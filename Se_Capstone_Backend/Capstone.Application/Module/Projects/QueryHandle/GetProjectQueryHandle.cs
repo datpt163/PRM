@@ -49,7 +49,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                 {
                     if (user != null)
                     {
-                        projectsQuery = user.UserProjects.Select(x => x.Project).ToList();
+                        projectsQuery = user.UserProjects.Select(x => x.Project).Where(x => x.IsVisible).ToList();
                         projectsQuery.AddRange(user.LeadProjects.ToList());
                     }
                 }
