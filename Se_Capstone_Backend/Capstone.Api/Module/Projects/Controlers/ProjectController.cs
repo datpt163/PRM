@@ -137,7 +137,7 @@ namespace Capstone.Api.Module.Projects.Controlers
         //[Authorize(Roles = "ADD_MEMBER_TO_PROJECT")]
         public async Task<IActionResult> UpdateMember(Guid projectId, Guid memberId, UpdateMemberRequest request)
         {
-            var result = await _mediator.Send(new UpdateMemberCommand() { IsIssueConfigurator = request.IsIssueConfigurator, IsProjectConfigurator = request.IsProjectConfigurator, PositionId = request.PositionId, ProjectId = projectId, UserId = memberId});
+            var result = await _mediator.Send(new UpdateMemberCommand() {IsCommentConfigurator = request.IsCommentConfigurator, IsIssueConfigurator = request.IsIssueConfigurator, IsProjectConfigurator = request.IsProjectConfigurator, PositionId = request.PositionId, ProjectId = projectId, UserId = memberId});
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(dataResponse: result.Data);
             else

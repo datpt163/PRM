@@ -34,6 +34,8 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             userProject.PositionId = request.PositionId;
             userProject.IsProjectConfigurator = request.IsProjectConfigurator;
             userProject.IsIssueConfigurator = request.IsIssueConfigurator;
+            userProject.IsCommentConfigurator = request.IsCommentConfigurator;
+
             _unitOfWork.UserProjects.Update(userProject);
             await _unitOfWork.SaveChangesAsync();
             return new ResponseMediator("", userProject);

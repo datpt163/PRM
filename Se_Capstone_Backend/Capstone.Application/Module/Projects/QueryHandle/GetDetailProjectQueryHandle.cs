@@ -48,6 +48,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                 {
                     p.IsIssueConfigurator = userProject.IsIssueConfigurator;
                     p.IsProjectConfigurator = userProject.IsProjectConfigurator;
+                    p.IsCommentConfigurator = userProject.IsCommentConfigurator;
                     p.PositionName = userProject.Position?.Title;
                 }
             }
@@ -61,10 +62,10 @@ namespace Capstone.Application.Module.Projects.QueryHandle
 
                 if (role != null && role.Name != null && role.Permissions.Select(x => x.Name).Contains("SETTING_DETAIL_ALL_PROJECTS"))
                 {
-                    projectMapper.MyPermissions = new List<string>() { "IsPermissionConfigurator", "IsProjectConfigurator", "IsIssueConfigurator" };
+                    projectMapper.MyPermissions = new List<string>() { "IsPermissionConfigurator", "IsProjectConfigurator", "IsIssueConfigurator", "IsCommentConfigurator" };
                 }else if(project.LeadId == myUser.Id)
                 {
-                    projectMapper.MyPermissions = new List<string>() { "IsPermissionConfigurator", "IsProjectConfigurator", "IsIssueConfigurator" };
+                    projectMapper.MyPermissions = new List<string>() { "IsPermissionConfigurator", "IsProjectConfigurator", "IsIssueConfigurator", "IsCommentConfigurator" };
                 }
                 else
                 {
@@ -75,6 +76,8 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                             projectMapper.MyPermissions.Add("IsIssueConfigurator");
                         if (userProject.IsProjectConfigurator == true)
                             projectMapper.MyPermissions.Add("IsProjectConfigurator");
+                        if (userProject.IsCommentConfigurator == true)
+                            projectMapper.MyPermissions.Add("IsCommentConfigurator");
                     }
                 }
             }
