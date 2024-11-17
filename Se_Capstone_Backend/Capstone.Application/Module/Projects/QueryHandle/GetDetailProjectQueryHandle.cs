@@ -59,12 +59,12 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                 var roles = await _userManager.GetRolesAsync(myUser);
                 var role = _unitOfWork.Roles.Find(x => x.Name != null && x.Name == (roles.FirstOrDefault() == null ? "" : roles.FirstOrDefault())).Include(c => c.Permissions).FirstOrDefault();
 
-                if (role != null && role.Name != null && role.Permissions.Select(x => x.Name).Contains("SETTING_ALL_PROJECT"))
+                if (role != null && role.Name != null && role.Permissions.Select(x => x.Name).Contains("SETTING_DETAIL_ALL_PROJECTS"))
                 {
-                    projectMapper.MyPermissions = new List<string>() {"IsPermissionConfigurator", "IsProjectConfigurator", "IsIssueConfigurator" };
+                    projectMapper.MyPermissions = new List<string>() {"IsMemberConfigurator", "IsProjectConfigurator", "IsIssueConfigurator" };
                 }else if(project.LeadId == myUser.Id)
                 {
-                    projectMapper.MyPermissions = new List<string>() { "IsPermissionConfigurator", "IsProjectConfigurator", "IsIssueConfigurator" };
+                    projectMapper.MyPermissions = new List<string>() { "IsMemberConfigurator", "IsProjectConfigurator", "IsIssueConfigurator" };
                 }
                 else
                 {
@@ -77,6 +77,22 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                             projectMapper.MyPermissions.Add("IsProjectConfigurator");
                     }
                 }
+            }
+
+            foreach(var r in projectMapper.Members)
+            {
+                var userQuery = _unitOfWork.Users.FindOne(x => x.Id == r.Id);
+                if(userQuery != null)
+                {
+                    var roles = await _userManager.GetRolesAsync(userQuery);
+                    var role = _unitOfWork.Roles.Find(x => x.Name != null && x.Name == (roles.FirstOrDefault() == null ? "" : roles.FirstOrDefault())).Include(c => c.Permissions).FirstOrDefault();
+
+                    if (role != null && role.Name != null && role.Permissions.Select(x => x.Name).Contains("SETTING_DETAIL_ALL_PROJECTS"))
+                    {
+                       r.IsConfigurator = true;
+                    }
+                }
+
             }
 
             return new ResponseMediator("", projectMapper);

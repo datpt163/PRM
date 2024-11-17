@@ -23,12 +23,12 @@ namespace Capstone.Application.Module.Auths.Response
         public DateTime? UpdateDate { get; set; }
         public DateTime? DeleteDate { get; set; }
         public string? PositionName {  get; set; }
-        public Guid RoleId { get; set; }
+        public Guid? RoleId { get; set; }
         public string RoleName { get; set; }
 
 
 
-        public CreateUserResponse(Guid roleId, string roleName, UserStatus status, string email, Guid id, string userName, string fullName, string phone, string avatar, string address, Gender? gender,
+        public CreateUserResponse(Guid? roleId, string roleName, UserStatus status, string email, Guid id, string userName, string fullName, string phone, string avatar, string address, Gender? gender,
             DateTime? dob, string? bankAccount, string? bankAccountName, DateTime createDate, DateTime? updateDate, DateTime? deleteDate)
         {
             RoleId = roleId;

@@ -41,7 +41,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                 var roles = await _userManager.GetRolesAsync(user);
                 var role = _unitOfWork.Roles.Find(x => x.Name != null && x.Name == (roles.FirstOrDefault() == null ? "" : roles.FirstOrDefault())).Include(c => c.Permissions).FirstOrDefault();
 
-                if (role != null && role.Name != null && role.Permissions.Select(x => x.Name).Contains("SETTING_ALL_PROJECT"))
+                if (role != null && role.Name != null && role.Permissions.Select(x => x.Name).Contains("READ_ALL_PROJECTS"))
                 {
                     projectsQuery = await _unitOfWork.Projects.GetQuery().Include(c => c.Lead).ToListAsync();
                 }

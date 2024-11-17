@@ -17,9 +17,9 @@ namespace Capstone.Application.Module.Auth.Command
         public Gender Gender { get; set; } 
         public DateTime Dob { get; set; }
         public string Phone { get; set; } = string.Empty;
-        public Guid RoleId { get; set; }
+        public Guid? RoleId { get; set; }
 
-        public RegisterCommand( Guid roleId, string token, string email, string password, string userName, string fullName, string address, Gender gender, DateTime dob, string phone)
+        public RegisterCommand( Guid? roleId, string token, string email, string password, string userName, string fullName, string address, Gender gender, DateTime dob, string phone)
         {
             RoleId = roleId;
             Token = token;
@@ -44,6 +44,6 @@ namespace Capstone.Application.Module.Auth.Command
         public Gender Gender { get; set; }
         public DateTime Dob { get; set; }
         public string Phone { get; set; } = string.Empty;
-        public Guid RoleId { get; set; }
+        public Guid? RoleId { get; set; }
     }
 }

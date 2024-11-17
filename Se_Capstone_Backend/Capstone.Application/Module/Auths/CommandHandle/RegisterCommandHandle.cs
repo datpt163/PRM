@@ -30,10 +30,16 @@ namespace Capstone.Application.Module.Users.CommandHandle
 
         public async Task<ResponseMediator> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
-            var role = _unitOfWork.Roles.Find(x => x.Id == request.RoleId).FirstOrDefault();
-            if (role == null)
-                return new ResponseMediator("Role not found", null, 404);
-
+            Guid? roleId = null;
+            string? roleName = "";
+            if (request.RoleId.HasValue)
+            {
+                var role = _unitOfWork.Roles.Find(x => x.Id == request.RoleId).FirstOrDefault();
+                if (role == null)
+                    return new ResponseMediator("Role not found", null, 404);
+                roleId = role.Id;
+                roleName = role.Name;
+            }
 
             var existingEmailAccount = await _userManager.FindByEmailAsync(request.Email);
             if (existingEmailAccount != null)
@@ -55,10 +61,11 @@ namespace Capstone.Application.Module.Users.CommandHandle
                     var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var resultConfirmEmail = await _userManager.ConfirmEmailAsync(user, confirmationToken);
                     var responseSave = await _userManager.FindByNameAsync(request.UserName);
-                    var responseUser = new CreateUserResponse(role.Id, role.Name ?? "", responseSave.Status, responseSave.Email ?? "", responseSave.Id, responseSave.UserName ?? "", responseSave.FullName, responseSave.PhoneNumber ?? "", responseSave.Avatar ?? "",
+                    var responseUser = new CreateUserResponse(roleId, roleName ?? "", responseSave.Status, responseSave.Email ?? "", responseSave.Id, responseSave.UserName ?? "", responseSave.FullName, responseSave.PhoneNumber ?? "", responseSave.Avatar ?? "",
                                              responseSave.Address ?? "", responseSave.Gender, responseSave.Dob, responseSave.BankAccount, responseSave.BankAccountName,
                                              responseSave.CreateDate, responseSave.UpdateDate, responseSave.DeleteDate) ;
-                    await _userManager.AddToRoleAsync(user, role.Name ?? "");
+                    if(!string.IsNullOrEmpty(roleName))
+                        await _userManager.AddToRoleAsync(user, roleName);
                     return new ResponseMediator("", responseUser);
                 }
                 return new ResponseMediator($"User creation failed!", null, 400);
