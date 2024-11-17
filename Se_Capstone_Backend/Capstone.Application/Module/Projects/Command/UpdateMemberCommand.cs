@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,6 @@ namespace Capstone.Application.Module.Projects.Command
         public bool IsProjectConfigurator { get; set; } = false;
         public bool IsIssueConfigurator { get; set; } = false;
         public bool IsCommentConfigurator { get; set; } = false;
+        //public IErrorBoundaryLogger
     }
 }
