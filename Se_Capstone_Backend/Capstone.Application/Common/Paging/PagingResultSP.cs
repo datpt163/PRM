@@ -9,7 +9,7 @@ namespace Capstone.Application.Common.Paging
         public IList<T> Data { get; set; }
         public string ErrorMessage { get; set; } = string.Empty;
 
-        public PagingResultSP()
+        public PagingResultSP(List<Module.Projects.Response.ProjectDTO> projects)
         {
         }
 
@@ -23,6 +23,10 @@ namespace Capstone.Application.Common.Paging
         {
             Paging = new PagingSP(totalCount, pageIndex, pageSize);
             Data = data.ToList();
+        }
+
+        public PagingResultSP()
+        {
         }
 
         //public static async Task<PagingResultSP<T>> CreateAsyncSP(IQueryable<T> query, int pageIndex, int pageSize)

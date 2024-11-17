@@ -27,7 +27,10 @@ namespace Capstone.Application.Module.Projects.CommandHandle
         }
         public async Task<ResponseMediator> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
-            var project = _unitOfWork.Projects.Find(p => p.Code.Trim().ToUpper().Equals(request.Code.Trim().ToUpper())).FirstOrDefault();
+            if (request?.Code == null)
+                return new ResponseMediator("Request code is null", null);
+
+            var project = _unitOfWork?.Projects?.Find(p => p.Code.Trim().ToUpper().Equals(request.Code.Trim().ToUpper())).FirstOrDefault();
 
             if (project != null)
                 return new ResponseMediator("Project code is exist", null);
@@ -88,11 +91,17 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             string folder = "Default";
             string fileName = "DefaultStatus.json";
             string path = Path.Combine(module, project, folder, fileName);
-            var statuses = JsonSerializer.Deserialize<List<Domain.Entities.Status>>(await _fileService.ReadFileAsync(path)) ?? new List<Domain.Entities.Status>();
+            var fileContent = await _fileService.ReadFileAsync(path);
+
+            if (fileContent == null)
+                throw new ArgumentNullException(nameof(fileContent), "File content cannot be null");
+
+            var statuses = JsonSerializer.Deserialize<List<Domain.Entities.Status>>(fileContent) ?? new List<Domain.Entities.Status>();
             foreach (var s in statuses)
                 s.ProjectId = projectId;
             return statuses;
         }
+
 
         public async Task<List<Label>> CreateDefaultLabels(Guid projectId)
         {
