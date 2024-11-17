@@ -31,6 +31,7 @@ namespace Capstone.Application.Module.Projects.Response
         public string? PositionName { get; set; }
         public bool IsProjectConfigurator { get; set; }
         public bool IsIssueConfigurator { get; set; }
+        public bool IsCommentConfigurator { get; set; }
         public string? Avatar { get; set; }
         public bool IsConfigurator { get; set; } = false;
     }

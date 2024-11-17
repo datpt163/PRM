@@ -5,5 +5,6 @@
         public Guid? PositionId { get; set; }
         public bool IsProjectConfigurator { get; set; } = false;
         public bool IsIssueConfigurator { get; set; } = false;
+        public bool IsCommentConfigurator { get; set; } = false;
     }
 }

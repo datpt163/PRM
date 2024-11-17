@@ -25,5 +25,6 @@ namespace Capstone.Domain.Entities
         public Position? Position { get; set; } 
         public bool IsProjectConfigurator { get; set; } = false;
         public bool IsIssueConfigurator { get; set; } = false;
+        public bool IsCommentConfigurator { get; set; } = false;
     }
 }
