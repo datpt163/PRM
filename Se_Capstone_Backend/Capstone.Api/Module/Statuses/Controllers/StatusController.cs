@@ -23,7 +23,7 @@ namespace Capstone.Api.Module.Statuses.Controllers
 
         [HttpPost]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        [Authorize(Roles = "ADD_STATUS")]
+        [Authorize]
         public async Task<IActionResult> CreateStatus([FromBody] CreateStatusCommand request)
         {
             var result = await _mediator.Send(request);
@@ -80,7 +80,7 @@ namespace Capstone.Api.Module.Statuses.Controllers
 
         [HttpDelete("{id}")]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        [Authorize(Roles = "DELETE_STATUS")]
+        [Authorize]
         public async Task<IActionResult> DeleteStatus(Guid id, [FromBody] DeleteStatusRequest newStatus)
         {
             var result = await _mediator.Send(new DeleteStatusCommand() { Id = id, NewStatusId = newStatus.newStatusId });
@@ -112,7 +112,7 @@ namespace Capstone.Api.Module.Statuses.Controllers
 
         [HttpPut("{id}")]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        [Authorize(Roles = "UPDATE_STATUS")]
+        [Authorize]
         public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateStatusRequest request)
         {
             var result = await _mediator.Send(new UpdateStatusCommand() { Id = id, Name = request.Name, Description = request.Description, Color = request.Color, IsDone = request.IsDone });

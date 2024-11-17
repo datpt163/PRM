@@ -23,7 +23,7 @@ namespace Capstone.Api.Module.Labels.Controllers
 
         [HttpPost]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        [Authorize(Roles = "ADD_LABEL")]
+        [Authorize]
         public async Task<IActionResult> CreateLabel([FromBody] CreateLabelCommand request)
         {
             var result = await _mediator.Send(request);
@@ -81,7 +81,7 @@ namespace Capstone.Api.Module.Labels.Controllers
 
         [HttpDelete("{id}")]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        [Authorize(Roles = "DELETE_LABEL")]
+        [Authorize]
         public async Task<IActionResult> DeleteLabel(Guid id)
         {
             var result = await _mediator.Send(new DeleteLabelCommand() { Id = id });
@@ -113,7 +113,7 @@ namespace Capstone.Api.Module.Labels.Controllers
 
         [HttpPut("{id}")]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        [Authorize(Roles = "UPDATE_LABEL")]
+        [Authorize]
         public async Task<IActionResult> UpdateLabel(Guid id, [FromBody] UpdateLabelRequest request)
         {
             var result = await _mediator.Send(new UpdateLabelCommand() { Id = id, Title = request.Title, Description = request.Description });

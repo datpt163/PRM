@@ -24,7 +24,7 @@ namespace Capstone.Api.Module.Phases.Controllers
 
         [HttpPost]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        [Authorize(Roles = "ADD_PHASE")]
+        [Authorize]
         public async Task<IActionResult> CreatePhase([FromBody] CreatePhaseCommand request)
         {
             var result = await _mediator.Send(request);
@@ -41,7 +41,7 @@ namespace Capstone.Api.Module.Phases.Controllers
 
         [HttpPut("{id}")]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        [Authorize(Roles = "UPDATE_PHASE")]
+        [Authorize]
         public async Task<IActionResult> UpdatePhase(Guid id, [FromBody] UpdatePhaseRequest request)
         {
             var result = await _mediator.Send(new UpdatePhaseCommand() { Id = id, Title = request.Title, Description = request.Description, ExpectedEndDate = request.ExpectedEndDate, ExpectedStartDate = request.ExpectedStartDate});
@@ -57,7 +57,7 @@ namespace Capstone.Api.Module.Phases.Controllers
 
         [HttpDelete("{id}")]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        [Authorize(Roles = "DELETE_PHASE")]
+        [Authorize]
         public async Task<IActionResult> UpdatePhase(Guid id)
         {
             var result = await _mediator.Send(new DeletePhaseCommand() { Id = id});
@@ -73,7 +73,7 @@ namespace Capstone.Api.Module.Phases.Controllers
 
         [HttpPut("complete")]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        [Authorize(Roles = "UPDATE_PHASE")]
+        [Authorize]
         public async Task<IActionResult> CompletePhase(Guid projectId)
         {
             var result = await _mediator.Send(new CompletePhaseCommand() {ProjectId = projectId });
