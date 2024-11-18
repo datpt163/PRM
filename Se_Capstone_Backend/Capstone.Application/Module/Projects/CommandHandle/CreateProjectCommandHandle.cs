@@ -27,10 +27,8 @@ namespace Capstone.Application.Module.Projects.CommandHandle
         }
         public async Task<ResponseMediator> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
-            if (request?.Code == null)
-                return new ResponseMediator("Request code is null", null);
-
-            var project = _unitOfWork?.Projects?.Find(p => p.Code.Trim().ToUpper().Equals(request.Code.Trim().ToUpper())).FirstOrDefault();
+            request.Code = string.Empty;
+            var project = _unitOfWork.Projects.Find(p => p.Code.Trim().ToUpper().Equals(request.Code.Trim().ToUpper())).FirstOrDefault();
 
             if (project != null)
                 return new ResponseMediator("Project code is exist", null);
