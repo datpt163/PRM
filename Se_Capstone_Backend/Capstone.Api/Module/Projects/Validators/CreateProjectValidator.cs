@@ -19,9 +19,12 @@ namespace Capstone.Api.Module.Projects.Validators
          .WithMessage("End date of birth must not include time zone information.");
         }
 
-        private bool BeValidDateWithoutTimeZone(DateTime dob)
+        private bool BeValidDateWithoutTimeZone(DateTime? dob)
         {
-            return dob.Kind == DateTimeKind.Unspecified;
+            if(dob != null)
+                return dob.Value.Kind == DateTimeKind.Unspecified;
+            else
+                return true;
         }
     }
 }

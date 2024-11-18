@@ -18,10 +18,12 @@ namespace Capstone.Application.Module.Issues.Query
         public int? Index { get; set; }
         public string? Title { get; set; }
         public Priority? Priority { get; set; }
-        public Guid? AssigneeId { get; set; }
+        public List<Guid>? AssigneeId { get; set; }
         public Guid? ReporterId { get; set; }
-        public Guid? StatusId { get; set; }
-        public Guid? LabelId { get; set; }
-        public Guid? PhaseId { get; set; }
+        public List<Guid>? StatusId { get; set; }
+        public List<Guid>? LabelId { get; set; }
+        public List<Guid>? PhaseId { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? DueDate { get; set; }
     }
 }

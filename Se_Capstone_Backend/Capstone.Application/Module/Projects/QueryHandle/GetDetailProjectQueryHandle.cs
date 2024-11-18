@@ -62,10 +62,10 @@ namespace Capstone.Application.Module.Projects.QueryHandle
 
                 if (role != null && role.Name != null && role.Permissions.Select(x => x.Name).Contains("SETTING_DETAIL_ALL_PROJECTS"))
                 {
-                    projectMapper.MyPermissions = new List<string>() { "IsPermissionConfigurator", "IsProjectConfigurator", "IsIssueConfigurator", "IsCommentConfigurator" };
+                    projectMapper.MyPermissions = new List<string>() { "IsMemberConfigurator", "IsProjectConfigurator", "IsIssueConfigurator", "IsCommentConfigurator" };
                 }else if(project.LeadId == myUser.Id)
                 {
-                    projectMapper.MyPermissions = new List<string>() { "IsPermissionConfigurator", "IsProjectConfigurator", "IsIssueConfigurator", "IsCommentConfigurator" };
+                    projectMapper.MyPermissions = new List<string>() { "IsMemberConfigurator", "IsProjectConfigurator", "IsIssueConfigurator", "IsCommentConfigurator" };
                 }
                 else
                 {
