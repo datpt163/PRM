@@ -36,8 +36,11 @@ namespace Capstone.Application.Module.Auths.CommandHandle
             {
                 return new ResponseMediator("Description empty", null,400);
             }
-
-            if(request.PermissionsId == null || request.PermissionsId.Count == 0)
+            if (string.IsNullOrEmpty(request.Color))
+            {
+                return new ResponseMediator("Color empty", null);
+            }
+            if (request.PermissionsId == null || request.PermissionsId.Count == 0)
                 return new ResponseMediator("List Permission empty", null, 400);
 
             var roleUpdate = await _unitOfWork.Roles.Find(x => x.Id == request.Id).Include(c => c.Permissions).FirstOrDefaultAsync();
@@ -68,6 +71,7 @@ namespace Capstone.Application.Module.Auths.CommandHandle
                     if (createdRole != null)
                     {
                         createdRole.Description = request.Description;
+                        createdRole.Color = request.Color;
                         createdRole.Permissions = new List<Permission>();
                         foreach (var p in request.PermissionsId)
                         {
@@ -108,7 +112,7 @@ namespace Capstone.Application.Module.Auths.CommandHandle
                         }
 
 
-                        return new ResponseMediator("", new { id = createdRole.Id, name = createdRole.Name, description = createdRole.Description, permissions = createdRole.Permissions });
+                        return new ResponseMediator("", new { id = createdRole.Id, name = createdRole.Name, description = createdRole.Description, permissions = createdRole.Permissions , color = createdRole.Color });
                     }
                     return new ResponseMediator("Failed to update role", null);
                 }

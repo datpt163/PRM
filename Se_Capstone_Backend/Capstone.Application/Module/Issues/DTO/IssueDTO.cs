@@ -55,6 +55,7 @@ namespace Capstone.Application.Module.Issues.DTO
         public UserForProjectDetailDTO? LastUpdateBy { get; set; }
         public UserForProjectDetailDTO Reporter { get; set; } = null!;
         public UserForProjectDetailDTO? Assignee { get; set; } = null!;
+        public IssueDTO? ParentIssue { get;set; }
         public List<IssueDTO> SubIssues { get; set; } = new List<IssueDTO>();
         public List<CommentDTO> Comments { get; set; } = new List<CommentDTO>();
     }

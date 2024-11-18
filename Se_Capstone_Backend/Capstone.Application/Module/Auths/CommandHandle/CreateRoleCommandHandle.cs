@@ -32,6 +32,12 @@ namespace Capstone.Application.Module.Auths.CommandHandle
                 return new ResponseMediator("Description empty", null);
             }
 
+
+            if (string.IsNullOrEmpty(request.Color))
+            {
+                return new ResponseMediator("Color empty", null);
+            }
+
             if (request.PermissionsId == null || request.PermissionsId.Count == 0)
                 return new ResponseMediator("List Permission empty", null, 400);
 
@@ -48,6 +54,7 @@ namespace Capstone.Application.Module.Auths.CommandHandle
                 var createdRole = await _unitOfWork.Roles.Find(c => c.Name == request.Name.ToUpper()).Include(c => c.Permissions).FirstOrDefaultAsync();
                 if (createdRole != null) {
                     createdRole.Description = request.Description;
+                    createdRole.Color = request.Color;
                     foreach (var p in request.PermissionsId) {
                         var permission = await _unitOfWork.Permissions.FindOneAsync(c => c.Id == p);
                         if (permission != null) 
@@ -55,7 +62,7 @@ namespace Capstone.Application.Module.Auths.CommandHandle
                     }
                     _unitOfWork.Roles.Update(createdRole);
                     await _unitOfWork.SaveChangesAsync();
-                    return new ResponseMediator("", new { id = createdRole.Id, name = createdRole.Name, description = createdRole.Description, permissions = createdRole.Permissions });
+                    return new ResponseMediator("", new { color = createdRole.Color, id = createdRole.Id, name = createdRole.Name, description = createdRole.Description, permissions = createdRole.Permissions }); ;
                 }
                 return new ResponseMediator("Failed to create role", null);
             }
