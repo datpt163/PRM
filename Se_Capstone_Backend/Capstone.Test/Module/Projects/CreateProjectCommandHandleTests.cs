@@ -85,7 +85,6 @@ namespace Capstone.Test.Module.Projects
         [Fact]
         public async Task Handle_ValidProjectCreation_ReturnsSuccess()
         {
-            // Arrange
             var command = new CreateProjectCommand
             {
                 Name = "Project C",
@@ -96,7 +95,6 @@ namespace Capstone.Test.Module.Projects
                 LeadId = Guid.NewGuid()
             };
 
-            // Ensure LeadId is set
             var user = new User { Id = command.LeadId.Value, FullName = "John Doe" };
             _mockUnitOfWork.Setup(u => u.Users.Find(It.IsAny<Expression<Func<User, bool>>>()))
                 .Returns(new[] { user }.AsQueryable());
@@ -115,20 +113,27 @@ namespace Capstone.Test.Module.Projects
                 LeadName = user.FullName
             });
 
-            // Mock CreateDefaultStatus method
             _mockFileService.Setup(fs => fs.ReadFileAsync(It.IsAny<string>()))
                 .ReturnsAsync("[{\"Name\":\"Status1\",\"Position\":1,\"Description\":\"Description1\",\"Color\":\"#FFFFFF\"}]");
 
-            // Act
+            var mockStatuses = new Mock<IRepository<Status>>();
+            _mockUnitOfWork.Setup(u => u.Statuses).Returns(mockStatuses.Object);
+
+            mockStatuses.Setup(s => s.AddRange(It.IsAny<IEnumerable<Status>>())).Verifiable();
+            var mockLabels = new Mock<IRepository<Label>>();
+            _mockUnitOfWork.Setup(u => u.Labels).Returns(mockLabels.Object);
+
+            mockLabels.Setup(l => l.AddRange(It.IsAny<IEnumerable<Label>>())).Verifiable();
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
-            Assert.Null(result.ErrorMessage);
+            Assert.Equal(string.Empty, result.ErrorMessage);
             Assert.NotNull(result.Data);
             Assert.Equal("Project C", ((ProjectDTO)result.Data).Name);
             _mockUnitOfWork.Verify(u => u.Projects.Add(It.IsAny<Project>()), Times.Once);
-            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Exactly(2));
+            mockStatuses.Verify(s => s.AddRange(It.IsAny<IEnumerable<Status>>()), Times.Once); 
         }
+
 
     }
 }
