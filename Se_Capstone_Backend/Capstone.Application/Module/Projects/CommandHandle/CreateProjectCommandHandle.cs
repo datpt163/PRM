@@ -30,7 +30,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             if (request?.Code == null)
                 return new ResponseMediator("Request code is null", null);
 
-            var project = _unitOfWork?.Projects?.Find(p => p.Code.Trim().ToUpper().Equals(request.Code.Trim().ToUpper())).FirstOrDefault();
+            var project = _unitOfWork.Projects.Find(p =>!string.IsNullOrWhiteSpace(p.Code) &&!string.IsNullOrWhiteSpace(request.Code) && p.Code.Trim().ToUpper() == request.Code.Trim().ToUpper()).FirstOrDefault();
 
             if (project != null)
                 return new ResponseMediator("Project code is exist", null);
