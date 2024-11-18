@@ -61,10 +61,10 @@ namespace Capstone.Api.Module.Projects.Controlers
         [HttpGet]
         [Authorize]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        public async Task<IActionResult> GetListProject(int? pageIndex,int? pageSize, bool? isVisible, ProjectStatus? status, string? search )
+        public async Task<IActionResult> GetListProject(int? pageIndex,int? pageSize, bool? isVisible, ProjectStatus? status, string? search,DateTime? startDate, DateTime? endDate )
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var result = await _mediator.Send(new GetListProjectQuery(pageIndex, pageSize, isVisible, status, token, search));
+            var result = await _mediator.Send(new GetListProjectQuery(pageIndex, pageSize, isVisible, status, token, search) { StartDate = startDate, EndDate = endDate});
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data, result.Paging);
             else
@@ -117,7 +117,6 @@ namespace Capstone.Api.Module.Projects.Controlers
 
         [HttpPost("members")]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        [Authorize(Roles = "ADD_MEMBER_TO_PROJECT")]
         public async Task<IActionResult> AddMember(AddMembersToProject request)
         {
             var result = await _mediator.Send(request);
@@ -134,7 +133,6 @@ namespace Capstone.Api.Module.Projects.Controlers
 
         [HttpPut("{projectId}/members/{memberId}")]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
-        //[Authorize(Roles = "ADD_MEMBER_TO_PROJECT")]
         public async Task<IActionResult> UpdateMember(Guid projectId, Guid memberId, UpdateMemberRequest request)
         {
             var result = await _mediator.Send(new UpdateMemberCommand() {IsCommentConfigurator = request.IsCommentConfigurator, IsIssueConfigurator = request.IsIssueConfigurator, IsProjectConfigurator = request.IsProjectConfigurator, PositionId = request.PositionId, ProjectId = projectId, UserId = memberId});
