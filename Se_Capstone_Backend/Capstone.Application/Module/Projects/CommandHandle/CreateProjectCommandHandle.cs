@@ -27,10 +27,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
         }
         public async Task<ResponseMediator> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
-            if (request?.Code == null)
-                return new ResponseMediator("Request code is null", null);
-
-            var project = _unitOfWork.Projects.Find(p =>!string.IsNullOrWhiteSpace(p.Code) &&!string.IsNullOrWhiteSpace(request.Code) && p.Code.Trim().ToUpper() == request.Code.Trim().ToUpper()).FirstOrDefault();
+            var project = _unitOfWork.Projects.Find(p => p.Code.Trim().ToUpper().Equals(request.Code.Trim().ToUpper())).FirstOrDefault();
 
             if (project != null)
                 return new ResponseMediator("Project code is exist", null);
@@ -38,8 +35,12 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             //if (request.StartDate.Date < DateTime.Now.Date || request.EndDate.Date < DateTime.Now.Date)
             //    return new ResponseMediator("Start date and end date must be greater than the current time", null);
 
-            if (request.EndDate.Date < request.StartDate.Date)
-                return new ResponseMediator("End date must be greater or equal than the start date", null);
+            if (request.StartDate.HasValue && request.EndDate.HasValue)
+            {
+                if (request.EndDate.Value.Date < request.StartDate.Value.Date)
+                    return new ResponseMediator("End date must be greater or equal than the start date", null);
+            }
+          
             UserDTO userDto = new UserDTO();
             if (request.LeadId != null)
             {

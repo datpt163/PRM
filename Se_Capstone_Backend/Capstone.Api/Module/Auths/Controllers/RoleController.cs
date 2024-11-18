@@ -64,6 +64,21 @@ namespace Capstone.Api.Module.Auths.Controllers
             return ResponseOk(dataResponse: result.Data);
         }
 
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "DELETE_ROLE")]
+        public async Task<IActionResult> DeleteRole(Guid id)
+        {
+            var result = await _mediator.Send(new DeleteRoleCommand() { Id = id});
+
+            if (!string.IsNullOrEmpty(result.ErrorMessage))
+            {
+                if (result.StatusCode == 404)
+                    return ResponseNotFound(messageResponse: result.ErrorMessage);
+                return ResponseBadRequest(messageResponse: result.ErrorMessage);
+            }
+            return ResponseNoContent();
+        }
+
         [HttpPost("add-role-for-user")]
         [SwaggerResponse(204, "Successful")]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]

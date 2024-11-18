@@ -3,6 +3,7 @@ using System;
 using Capstone.Infrastructure.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Capstone.Infrastructure.Migrations
 {
     [DbContext(typeof(SeCapstoneContext))]
-    partial class SeCapstoneContextModelSnapshot : ModelSnapshot
+    [Migration("20241118030027_RefactorRole")]
+    partial class RefactorRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -617,7 +620,7 @@ namespace Capstone.Infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("description");
 
-                    b.Property<DateTime?>("EndDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("endDate");
 
@@ -639,7 +642,7 @@ namespace Capstone.Infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
-                    b.Property<DateTime?>("StartDate")
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("startDate");
 

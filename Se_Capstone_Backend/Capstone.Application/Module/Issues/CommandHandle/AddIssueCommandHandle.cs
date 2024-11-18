@@ -93,7 +93,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 PhaseId = phaseId
             };
             await _publishEndpoint.Publish(new AddIssueMessage() { Issue = issue, StatusId = request.StatusId });
-            await Task.Delay(150, cancellationToken);
+            await Task.Delay(350, cancellationToken);
             var response =  _mapper.Map<IssueDTO>(issue);
             return new ResponseMediator("", response);
         }
