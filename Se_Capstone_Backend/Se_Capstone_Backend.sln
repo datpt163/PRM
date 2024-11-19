@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capstone.Domain", "Capstone
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capstone.Infrastructure", "Capstone.Infrastructure\Capstone.Infrastructure.csproj", "{7DC93DDB-E260-4895-8642-5C214D84A272}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capstone.Test", "Capstone.Test\Capstone.Test.csproj", "{B2FEB12F-B690-4938-B692-AF7A7150E6B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capstone.Test", "Capstone.Test\Capstone.Test.csproj", "{B2FEB12F-B690-4938-B692-AF7A7150E6B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

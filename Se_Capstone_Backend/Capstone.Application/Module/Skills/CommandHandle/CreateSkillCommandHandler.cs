@@ -19,6 +19,11 @@ namespace Capstone.Application.Module.Skills.CommandHandle
 
         public async Task<SkillDto> Handle(CreateSkillCommand request, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrWhiteSpace(request.Title))
+            {
+                throw new ArgumentException("Skill title cannot be empty or null.");
+            }
+
             var skill = new Skill
             {
                 Id = Guid.NewGuid(),
