@@ -17,6 +17,7 @@
         public int Status { get; set; }
         public string? RoleId { get;set; }
         public string? RoleName { get;set; }
+        public string? RoleColor { get; set; }
 
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }

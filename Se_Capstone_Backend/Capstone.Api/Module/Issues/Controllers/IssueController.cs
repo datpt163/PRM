@@ -44,9 +44,9 @@ namespace Capstone.Api.Module.Issues.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetListStatus(Guid? projectId, int? pageIndex, int? pageSize, int? index, string? title, Priority? priority, [FromQuery] List<Guid>? assigneeIds, [FromQuery]  Guid? reporterId, [FromQuery] List<Guid>? statusIds, [FromQuery] List<Guid>? labelIds, [FromQuery] List<Guid>? phaseIds, DateTime? startDate, DateTime? dueDate)
+        public async Task<IActionResult> GetListStatus(Guid? projectId, int? pageIndex, [FromQuery] int? pageSize, string? title, Priority? priority, [FromQuery] List<Guid>? assigneeIds, [FromQuery]  Guid? reporterId, [FromQuery] List<Guid>? statusIds, [FromQuery] List<Guid>? labelIds, [FromQuery] List<Guid>? phaseIds, DateTime? startDate, DateTime? dueDate)
         {
-            var result = await _mediator.Send(new GetListIssuesQuery() { StartDate = startDate, DueDate = dueDate, ProjectId = projectId, PageIndex = pageIndex, PageSize = pageSize, Index = index, Title = title, Priority = priority, AssigneeId = assigneeIds, ReporterId = reporterId, StatusId = statusIds, LabelId = labelIds, PhaseId = phaseIds }); ;
+            var result = await _mediator.Send(new GetListIssuesQuery() { StartDate = startDate, DueDate = dueDate, ProjectId = projectId, PageIndex = pageIndex, PageSize = pageSize,Title = title, Priority = priority, AssigneeId = assigneeIds, ReporterId = reporterId, StatusId = statusIds, LabelId = labelIds, PhaseId = phaseIds }); ;
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data, result.Paging);
             else
@@ -56,9 +56,9 @@ namespace Capstone.Api.Module.Issues.Controllers
         }
 
         [HttpGet("kanban")]
-        public async Task<IActionResult> GetListStatus(Guid? projectId, int? index, string? title, Priority? priority, [FromQuery] List<Guid>? assigneeIds, [FromQuery] Guid? reporterId, [FromQuery] List<Guid>? statusIds, [FromQuery] List<Guid>? labelIds, [FromQuery] List<Guid>? phaseIds, DateTime? startDate, DateTime? dueDate)
+        public async Task<IActionResult> GetListStatus(Guid? projectId,string? title, Priority? priority, [FromQuery] List<Guid>? assigneeIds, [FromQuery] Guid? reporterId, [FromQuery] List<Guid>? statusIds, [FromQuery] List<Guid>? labelIds, [FromQuery] List<Guid>? phaseIds, DateTime? startDate, DateTime? dueDate)
         {
-            var result = await _mediator.Send(new GetListStatusKanbanQuery() { StartDate = startDate, DueDate = dueDate, projectId = projectId, Index = index, Title = title, Priority = priority, AssigneeId = assigneeIds, ReporterId = reporterId, StatusId = statusIds, LabelId = labelIds, PhaseId = phaseIds });
+            var result = await _mediator.Send(new GetListStatusKanbanQuery() { StartDate = startDate, DueDate = dueDate, projectId = projectId, Title = title, Priority = priority, AssigneeId = assigneeIds, ReporterId = reporterId, StatusId = statusIds, LabelId = labelIds, PhaseId = phaseIds });
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data);
             else
@@ -106,7 +106,7 @@ namespace Capstone.Api.Module.Issues.Controllers
         public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateIssueRequest request)
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var result = await _mediator.Send(new UpdateIssueCommand(id, token, request.Title, request.Description, request.StartDate, request.DueDate, request.Percentage, request.Priority, request.EstimatedTime, request.ParentIssueId, request.AssigneeId, request.StatusId , request.LabelId));
+            var result = await _mediator.Send(new UpdateIssueCommand(id, token, request.Title, request.Description, request.StartDate, request.DueDate, request.Percentage, request.Priority, request.EstimatedTime, request.ParentIssueId, request.AssigneeId, request.StatusId , request.LabelId) { PhaseId = request.PhaseId });
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data);
             else

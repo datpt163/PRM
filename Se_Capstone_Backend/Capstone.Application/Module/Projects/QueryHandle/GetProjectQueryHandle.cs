@@ -62,10 +62,14 @@ namespace Capstone.Application.Module.Projects.QueryHandle
             if (request.Status.HasValue)
                 ListProject = ListProject.Where(x => x.Status == request.Status).ToList();
             if (request.StartDate != null)
+            {
                 ListProject = ListProject.Where(x => x.StartDate != null && x.StartDate.Value.Date >= request.StartDate.Value.Date).ToList();
+            }
 
             if (request.EndDate != null)
-                ListProject = ListProject.Where(x => x.EndDate != null && x.EndDate.Value.Date >= request.EndDate.Value.Date).ToList();
+            {
+                ListProject = ListProject.Where(x => x.EndDate != null && x.EndDate.Value.Date <= request.EndDate.Value.Date).ToList();
+            }
 
             if (!string.IsNullOrEmpty(request.Search))
             {

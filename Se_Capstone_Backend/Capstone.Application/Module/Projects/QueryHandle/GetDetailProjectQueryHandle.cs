@@ -49,6 +49,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                     p.IsIssueConfigurator = userProject.IsIssueConfigurator;
                     p.IsProjectConfigurator = userProject.IsProjectConfigurator;
                     p.IsCommentConfigurator = userProject.IsCommentConfigurator;
+                    p.PositionId  = userProject.Position?.Id;
                     p.PositionName = userProject.Position?.Title;
                 }
             }
