@@ -75,7 +75,7 @@ namespace Capstone.Application.Module.Auth.QueryHandle
                                 User = new RegisterResponse(role.Id, role.Name, user.Status, user.Email ?? "", user.Id, user.UserName ?? "", user.FullName, user.PhoneNumber ?? "", user.Avatar ?? "",
                                             user.Address ?? "", user.Gender, user.Dob, user.BankAccount, user.BankAccountName,
                                             user.CreateDate, user.UpdateDate, user.DeleteDate)
-                                { Permissions = role.Permissions}
+                                { Permissions = role.Permissions, RoleColor = role.Color}
                             });
                         }
                     }

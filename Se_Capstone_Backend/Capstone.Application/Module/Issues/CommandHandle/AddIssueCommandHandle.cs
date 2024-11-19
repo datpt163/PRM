@@ -41,7 +41,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 return new ResponseMediator("Title empty", null, 400);
 
            if(request.StartDate.HasValue && request.DueDate.HasValue && request.StartDate.Value.Date > request.DueDate.Value.Date)
-                return new ResponseMediator("Start date must greater or equal due date", null, 400);
+                return new ResponseMediator("Due date must greater or equal start date", null, 400);
 
             if (request.Priority.HasValue && ( (int)request.Priority < 1 || (int)request.Priority > 5 ) )
                 return new ResponseMediator("Priority must be between 1 and 5", null, 400);

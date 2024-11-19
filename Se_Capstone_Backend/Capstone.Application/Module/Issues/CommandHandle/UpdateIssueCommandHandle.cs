@@ -60,6 +60,9 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             if (request.LabelId.HasValue && _unitOfWork.Labels.FindOne(x => x.Id == request.LabelId) == null)
                 return new ResponseMediator("Label  not found", null, 404);
 
+            if (request.PhaseId.HasValue && _unitOfWork.Phases.FindOne(x => x.Id == request.PhaseId) == null)
+                return new ResponseMediator("Phase  not found", null, 404);
+
             var status = _unitOfWork.Statuses.Find(x => x.Id == request.StatusId).Include(c => c.Project).ThenInclude(c => c.Phases).Include(c => c.Issues).FirstOrDefault();
             if (status == null)
                 return new ResponseMediator("Status  not found", null, 404);
@@ -88,6 +91,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             issue.LastUpdateById = user.Id;
             issue.StatusId = request.StatusId;
             issue.LabelId = request.LabelId;
+            issue.PhaseId = request.PhaseId;
             _unitOfWork.Issues.Update(issue);
             await _unitOfWork.SaveChangesAsync();
             var response = _mapper.Map<IssueDTO?>(issue);

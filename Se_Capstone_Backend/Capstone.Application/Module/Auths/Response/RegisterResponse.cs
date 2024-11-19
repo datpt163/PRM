@@ -25,6 +25,7 @@ namespace Capstone.Application.Module.Auths.Response
         public DateTime? DeleteDate { get; set; }
         public Guid? RoleId { get; set; }
         public object? RoleName { get; set; }
+        public string? RoleColor { get; set; }
         public string? PositionName { get; set; }
         public ICollection<Permission> Permissions { get; set; } = new List<Permission>();
 

@@ -21,5 +21,6 @@ namespace Capstone.Application.Module.Status.Query
         public List<Guid>? PhaseId { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? DueDate { get; set; }
+
     }
 }

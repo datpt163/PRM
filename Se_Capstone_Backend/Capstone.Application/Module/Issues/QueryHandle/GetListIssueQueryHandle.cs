@@ -45,9 +45,13 @@ namespace Capstone.Application.Module.Issues.QueryHandle
             }
 
             if (request.StartDate.HasValue)
-                issues = issues.Where(x => x.StartDate != null && x.StartDate.Value.Date >= request.StartDate.Value.Date).ToList();
+            {
+               issues = issues.Where(x => x.StartDate != null && x.StartDate.Value.Date >= request.StartDate.Value.Date).ToList();
+            }
             if (request.DueDate.HasValue)
+            {
                 issues = issues.Where(x => x.DueDate != null && x.DueDate.Value.Date <= request.DueDate.Value.Date).ToList();
+            }
 
             if (request.AssigneeId != null && request.AssigneeId.Count > 0)
             {

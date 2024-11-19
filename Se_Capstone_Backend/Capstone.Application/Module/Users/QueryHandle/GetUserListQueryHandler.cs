@@ -148,6 +148,7 @@ namespace Capstone.Application.Module.Users.QueryHandle
                     RoleId = user.Roles.Count() == 0 ? "" : user.Roles.Select(r => r.Id.ToString()).FirstOrDefault(),
                     RoleName = user?.Roles?.Count() == 0 ? "" : user?.Roles?.Select(r => r?.Name?.ToString()).FirstOrDefault() ?? "",
                     UserName = user?.UserName,
+                    RoleColor = user?.Roles?.Count() == 0 ? "" : user?.Roles?.Select(r => r?.Color?.ToString()).FirstOrDefault() ?? "",
                 }).ToList();
 
 

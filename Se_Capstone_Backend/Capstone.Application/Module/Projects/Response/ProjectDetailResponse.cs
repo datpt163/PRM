@@ -28,6 +28,7 @@ namespace Capstone.Application.Module.Projects.Response
         public string FullName { get; set; } = string.Empty;
         public string UserName { get; set; } = string.Empty;
         public string? RoleName { get; set; }
+        public Guid? PositionId { get; set; }
         public string? PositionName { get; set; }
         public bool IsProjectConfigurator { get; set; }
         public bool IsIssueConfigurator { get; set; }
