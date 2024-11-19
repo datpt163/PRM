@@ -2,6 +2,7 @@
 using Capstone.Application.Module.Projects.Response;
 using Capstone.Domain.Enums;
 using MediatR;
+using System.ComponentModel.DataAnnotations;
 
 namespace Capstone.Application.Module.Projects.Query
 {
@@ -11,6 +12,8 @@ namespace Capstone.Application.Module.Projects.Query
         public int? PageSize { get; set; }
         public bool? IsVisible {  get; set; }
         public ProjectStatus? Status { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public string? Search { get; set; } 
 
         public string Token { get; set; } = string.Empty;

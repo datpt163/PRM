@@ -44,9 +44,9 @@ namespace Capstone.Api.Module.Issues.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetListStatus(Guid? projectId, int? pageIndex, int? pageSize, int? index, string? title, Priority? priority, Guid? assigneeId, Guid? reporterId, Guid? statusId, Guid? labelId, Guid? phaseId)
+        public async Task<IActionResult> GetListStatus(Guid? projectId, int? pageIndex, int? pageSize, int? index, string? title, Priority? priority, [FromQuery] List<Guid>? assigneeIds, [FromQuery]  Guid? reporterId, [FromQuery] List<Guid>? statusIds, [FromQuery] List<Guid>? labelIds, [FromQuery] List<Guid>? phaseIds, DateTime? startDate, DateTime? dueDate)
         {
-            var result = await _mediator.Send(new GetListIssuesQuery() { ProjectId = projectId, PageIndex = pageIndex, PageSize = pageSize, Index = index, Title = title, Priority = priority, AssigneeId = assigneeId, ReporterId = reporterId, StatusId = statusId, LabelId = labelId, PhaseId = phaseId });
+            var result = await _mediator.Send(new GetListIssuesQuery() { StartDate = startDate, DueDate = dueDate, ProjectId = projectId, PageIndex = pageIndex, PageSize = pageSize, Index = index, Title = title, Priority = priority, AssigneeId = assigneeIds, ReporterId = reporterId, StatusId = statusIds, LabelId = labelIds, PhaseId = phaseIds }); ;
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data, result.Paging);
             else
@@ -56,9 +56,9 @@ namespace Capstone.Api.Module.Issues.Controllers
         }
 
         [HttpGet("kanban")]
-        public async Task<IActionResult> GetListStatus(Guid? projectId)
+        public async Task<IActionResult> GetListStatus(Guid? projectId, int? index, string? title, Priority? priority, [FromQuery] List<Guid>? assigneeIds, [FromQuery] Guid? reporterId, [FromQuery] List<Guid>? statusIds, [FromQuery] List<Guid>? labelIds, [FromQuery] List<Guid>? phaseIds, DateTime? startDate, DateTime? dueDate)
         {
-            var result = await _mediator.Send(new GetListStatusKanbanQuery() { projectId = projectId });
+            var result = await _mediator.Send(new GetListStatusKanbanQuery() { StartDate = startDate, DueDate = dueDate, projectId = projectId, Index = index, Title = title, Priority = priority, AssigneeId = assigneeIds, ReporterId = reporterId, StatusId = statusIds, LabelId = labelIds, PhaseId = phaseIds });
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data);
             else

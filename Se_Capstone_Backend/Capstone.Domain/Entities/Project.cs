@@ -13,7 +13,7 @@ namespace Capstone.Domain.Entities
         {
         }
 
-        public Project(string name, string code, string description, DateTime startDate, DateTime endDate, Guid? leadId, bool isVisible)
+        public Project(string name, string code, string description, DateTime? startDate, DateTime? endDate, Guid? leadId, bool isVisible)
         {
             Name = name;
             Code = code;
@@ -36,8 +36,8 @@ namespace Capstone.Domain.Entities
 
         [MaxLength(100)]
         public string Description { get; set; } = string.Empty;
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public ProjectStatus Status { get; set; } = ProjectStatus.NotStarted;
         public bool IsVisible { get; set; } = false;
         public Guid? LeadId { get; set; }
