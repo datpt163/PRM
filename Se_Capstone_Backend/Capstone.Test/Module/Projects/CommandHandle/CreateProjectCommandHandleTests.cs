@@ -15,7 +15,7 @@ using AutoMapper;
 using Capstone.Application.Common.FileService;
 using System.Linq.Expressions;
 
-namespace Capstone.Test.Module.Projects
+namespace Capstone.Test.Module.Projects.CommandHandle
 {
     public class CreateProjectCommandHandleTests
     {
@@ -74,6 +74,19 @@ namespace Capstone.Test.Module.Projects
                 LeadId = Guid.NewGuid()
             };
 
+            var user = new User { Id = command.LeadId.Value, FullName = "John Doe" };
+            _mockUnitOfWork.Setup(u => u.Users.Find(It.IsAny<Expression<Func<User, bool>>>()))
+                .Returns(new[] { user }.AsQueryable());
+
+            _mockUnitOfWork.Setup(u => u.Users.Find(It.IsAny<Expression<Func<User, bool>>>()))
+                .Returns(new[] { user }.AsQueryable());
+
+            _mockUnitOfWork.Setup(u => u.Projects.Find(It.IsAny<Expression<Func<Project, bool>>>()))
+                .Returns(Enumerable.Empty<Project>().AsQueryable());
+
+            _mockUnitOfWork.Setup(u => u.Projects.Add(It.IsAny<Project>())).Verifiable();
+            _mockUnitOfWork.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -131,7 +144,7 @@ namespace Capstone.Test.Module.Projects
             Assert.Equal("Project C", ((ProjectDTO)result.Data).Name);
             _mockUnitOfWork.Verify(u => u.Projects.Add(It.IsAny<Project>()), Times.Once);
             _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Exactly(2));
-            mockStatuses.Verify(s => s.AddRange(It.IsAny<IEnumerable<Status>>()), Times.Once); 
+            mockStatuses.Verify(s => s.AddRange(It.IsAny<IEnumerable<Status>>()), Times.Once);
         }
 
 
