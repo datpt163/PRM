@@ -28,7 +28,7 @@ namespace Capstone.Api.Module.Auths.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "UPSERT_ROLE")]
+        //[Authorize(Roles = "UPSERT_ROLE")]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleCommand request)
         {
             var result = await _mediator.Send(request);
@@ -39,7 +39,7 @@ namespace Capstone.Api.Module.Auths.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "READ_DETAIL_ROLE")]
+        //[Authorize(Roles = "READ_DETAIL_ROLE")]
         public async Task<IActionResult> Detail(Guid id)
         {
             var result = await _mediator.Send(new RoleDetailQuery() { Id = id});
@@ -50,7 +50,7 @@ namespace Capstone.Api.Module.Auths.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "ADD_ROLE")]
+        //[Authorize(Roles = "ADD_ROLE")]
         public async Task<IActionResult> CreateRole([FromBody] UpdateRoleCommand request)
         {
             var result = await _mediator.Send(request);
@@ -65,7 +65,7 @@ namespace Capstone.Api.Module.Auths.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "DELETE_ROLE")]
+        //[Authorize(Roles = "DELETE_ROLE")]
         public async Task<IActionResult> DeleteRole(Guid id)
         {
             var result = await _mediator.Send(new DeleteRoleCommand() { Id = id});
@@ -100,7 +100,7 @@ namespace Capstone.Api.Module.Auths.Controllers
 
         [HttpGet]
         [SwaggerResponse(200, "Successful", typeof(List<RoleDTO>))]
-        [Authorize(Roles = "READ_LIST_ROLE")]
+        //[Authorize(Roles = "READ_LIST_ROLE")]
         public async Task<IActionResult> GetList([FromQuery] GetListRoleQuery request)
         {
             var result = await _mediator.Send(request);

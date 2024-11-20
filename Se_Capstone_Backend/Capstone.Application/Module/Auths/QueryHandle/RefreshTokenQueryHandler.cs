@@ -46,7 +46,6 @@ namespace Capstone.Application.Module.Auth.QueryHandle
             }
 
 
-
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken, cancellationToken: cancellationToken);
 
             if (user == null)

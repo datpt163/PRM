@@ -24,6 +24,7 @@ namespace Capstone.Api.Module.Auth.Controllers
         }
 
         [HttpPost("refresh-token")]
+        [AllowAnonymous]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenQuery query)
         {
             var result = await _mediator.Send(query);
