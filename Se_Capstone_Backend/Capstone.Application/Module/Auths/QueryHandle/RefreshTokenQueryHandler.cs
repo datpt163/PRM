@@ -39,7 +39,15 @@ namespace Capstone.Application.Module.Auth.QueryHandle
 
         public async Task<ResponseMediator> Handle(RefreshTokenQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshToken == request.RefreshToken, cancellationToken: cancellationToken);
+            var refreshToken = request.RefreshToken;
+            if (!refreshToken.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                refreshToken = "Bearer " + refreshToken;
+            }
+
+
+
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken, cancellationToken: cancellationToken);
 
             if (user == null)
             {
