@@ -55,8 +55,7 @@ namespace Capstone.Application.Module.Issues.QueryHandle
 
             if (request.AssigneeId != null && request.AssigneeId.Count > 0)
             {
-
-                issues = issues.Where(x => request.AssigneeId.Contains(x.Id)).ToList();
+                issues = issues.Where(x => x.AssigneeId != null && request.AssigneeId.Contains(x.AssigneeId.Value)).ToList();
             }
 
             if (request.ReporterId.HasValue)

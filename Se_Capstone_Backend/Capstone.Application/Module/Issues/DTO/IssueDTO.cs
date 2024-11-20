@@ -33,6 +33,7 @@ namespace Capstone.Application.Module.Issues.DTO
         public Domain.Entities.Status? Status { get; set; }
         public UserForProjectDetailDTO? LastUpdateBy { get; set; }
         public UserForProjectDetailDTO Reporter { get; set; } = null!;
+        public Guid? AssigneeId { get; set; } = null!;
         public UserForProjectDetailDTO? Assignee { get; set; } = null!;
         public IssueDTO? ParentIssue { get; set; }
         public List<CommentDTO> Comments { get; set; } = new List<CommentDTO>();
