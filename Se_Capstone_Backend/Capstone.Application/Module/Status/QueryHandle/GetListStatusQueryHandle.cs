@@ -112,9 +112,8 @@ namespace Capstone.Application.Module.Status.QueryHandle
             if (request.AssigneeId != null && request.AssigneeId.Count > 0)
                 foreach (var status in statuses)
                 {
-                    status.Issues = status.Issues.Where(x => request.AssigneeId.Contains(x.Id)).ToList();
+                    status.Issues = status.Issues.Where(x => x.AssigneeId != null && request.AssigneeId.Contains(x.AssigneeId.Value)).ToList();
                 }
-           
 
             if (request.ReporterId.HasValue)
                 foreach (var status in statuses)
