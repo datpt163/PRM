@@ -51,7 +51,7 @@ namespace Capstone.Application.Module.Auth.QueryHandle
                     var refreshToken = await _jwtService.GenerateJwtTokenAsync(user, DateTime.Now.AddDays(30));
                     user.RefreshToken = "Bearer " + refreshToken;
                     await _userManager.UpdateAsync(user);
-                    if (roles.FirstOrDefault() != null)
+                    if (roles.Any())
                     {
                         var role = _unitOfWork.Roles.Find(x => x.Name == roles.FirstOrDefault()).Include(c => c.Permissions).FirstOrDefault();
                         if(role != null)
@@ -61,11 +61,11 @@ namespace Capstone.Application.Module.Auth.QueryHandle
                             {
 
                                 listCheckToken.Add(new MonitorTokenModel() { RoleId = role.Id, Token = accessToken});
-                                _redis.SetData<List<MonitorTokenModel>>("ListMonitorToken", listCheckToken, DateTime.Now.AddYears(20));
+                                _redis.SetData("ListMonitorToken", listCheckToken, DateTime.Now.AddYears(20));
                             }
                             else
                             {
-                                _redis.SetData<List<MonitorTokenModel>>("ListMonitorToken", new List<MonitorTokenModel>() { new MonitorTokenModel() { RoleId = role.Id, Token = accessToken} }, DateTime.Now.AddYears(20));
+                                _redis.SetData("ListMonitorToken", new List<MonitorTokenModel>() { new MonitorTokenModel() { RoleId = role.Id, Token = accessToken} }, DateTime.Now.AddYears(20));
                             }
 
                             return new ResponseMediator("", new LoginResponse()
