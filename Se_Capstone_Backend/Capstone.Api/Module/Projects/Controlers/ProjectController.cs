@@ -147,6 +147,22 @@ namespace Capstone.Api.Module.Projects.Controlers
             }
         }
 
+        [HttpGet("{projectId}/members")]
+        [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
+        public async Task<IActionResult> GetMember(Guid projectId)
+        {
+            var result = await _mediator.Send(new GetListMemberQuery() {ProjectId = projectId});
+            if (string.IsNullOrEmpty(result.ErrorMessage))
+                return ResponseOk(dataResponse: result.Data);
+            else
+            {
+                if (result.StatusCode == 404)
+                    return ResponseNotFound(messageResponse: result.ErrorMessage);
+                else
+                    return ResponseBadRequest(messageResponse: result.ErrorMessage);
+            }
+        }
+
 
         [HttpPost("calculate-effort")]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
