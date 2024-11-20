@@ -53,6 +53,7 @@ namespace Capstone.Application.Module.Auths.QueryHandle
             var refreshToken = await _jwtService.GenerateJwtTokenAsync(user, DateTime.Now.AddDays(30));
             user.RefreshToken = "Bearer " + refreshToken;
             await _userManager.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
 
             if (roles.Any())
             {
