@@ -49,7 +49,7 @@ namespace Capstone.Application.Module.Auth.QueryHandle
                         return new ResponseMediator("Account inactive", null, 400);
                     var accessToken = await _jwtService.GenerateJwtTokenAsync(user, DateTime.Now.AddDays(10));
                     var refreshToken = await _jwtService.GenerateJwtTokenAsync(user, DateTime.Now.AddDays(30));
-                    user.RefreshToken = "Bearer " + refreshToken;
+                    user.RefreshToken = refreshToken;
                     await _userManager.UpdateAsync(user);
                     await _unitOfWork.SaveChangesAsync();
                     if (roles.Any())
