@@ -71,14 +71,17 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             if (user == null)
                 return new ResponseMediator("User  not found", null, 404);
 
-            foreach (var iss in issue.Status.Issues)
-                if (iss.Position > issue.Position)
-                    iss.Position--;
+            if (issue.StatusId != request.StatusId)
+            {
+                foreach (var iss in issue.Status.Issues)
+                    if (iss.Position > issue.Position)
+                        iss.Position--;
 
-            foreach (var issu in status.Issues)
-                issu.Position++;
+                foreach (var issu in status.Issues)
+                    issu.Position++;
+                issue.Position = 1;
+            }
 
-            issue.Position = 1;
             issue.Title = request.Title;
             issue.Description = request.Description;
             issue.StartDate = request.StartDate;
