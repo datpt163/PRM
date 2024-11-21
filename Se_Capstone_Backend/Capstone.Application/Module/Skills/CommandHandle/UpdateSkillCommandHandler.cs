@@ -10,11 +10,13 @@ namespace Capstone.Application.Module.Skills.CommandHandle
     {
         private readonly IRepository<Skill> _skillRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IIdentityService _identityService;
 
-        public UpdateSkillCommandHandler(IRepository<Skill> skillRepository, IUnitOfWork unitOfWork)
+        public UpdateSkillCommandHandler(IRepository<Skill> skillRepository, IUnitOfWork unitOfWork, IIdentityService identityService)
         {
             _skillRepository = skillRepository;
             _unitOfWork = unitOfWork;
+            _identityService = identityService;
         }
 
         public async Task<SkillDto?> Handle(UpdateSkillCommand request, CancellationToken cancellationToken)
@@ -33,7 +35,7 @@ namespace Capstone.Application.Module.Skills.CommandHandle
 
             skill.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
             skill.UpdatedBy = null;
-
+            await _identityService.SetUpdatedByAsync(skill);
             await _skillRepository.UpdateAsync(skill);
             await _unitOfWork.SaveChangesAsync();
             return new SkillDto

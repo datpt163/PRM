@@ -41,7 +41,7 @@ namespace Capstone.Application.Module.Auth.QueryHandle
         {
             request.RefreshToken = request.RefreshToken.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
                                     ? request.RefreshToken.Substring("Bearer ".Length): request.RefreshToken;
-            var refreshToken = "Bearer " + request.RefreshToken;
+            var refreshToken = request.RefreshToken;
 
 
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken, cancellationToken: cancellationToken);
@@ -85,6 +85,7 @@ namespace Capstone.Application.Module.Auth.QueryHandle
 
                 user.RefreshToken = newRefreshToken;
                 await _userManager.UpdateAsync(user);
+                await _unitOfWork.SaveChangesAsync();
                 var roles = await _userManager.GetRolesAsync(user);
                 if (roles.FirstOrDefault() != null)
                 {

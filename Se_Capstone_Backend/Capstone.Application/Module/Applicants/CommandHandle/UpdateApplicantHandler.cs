@@ -12,12 +12,15 @@ public class UpdateApplicantCommandHandler : IRequestHandler<UpdateApplicantComm
     private readonly IRepository<Applicant> _applicantRepository;
     private readonly CloudinaryService _cloudinaryService;
     private readonly IRepository<Job> _jobRepository;
-
-    public UpdateApplicantCommandHandler(IRepository<Applicant> applicantRepository, IRepository<Job> jobRepository, CloudinaryService cloudinaryService)
+    private readonly IIdentityService _identityService;
+    private readonly IUnitOfWork _unitOfWork;
+    public UpdateApplicantCommandHandler(IRepository<Applicant> applicantRepository, IRepository<Job> jobRepository, CloudinaryService cloudinaryService, IIdentityService identityService, IUnitOfWork unitOfWork)
     {
         _applicantRepository = applicantRepository;
         _jobRepository = jobRepository;
         _cloudinaryService = cloudinaryService;
+        _identityService = identityService;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<ApplicantDto?> Handle(UpdateApplicantCommand request, CancellationToken cancellationToken)
@@ -80,8 +83,9 @@ public class UpdateApplicantCommandHandler : IRequestHandler<UpdateApplicantComm
             }
         }
         applicant.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
+        await _identityService.SetUpdatedByAsync(applicant);
         await _applicantRepository.UpdateAsync(applicant);
-
+        await _unitOfWork.SaveChangesAsync();
         var applicantDto = new ApplicantDto
         {
             Id = applicant.Id,
