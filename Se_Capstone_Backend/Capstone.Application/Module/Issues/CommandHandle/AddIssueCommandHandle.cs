@@ -11,6 +11,7 @@ using Capstone.Domain.Enums;
 using Capstone.Infrastructure.Redis;
 using Capstone.Infrastructure.Repository;
 using MassTransit;
+using MassTransit.Transports;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
@@ -25,10 +26,20 @@ namespace Capstone.Application.Module.Issues.CommandHandle
         private readonly RedisContext _redisContext;
         private readonly IMapper _mapper;
         public readonly IPublishEndpoint _publishEndpoint;
+        private readonly IRequestClient<AddIssueMessage2> _requestClient;
 
-        public AddIssueCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService, RedisContext redisContext, IMapper mapper, IPublishEndpoint publishEndpoint)
+        //public AddIssueCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService, RedisContext redisContext, IMapper mapper, IPublishEndpoint publishEndpoint)
+        //{
+        //    _publishEndpoint = publishEndpoint;
+        //    _mapper = mapper;
+        //    _unitOfWork = unitOfWork;
+        //    _jwtService = jwtService;
+        //    _redisContext = redisContext;
+        //}
+
+        public AddIssueCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService, RedisContext redisContext, IMapper mapper, IRequestClient<AddIssueMessage2> requestClient)
         {
-            _publishEndpoint = publishEndpoint;
+            _requestClient = requestClient;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _jwtService = jwtService;
@@ -92,8 +103,9 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 LabelId = request.LabelId,
                 PhaseId = phaseId
             };
-            await _publishEndpoint.Publish(new AddIssueMessage() { Issue = issue, StatusId = request.StatusId });
-            await Task.Delay(350, cancellationToken);
+            var response2 = await _requestClient.GetResponse<UserResponse>(new AddIssueMessage2 { Issue = issue, StatusId = request.StatusId });
+            //await _publishEndpoint.Publish(new AddIssueMessage2() { Issue = issue, StatusId = request.StatusId });
+            //await Task.Delay(350, cancellationToken);
             var response =  _mapper.Map<IssueDTO>(issue);
             return new ResponseMediator("", response);
         }

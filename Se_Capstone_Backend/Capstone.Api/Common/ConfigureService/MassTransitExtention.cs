@@ -1,4 +1,5 @@
 ﻿using Capstone.Application.Module.Issues.ConsumerRabbitMq;
+using Capstone.Application.Module.Issues.ConsumerRabbitMq.Message;
 using Capstone.Application.Module.Status.ConsumerRabbitMq;
 using MassTransit;
 
@@ -15,7 +16,7 @@ namespace Capstone.Api.Common.ConfigureService
 
             services.AddMassTransit(busConfiguration =>
             {
-                busConfiguration.SetKebabCaseEndpointNameFormatter();
+                //busConfiguration.SetKebabCaseEndpointNameFormatter();
 
 
                 busConfiguration.AddConsumer<OrderStatusConsumer>();
@@ -32,6 +33,8 @@ namespace Capstone.Api.Common.ConfigureService
                     });
                     configuration.ConfigureEndpoints(context);
                 });
+
+                //busConfiguration.AddRequestClient<AddIssueMessage>();
             });
         }
     }
