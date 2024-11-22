@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
 {
-    public class AddIssueConsumer : IConsumer<AddIssueMessage>
+    public class AddIssueConsumer : IConsumer<AddIssueMessage2>
     {
         private readonly IUnitOfWork _unitOfWork;
         public AddIssueConsumer(IUnitOfWork unitOfWork)
@@ -23,9 +23,9 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Consume(ConsumeContext<AddIssueMessage> context)
+        public async Task Consume(ConsumeContext<AddIssueMessage2> context)
         {
-            Console.WriteLine("xxx");
+            Console.WriteLine("dattttttttttttttttttttttttttttttttttttttttttttttttttttt");
             var issue = context.Message.Issue;
             if (issue != null)
             {
@@ -36,7 +36,14 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
                 issue.Position = position;
                 _unitOfWork.Issues.Add(issue);
                 await _unitOfWork.SaveChangesAsync();
+                await context.RespondAsync(new UserResponse() { Success = true });
             }
+            await context.RespondAsync(new UserResponse() { Success = true });
         }
+    }
+
+    public record UserResponse
+    {
+        public bool Success { get; set; } = false;
     }
 }
