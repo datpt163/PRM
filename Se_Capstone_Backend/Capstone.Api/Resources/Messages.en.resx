@@ -141,4 +141,7 @@
   <data name="ApplicantUpdatedSuccessfully" xml:space="preserve">
     <value>Applicant updated successfully.</value>
   </data>
+  <data name="String1" xml:space="preserve">
+    <value>da</value>
+  </data>
 </root>

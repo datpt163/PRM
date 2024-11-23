@@ -131,5 +131,16 @@ namespace Capstone.Api.Resources {
                 return ResourceManager.GetString("ApplicantUpdatedSuccessfully", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Applicant updated successfully..
+        /// </summary>
+        internal static string String1
+        {
+            get
+            {
+                return ResourceManager.GetString("String1", resourceCulture);
+            }
+        }
     }
 }

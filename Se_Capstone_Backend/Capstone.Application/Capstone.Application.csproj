@@ -52,6 +52,7 @@
     <Folder Include="Module\Position\Response\" />
 	  <Folder Include="Module\Comments\QueryHandle\" />
 	  <Folder Include="Module\Position\CommandHandle\" />
+	  <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>
