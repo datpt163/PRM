@@ -68,7 +68,7 @@ namespace Capstone.Api.Module.Applicants.Controllers
 
         [HttpPut]
         [AllowAnonymous]
-        public async Task<IActionResult> Update([FromBody] UpdateApplicantCommand command)
+        public async Task<IActionResult> Update([FromForm] UpdateApplicantCommand command)
         {
             var applicantDto = await _mediator.Send(command);
             if (applicantDto == null)
