@@ -82,7 +82,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             await _unitOfWork.SaveChangesAsync();
             if (statusCodeSuccess == 205)
             {
-                _unitOfWork.Notifications.Add(new Notification() { UserId = userDto.Id, Type = "assignLeader", Data = JsonSerializer.Serialize(new { projectId = projectCreate.Id, projectName = request.Name }) });
+                _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = userDto.Id, Type = "assignLeader", Data = JsonSerializer.Serialize(new { projectId = projectCreate.Id, projectName = request.Name }) });
                 await _publisher.Publish(new SendEmailMessage() { ToEmail = toEmail == null ? "" : toEmail, Body = EmailMessage.AssignLeader(request.Name, userDto.Name, projectCreate.Id), Subject = $"🎉 congratulations! you’ve been assigned as the project leader for {request.Name}" });
             }
             var defaultStatueses = await CreateDefaultStatus(projectCreate.Id);

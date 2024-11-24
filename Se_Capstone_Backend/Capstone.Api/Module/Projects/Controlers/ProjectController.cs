@@ -58,15 +58,18 @@ namespace Capstone.Api.Module.Projects.Controlers
         public async Task<IActionResult> UpdateProject(Guid id, [FromBody] UpdateProjectRequest request)
         {
             var result = await _mediator.Send(new UpdateProjectCommand(id, request.Name, request.Code, request.Description, request.StartDate, request.EndDate, request.LeadId, request.Status));
-            if (string.IsNullOrEmpty(result.ErrorMessage))
+            if (result.StatusCode == 205)
+            {
+                await _hubContext.Clients.Group(result.ErrorMessage == null ? "" : result.ErrorMessage)
+                    .SendAsync("NotificationResponse", "Success");
                 return ResponseOk(result.Data);
-            else
-            {  
-                if (result.StatusCode == 404)
-                    return ResponseNotFound(messageResponse: result.ErrorMessage);
-                return ResponseBadRequest(messageResponse: result.ErrorMessage);
-
             }
+            else if (result.StatusCode == 200)
+                return ResponseOk(result.Data);
+            else if (result.StatusCode == 404)
+                return ResponseNotFound(messageResponse: result.ErrorMessage);
+            else
+                return ResponseBadRequest(messageResponse: result.ErrorMessage);
         }
 
         [HttpGet]
