@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Notifications.Command;
+using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using System;
@@ -17,30 +18,29 @@ namespace Capstone.Application.Module.Notifications.CommandHandle
         private readonly IJwtService _jwtService;
         public MarkReadNotificationCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService)
         {
-            _jwtService = jwtService;   
+            _jwtService = jwtService;
             _unitOfWork = unitOfWork;
         }
 
         public async Task<ResponseMediator> Handle(MarkReadNotificationCommand request, CancellationToken cancellationToken)
         {
             var user = await _jwtService.VerifyTokenAsync(request.Token);
-            if(user == null)
+            if (user == null)
                 return new ResponseMediator("Dont have permission", null, 403);
 
-            var notifications = _unitOfWork.Notifications.GetQuery();
-            foreach(var i in request.Ids)
+            var notification = _unitOfWork.Notifications.FindOne(x => x.Id == request.Id);
+
+            if (notification != null)
             {
-                var notification = notifications.FirstOrDefault(x => x.Id == i);
-                if(notification != null)
-                {
-                    if(notification.UserId != user.Id)
-                        return new ResponseMediator("Dont have permission", null, 403);
-                    notification.HasRead = true;
-                }
+                if (notification.UserId != user.Id)
+                    return new ResponseMediator("Dont have permission", null, 403);
+                notification.HasRead = true;
+                _unitOfWork.Notifications.Update(notification);
+                await _unitOfWork.SaveChangesAsync();
+                return new ResponseMediator("", null);
             }
-            _unitOfWork.Notifications.UpdateRange(notifications);
-            await _unitOfWork.SaveChangesAsync();
-            return new ResponseMediator("", null);
+
+            return new ResponseMediator("Notification Not found", null, 404);
         }
     }
 }

@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Capstone.Application.Module.Notifications.Command
 {
-    public class MarkReadNotificationCommand : IRequest<ResponseMediator>
+    public class MarkReadAllNotificationCommand : IRequest<ResponseMediator>
     {
-        public Guid Id { get; set; } 
         public string Token { get; set; } = string.Empty;
     }
 }

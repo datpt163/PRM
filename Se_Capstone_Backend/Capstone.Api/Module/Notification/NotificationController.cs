@@ -33,12 +33,28 @@ namespace Capstone.Api.Module.Notification
             }
         }
 
-        [HttpPost("mark-read")]
+        [HttpPost("{id}/mark-read")]
         [Authorize]
-        public async Task<IActionResult> MarkRead(NotificationRequest request)
+        public async Task<IActionResult> MarkRead(Guid id)
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var result = await _mediator.Send(new MarkReadNotificationCommand() { Ids = request.Ids, Token = token });
+            var result = await _mediator.Send(new MarkReadNotificationCommand() { Id = id, Token = token });
+            if (string.IsNullOrEmpty(result.ErrorMessage))
+                return ResponseNoContent();
+            else
+            {
+                if(result.StatusCode == 404)
+                    return ResponseNotFound(result.ErrorMessage);
+                return Forbid();
+            }
+        }
+
+        [HttpPost("mark-read")]
+        [Authorize]
+        public async Task<IActionResult> MarkReadAll()
+        {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var result = await _mediator.Send(new MarkReadAllNotificationCommand() {Token = token });
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseNoContent();
             else
