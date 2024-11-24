@@ -1,6 +1,7 @@
 ﻿using Capstone.Api.Common.ResponseApi.Controllers;
 using Capstone.Api.Common.ResponseApi.Model;
 using Capstone.Api.Module.Projects.Request;
+using Capstone.Api.Module.Statuses.SignalR;
 using Capstone.Application.Module.Auths.Command;
 using Capstone.Application.Module.Projects.Command;
 using Capstone.Application.Module.Projects.Query;
@@ -9,7 +10,10 @@ using Capstone.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Swashbuckle.AspNetCore.Annotations;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Text.RegularExpressions;
 
 namespace Capstone.Api.Module.Projects.Controlers
 {
@@ -18,9 +22,12 @@ namespace Capstone.Api.Module.Projects.Controlers
     public class ProjectController : BaseController
     {
         private readonly IMediator _mediator;
+        private readonly IHubContext<StatusHub> _hubContext;
 
-        public ProjectController(IMediator mediator)
+
+        public ProjectController(IMediator mediator, IHubContext<StatusHub> hubContext)
         {
+            _hubContext = hubContext;
             _mediator = mediator;
         }
 
@@ -29,16 +36,20 @@ namespace Capstone.Api.Module.Projects.Controlers
         [Authorize(Roles = "ADD_PROJECT")]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectCommand request)
         {
+           
             var result = await _mediator.Send(request);
-            if (string.IsNullOrEmpty(result.ErrorMessage))
-                return ResponseOk(result.Data);
-            else
+            if (result.StatusCode == 205)
             {
-                if (result.StatusCode == 404)
-                    return ResponseNotFound(messageResponse: result.ErrorMessage);
-                return ResponseBadRequest(messageResponse: result.ErrorMessage);
-
+                await _hubContext.Clients.Group(result.ErrorMessage == null ? "" : result.ErrorMessage)
+                    .SendAsync("NotificationResponse", "Success");
+                return ResponseOk(result.Data);
             }
+            else if (result.StatusCode == 200)
+                return ResponseOk(result.Data);
+            else if (result.StatusCode == 404)
+                    return ResponseNotFound(messageResponse: result.ErrorMessage);
+            else
+                return ResponseBadRequest(messageResponse: result.ErrorMessage);
         }
 
         [HttpPut("{id}")]

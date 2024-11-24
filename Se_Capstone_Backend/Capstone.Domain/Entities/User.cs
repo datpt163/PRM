@@ -32,6 +32,7 @@ namespace Capstone.Domain.Entities
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public ICollection<Issue> IssuesUpdate { get; set; } = new List<Issue>();
         public ICollection<Issue> AssinedIssues { get; set; } = new List<Issue>();
+        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
         public ICollection<Issue> ReportIssues { get; set; } = new List<Issue>();
         public ICollection<UserProject> UserProjects { get; set; } = new List<UserProject>();
         public User(string email, string address, Gender gender, DateTime dob, string phone, string userName, string fullName)

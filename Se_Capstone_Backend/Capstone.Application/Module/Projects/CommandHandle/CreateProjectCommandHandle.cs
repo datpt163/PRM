@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Capstone.Application.Common.Email.EmailQueue;
 using Capstone.Application.Common.FileService;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Projects.Command;
@@ -6,10 +7,14 @@ using Capstone.Application.Module.Projects.Response;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Pipelines.Sockets.Unofficial.Arenas;
 using System.Text.Json;
-
+using Capstone.Application.Common.EmailHTML;
+using MassTransit;
 namespace Capstone.Application.Module.Projects.CommandHandle
 {
     public class CreateProjectCommandHandle : IRequestHandler<CreateProjectCommand, ResponseMediator>
@@ -18,15 +23,19 @@ namespace Capstone.Application.Module.Projects.CommandHandle
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mappper;
         private readonly IFileService _fileService;
-        public CreateProjectCommandHandle(IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper, IFileService fileService)
+        private readonly IPublishEndpoint _publisher;
+        public CreateProjectCommandHandle(IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper, IFileService fileService, IPublishEndpoint publisher)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _mappper = mapper;
             _fileService = fileService;
+            _publisher = publisher;
         }
         public async Task<ResponseMediator> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
+            int statusCodeSuccess = 200;
+            var toEmail = "";
             var project = _unitOfWork.Projects.Find(p => p.Code.Trim().ToUpper().Equals(request.Code.Trim().ToUpper())).FirstOrDefault();
 
             if (project != null)
@@ -60,13 +69,22 @@ namespace Capstone.Application.Module.Projects.CommandHandle
 
                 userDto.Id = user.Id;
                 userDto.Name = user.FullName;
+                toEmail = user.Email;
+                statusCodeSuccess = 205;
             }
+
+
             var projectCreate = new Project(request.Name.Trim(), request.Code.Trim(), request.Description, request.StartDate, request.EndDate, request.LeadId, false);
             if (request.IsVisible != null)
                 projectCreate.IsVisible = request.IsVisible.Value;
 
             _unitOfWork.Projects.Add(projectCreate);
             await _unitOfWork.SaveChangesAsync();
+            if (statusCodeSuccess == 205)
+            {
+                _unitOfWork.Notifications.Add(new Notification() { UserId = userDto.Id, Type = "assignLeader", Data = JsonSerializer.Serialize(new { projectId = projectCreate.Id, projectName = request.Name }) });
+                await _publisher.Publish(new SendEmailMessage() { ToEmail = toEmail == null ? "" : toEmail, Body = EmailMessage.AssignLeader(request.Name, userDto.Name, projectCreate.Id), Subject = $"🎉 congratulations! you’ve been assigned as the project leader for {request.Name}" });
+            }
             var defaultStatueses = await CreateDefaultStatus(projectCreate.Id);
             var listDefaultStatus = new List<Domain.Entities.Status>();
             foreach (var s in defaultStatueses)
@@ -81,8 +99,8 @@ namespace Capstone.Application.Module.Projects.CommandHandle
 
             var response = _mappper.Map<ProjectDTO>(projectCreate);
             response.LeadId = userDto.Id;
-            response.LeadName = userDto.Name;
-            return new ResponseMediator("", response);
+            response.LeadName = userDto.Name; 
+            return new ResponseMediator(userDto.Id + "", response, statusCodeSuccess);
         }
 
         public async Task<List<Domain.Entities.Status>> CreateDefaultStatus(Guid projectId)

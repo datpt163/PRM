@@ -95,6 +95,19 @@ namespace Capstone.Api.Module.Statuses.SignalR
                 Console.WriteLine(ex.ToString());
             }
         }
+
+        public async Task NotificationRequest(string groupId)
+        {
+            try
+            {
+                await Clients.Group(groupId).SendAsync("NotificationResponse", "Success");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
     }
 
 }
