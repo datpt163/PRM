@@ -25,7 +25,6 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
 
         public async Task Consume(ConsumeContext<AddIssueMessage2> context)
         {
-            Console.WriteLine("dattttttttttttttttttttttttttttttttttttttttttttttttttttt");
             var issue = context.Message.Issue;
             if (issue != null)
             {

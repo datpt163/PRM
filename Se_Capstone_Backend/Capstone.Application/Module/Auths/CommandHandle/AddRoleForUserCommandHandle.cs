@@ -4,7 +4,6 @@ using Capstone.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-
 namespace Capstone.Application.Module.Auths.CommandHandle
 {
     public class AddRoleForUserCommandHandle : IRequestHandler<AddRoleForUserCommand, ResponseMediator>

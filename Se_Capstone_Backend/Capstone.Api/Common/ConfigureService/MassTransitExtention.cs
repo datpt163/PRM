@@ -1,4 +1,5 @@
-﻿using Capstone.Application.Module.Issues.ConsumerRabbitMq;
+﻿using Capstone.Application.Common.Email.EmailQueue;
+using Capstone.Application.Module.Issues.ConsumerRabbitMq;
 using Capstone.Application.Module.Issues.ConsumerRabbitMq.Message;
 using Capstone.Application.Module.Status.ConsumerRabbitMq;
 using MassTransit;
@@ -22,6 +23,7 @@ namespace Capstone.Api.Common.ConfigureService
                 busConfiguration.AddConsumer<OrderStatusConsumer>();
                 busConfiguration.AddConsumer<AddIssueConsumer>();
                 busConfiguration.AddConsumer<OrderIssueConsumer>();
+                busConfiguration.AddConsumer<SendEmailConsumer>();
 
 
                 busConfiguration.UsingRabbitMq((context, configuration) =>

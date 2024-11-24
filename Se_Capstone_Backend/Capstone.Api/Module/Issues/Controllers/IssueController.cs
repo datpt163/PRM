@@ -11,6 +11,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Capstone.Api.Resources;
 
 namespace Capstone.Api.Module.Issues.Controllers
 {
@@ -37,7 +38,7 @@ namespace Capstone.Api.Module.Issues.Controllers
             else
             {
                 if (result.StatusCode == 404)
-                    return ResponseNotFound(messageResponse: result.ErrorMessage);
+                    return ResponseNotFound(messageResponse: Messages.String1);
                 return ResponseBadRequest(messageResponse: result.ErrorMessage);
             }
         }

@@ -21,6 +21,7 @@ namespace Capstone.Infrastructure.Repository
         public IRepository<Phase> Phases { get; }
         public IRepository<UserProject> UserProjects { get; }
         public IRepository<GroupPermission> GroupPermissions { get; }
+        public IRepository<Notification> Notifications { get; }
         int SaveChanges();
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

@@ -28,7 +28,9 @@ namespace Capstone.Infrastructure.Repository
         public IRepository<Phase> phases = null!;
         public IRepository<UserProject> userProjects = null!;
         public IRepository<GroupPermission> groupPermissions = null!;
+        public IRepository<Notification> notifications = null!;
         public IRepository<User> Users => users ?? new Repository<User>(_context);
+        public IRepository<Notification> Notifications => notifications ?? new Repository<Notification>(_context);
         public IRepository<Comment> Comments => comments ?? new Repository<Comment>(_context);
         public IRepository<UserProject> UserProjects => userProjects ?? new Repository<UserProject>(_context);
         public IRepository<Position> Positions => positions ?? new Repository<Position>(_context);

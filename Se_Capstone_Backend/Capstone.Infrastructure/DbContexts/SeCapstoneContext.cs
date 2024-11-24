@@ -38,6 +38,7 @@ namespace Capstone.Infrastructure.DbContexts
         public new DbSet<User> Users { get; set; }
         public DbSet<UserProject> UserProjects { get; set; }
         public DbSet<GroupPermission> GroupPermissions { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,6 +51,10 @@ namespace Capstone.Infrastructure.DbContexts
             modelBuilder.Entity<Applicant>()
                 .Property(e => e.Id)
                 .HasDefaultValueSql("gen_random_uuid()");
+
+            modelBuilder.Entity<Notification>()
+               .Property(e => e.Id)
+               .HasDefaultValueSql("gen_random_uuid()");
             modelBuilder.Entity<Permission>()
               .Property(e => e.Id)
               .HasDefaultValueSql("gen_random_uuid()");
@@ -137,6 +142,12 @@ namespace Capstone.Infrastructure.DbContexts
           .HasOne(a => a.Project)
            .WithMany(s => s.Labels)
            .HasForeignKey(a => a.ProjectId);
+
+
+            modelBuilder.Entity<Notification>()
+          .HasOne(a => a.User)
+           .WithMany(s => s.Notifications)
+           .HasForeignKey(a => a.UserId);
 
             modelBuilder.Entity<Phase>()
         .HasOne(a => a.Project)
