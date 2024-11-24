@@ -25,10 +25,10 @@ namespace Capstone.Application.Module.Users.QueryHandle
         public async Task<List<UserStatisticsResponse>> Handle(GetActiveUsersQuery request, CancellationToken cancellationToken)
         {
             var users = await _userRepository.GetQueryNoTracking()
-                .Include(u => u.Skills)
-                .Include(u => u.UserProjects)
+                .Include(u => u.Skills.Where(s => !s.IsDeleted))
+                .Include(u => u.UserProjects.Where(x=> x.Project.Status != ProjectStatus.Finished))
                 .ThenInclude(c => c.Project)
-                .Where(u => u.Status == UserStatus.Active)
+                .Where(u => u.Status == UserStatus.Active && request.UserInProject ==null || !request.UserInProject.Contains(u.Id))
                 .ToListAsync(cancellationToken);
 
             var userResponses = users.Select(user => new UserStatisticsResponse
@@ -36,7 +36,7 @@ namespace Capstone.Application.Module.Users.QueryHandle
                 Id = user.Id,
                 FullName = user.FullName,
                 Skills = string.Join(", ", user.Skills?.Select(s => s.Title) ?? Enumerable.Empty<string>()),
-                ActiveProjectCount = user.UserProjects.Select(x => x.Project).Count(p => p.Status == ProjectStatus.Finished)
+                ActiveProjectCount = user.UserProjects.Select(x => x.Project).Count()
             }).ToList();
 
             return userResponses;

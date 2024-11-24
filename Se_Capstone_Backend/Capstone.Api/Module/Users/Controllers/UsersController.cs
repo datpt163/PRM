@@ -108,11 +108,14 @@ namespace Capstone.Api.Module.Users.Controllers
             }
         }
 
-        [HttpGet("active")]
+        [HttpPost("active")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetActiveUsers()
+        public async Task<IActionResult> GetActiveUsers([FromBody] GetActiveUsersRequest request)
         {
-            var query = new GetActiveUsersQuery();
+            var query = new GetActiveUsersQuery
+            {
+                UserInProject = request.UserInProject,
+            };
             var response = await _mediator.Send(query);
 
             return ResponseOk(response); 

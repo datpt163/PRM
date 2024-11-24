@@ -34,19 +34,19 @@ namespace Capstone.Application.Module.Users.QueryHandle
             
             if (!string.IsNullOrEmpty(request.Phone))
             {
-                if (!PhoneNumberValidator.Validate(request.Phone))
-                {
-                    throw new ArgumentException("Invalid phone number format.");
-                }
+                //if (!PhoneNumberValidator.Validate(request.Phone))
+                //{
+                //    throw new ArgumentException("Invalid phone number format.");
+                //}
 
                 usersQuery = usersQuery.Where(user => user.PhoneNumber != null && user.PhoneNumber.Contains(request.Phone));
             }
             if (!string.IsNullOrEmpty(request.Email))
             {
-                if (!EmailHelper.IsValidEmail(request.Email))
-                {
-                    throw new ArgumentException("Invalid email format.");
-                }
+                //if (!EmailHelper.IsValidEmail(request.Email))
+                //{
+                //    throw new ArgumentException("Invalid email format.");
+                //}
                 usersQuery = usersQuery.Where(user => user.Email != null && user.Email.ToLower().Contains(request.Email.ToLower()));
             }
 
