@@ -17,7 +17,7 @@ namespace Capstone.Api.Module.Dashboard.Controllers
         }
 
         [HttpGet("overview")]
-        //[Authorize(Roles = "VIEW_DASHBOARD")]
+        [Authorize(Roles = "VIEW_DASHBOARD")]
         [AllowAnonymous]
         public async Task<IActionResult> GetDashboardOverview()
         {
