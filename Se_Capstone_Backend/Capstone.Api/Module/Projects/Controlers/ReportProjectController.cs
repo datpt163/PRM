@@ -36,8 +36,7 @@ namespace Capstone.Api.Module.Projects.Controllers
         }
 
         [HttpPost("tasks/overview")]
-        //[Authorize(Roles = "REPORT_PROJECT")]
-        [AllowAnonymous]
+        [Authorize(Roles = "REPORT_PROJECT")]
         public async Task<IActionResult> GetTaskOverview([FromBody] TaskOverviewRequest request)
         {
             var query = new GetTaskOverviewQuery
