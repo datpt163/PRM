@@ -1,6 +1,7 @@
 ﻿using Capstone.Api.Common.ResponseApi.Controllers;
 using Capstone.Api.Module.Projects.Request;
 using Capstone.Application.Module.Projects.Query;
+using Capstone.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace Capstone.Api.Module.Projects.Controllers
         }
 
         [HttpPost("tasks")]
-        [Authorize(Roles = "REPORT_TASK")]
+        [Authorize(Roles = "REPORT_PROJECT")]
         public async Task<IActionResult> GenerateReport([FromBody] GenerateReportTask request)
         {
             var query = new GetReportTaskQuery
@@ -34,6 +35,21 @@ namespace Capstone.Api.Module.Projects.Controllers
             return ResponseOk(result, "Report generated successfully.");
         }
 
+        [HttpPost("tasks/overview")]
+        //[Authorize(Roles = "REPORT_PROJECT")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetTaskOverview([FromBody] TaskOverviewRequest request)
+        {
+            var query = new GetTaskOverviewQuery
+            {
+                ProjectId = request.ProjectId,
+                PhaseId = request.PhaseId,
+            };
+
+            var result = await _mediator.Send(query);
+
+            return ResponseOk(result, "Task overview retrieved successfully.");
+        }
 
     }
 }

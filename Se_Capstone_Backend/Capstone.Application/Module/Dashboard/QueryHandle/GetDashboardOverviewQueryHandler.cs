@@ -28,38 +28,24 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
             var ongoingTasks = await _unitOfWork.Issues.GetQueryNoTracking()
                 .Include(x => x.Status).CountAsync(i => i.Status != null && i.Status.IsDone == false, cancellationToken);
 
+            var totalProjects = await _unitOfWork.Projects.GetQueryNoTracking().CountAsync(cancellationToken);
 
-            var pausedTasks = await _unitOfWork.Issues.GetQueryNoTracking().Include(x => x.Status).CountAsync(i => i.Status != null && i.Status.IsDone == true, cancellationToken);
+            var currentYear = DateTime.Now.Year;
+
+            var totalProjectsDone = await _unitOfWork.Projects.GetQueryNoTracking()
+                .Where(p => p.Status == ProjectStatus.Finished && ((p.StartDate.HasValue && p.StartDate.Value.Year == currentYear)|| (p.EndDate.HasValue && p.EndDate.Value.Year == currentYear)))
+                .CountAsync(cancellationToken);
 
 
-            var unfinishedProjects = await _unitOfWork.Projects.GetQueryNoTracking()
-                .CountAsync(p => p.Status != ProjectStatus.Finished, cancellationToken);
-
-
-            var projectsDueThisMonth = await _unitOfWork.Projects.GetQueryNoTracking()
-                .CountAsync(p => p.EndDate.HasValue &&
-                                 p.EndDate.Value.Month == DateTime.Now.Month &&
-                                 p.EndDate.Value.Year == DateTime.Now.Year, cancellationToken);
-
-            var taskCompletionRate = await _unitOfWork.Issues.GetQueryNoTracking()
-                                     .Include(x => x.Status)
-                                     .GroupBy(i => i.Status.Name)
-                                     .Select(group => new TaskCompletionRate
-                                     {
-                                         Status = group.Key ?? "Unknown",
-                                         Percentage = (double)group.Count() * 100 / totalTasks
-                                     })
-                                     .ToListAsync(cancellationToken);
-
+            var totalSkillsEmployee = await _unitOfWork.Skills.GetQueryNoTracking().CountAsync(cancellationToken);
 
             return new DashboardOverviewResponse
             {
                 OngoingTasks = ongoingTasks,
                 TotalTasks = totalTasks,
-                UnfinishedProjects = unfinishedProjects,
-                ProjectsDueThisMonth = projectsDueThisMonth,
-                PausedTasks = pausedTasks,
-                TaskCompletionRate = taskCompletionRate
+                TotalProjects = totalProjects,
+                TotalProjectsDone = totalProjectsDone,
+                TotalSkillsEmployee = totalSkillsEmployee
             };
         }
     }
