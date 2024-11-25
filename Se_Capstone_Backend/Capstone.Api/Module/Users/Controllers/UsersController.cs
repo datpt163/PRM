@@ -24,7 +24,7 @@ namespace Capstone.Api.Module.Users.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = "GET_USER")]
         public async Task<IActionResult> GetUsers([FromBody] GetUserListQuery query)
         {
             var response = await _mediator.Send(query);
@@ -34,7 +34,7 @@ namespace Capstone.Api.Module.Users.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        [AllowAnonymous]
+        [Authorize(Roles = "GET_USER")]
         public async Task<IActionResult> GetUserDetail(Guid id)
         {
             var query = new GetUserDetailQuery(id);
@@ -47,6 +47,7 @@ namespace Capstone.Api.Module.Users.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "UPDATE_USER")]
         public async Task<IActionResult> UpdateUser([FromForm] UpdateUserRequest request)
         {
             var command = new UpdateUserCommand
@@ -75,6 +76,7 @@ namespace Capstone.Api.Module.Users.Controllers
         }
 
         [HttpPut("toggle-status")]
+        [Authorize(Roles = "TOGGLE_USER")]
         public async Task<IActionResult> ToggleUserStatus([FromForm] ToggleUserStatusRequest request)
         {
             var command = new ToggleUserStatusCommand
