@@ -19,7 +19,7 @@ namespace Capstone.Api.Module.Projects.Controllers
         }
 
         [HttpPost("tasks")]
-        [AllowAnonymous]
+        [Authorize(Roles = "REPORT_TASK")]
         public async Task<IActionResult> GenerateReport([FromBody] GenerateReportTask request)
         {
             var query = new GetReportTaskQuery
@@ -33,6 +33,7 @@ namespace Capstone.Api.Module.Projects.Controllers
 
             return ResponseOk(result, "Report generated successfully.");
         }
+
 
     }
 }

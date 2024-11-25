@@ -18,9 +18,7 @@ namespace Capstone.Api.Module.Extension.Controllers
             _pdfReaderService = pdfReaderService;
         }
 
-        // POST /api/extensions/images
         [HttpPost("images")]
-        [AllowAnonymous]
         public async Task<IActionResult> UploadImage(IFormFile image)
         {
             using var stream = image.OpenReadStream();
@@ -28,9 +26,7 @@ namespace Capstone.Api.Module.Extension.Controllers
             return Created(url, new { Url = url }); 
         }
 
-        // DELETE /api/extensions/images/{publicId}
         [HttpDelete("images/{publicId}")]
-        [AllowAnonymous]
         public async Task<IActionResult> DeleteImage(string publicId)
         {
             var success = await _cloudinaryService.DeleteImageByUrlAsync(publicId);
@@ -41,9 +37,7 @@ namespace Capstone.Api.Module.Extension.Controllers
             return NotFound("Image not found or could not be deleted.");
         }
 
-        // POST /api/extensions/pdfs
         [HttpPost("pdfs")]
-        [AllowAnonymous]
         public IActionResult ExtractPdfContent(IFormFile pdfFile)
         {
             if (pdfFile == null || pdfFile.Length == 0)

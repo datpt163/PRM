@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Capstone.Application.Module.Skills.Query;
 using Capstone.Api.Module.Skills.Request;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Capstone.Api.Module.skills.Controllers
 {
@@ -19,6 +20,7 @@ namespace Capstone.Api.Module.skills.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "CREATE_SKILL")]
         public async Task<IActionResult> Create([FromBody] CreateSkillCommand command)
         {
             var skillDto = await _mediator.Send(command);
@@ -26,6 +28,7 @@ namespace Capstone.Api.Module.skills.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "UPDATE_SKILL")]
         public async Task<IActionResult> Update([FromBody] UpdateSkillCommand command)
         {
             var skillDto = await _mediator.Send(command);
@@ -37,6 +40,7 @@ namespace Capstone.Api.Module.skills.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "DELETE_SKILL")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var command = new DeleteSkillCommand { Id = id };
@@ -49,6 +53,7 @@ namespace Capstone.Api.Module.skills.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "CREATE_SKILL")]
         public async Task<IActionResult> Get(Guid id)
         {
             var query = new GetSkillQuery { Id = id };
@@ -61,6 +66,7 @@ namespace Capstone.Api.Module.skills.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "GET_SKILL")]
         public async Task<IActionResult> GetList([FromQuery] GetSkillsListQuery request)
         {
 
@@ -69,6 +75,7 @@ namespace Capstone.Api.Module.skills.Controllers
         }
 
         [HttpGet("user/{userId}")]
+        [Authorize(Roles = "GET_SKILL")]
         public async Task<IActionResult> GetSkillsByUserId(Guid userId)
         {
             var query = new GetSkillsByUserIdQuery { UserId = userId };
@@ -77,6 +84,7 @@ namespace Capstone.Api.Module.skills.Controllers
         }
 
         [HttpDelete("user")]
+        [Authorize(Roles = "REMOVE_SKILL_USER")]
         public async Task<IActionResult> RemoveSkillFromUser([FromBody] RemoveSkillFromUserRequest request)
         {
             try
@@ -103,6 +111,7 @@ namespace Capstone.Api.Module.skills.Controllers
         }
 
         [HttpDelete("user/multiple")]
+        [Authorize(Roles = "REMOVE_SKILL_USER")]
         public async Task<IActionResult> RemoveSkillsFromUser([FromBody] RemoveSkillsFromUserRequest request)
         {
             try
@@ -129,6 +138,7 @@ namespace Capstone.Api.Module.skills.Controllers
         }
 
         [HttpPost("user")]
+        [Authorize(Roles = "GET_SKILL_USER")]
         public async Task<IActionResult> AddSkillToUser([FromBody] AddSkillToUserRequest request)
         {
             try
@@ -155,6 +165,7 @@ namespace Capstone.Api.Module.skills.Controllers
         }
 
         [HttpPost("user/multiple")]
+        [Authorize(Roles = "GET_SKILL_USER")]
         public async Task<IActionResult> AddMultipleSkillsToUser([FromBody] AddMultipleSkillsToUserRequest request)
         {
             try

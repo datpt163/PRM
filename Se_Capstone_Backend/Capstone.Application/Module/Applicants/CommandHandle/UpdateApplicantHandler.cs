@@ -38,6 +38,8 @@ public class UpdateApplicantCommandHandler : IRequestHandler<UpdateApplicantComm
             {
                 throw new ArgumentException("Invalid email format.");
             }
+            applicant.Email = request.Email ?? string.Empty;
+
         }
 
         if (!string.IsNullOrEmpty(request.PhoneNumber))
@@ -46,12 +48,20 @@ public class UpdateApplicantCommandHandler : IRequestHandler<UpdateApplicantComm
             {
                 throw new ArgumentException("Invalid phone number format.");
             }
+            applicant.PhoneNumber = request.PhoneNumber;
 
         }
-        applicant.Name = request.Name;
-        applicant.Email = request.Email;
-        applicant.StartDate = request.StartDate;
-        applicant.PhoneNumber = request.PhoneNumber;
+        if (!string.IsNullOrEmpty(request.Name))
+        {
+            applicant.Name = request.Name;
+
+        }
+
+        if (request.StartDate != null)
+        {
+            applicant.StartDate = request.StartDate;
+
+        }
 
         if (request.CvFile != null)
         {
@@ -65,9 +75,13 @@ public class UpdateApplicantCommandHandler : IRequestHandler<UpdateApplicantComm
             pdfStream.Position = 0;
             applicant.CvLink = await _cloudinaryService.UploadPdfAsync(pdfStream, request.CvFile.FileName);
         }
+        if (request.MainJobId != null)
+        {
+            applicant.MainJobId = (Guid)request.MainJobId;
 
-        applicant.MainJobId = request.MainJobId;
-        applicant.MainJob = await _jobRepository.FindOneAsync(x => x.Id == request.MainJobId);
+            applicant.MainJob = await _jobRepository.FindOneAsync(x => x.Id == request.MainJobId);
+        }
+
         applicant.IsOnBoard = request.IsOnBoard;
 
         if (request.JobIds != null && request.JobIds.Any())

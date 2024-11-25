@@ -23,7 +23,7 @@ namespace Capstone.Api.Module.Applicants.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = "GET_APPLICANT")]
         public async Task<IActionResult> GetApplicants([FromQuery] GetApplicantListQuery query)
         {
             var response = await _mediator.Send(query);
@@ -31,7 +31,7 @@ namespace Capstone.Api.Module.Applicants.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        [AllowAnonymous]
+        [Authorize(Roles = "GET_APPLICANT")]
         public async Task<IActionResult> GetApplicantDetail(Guid id)
         {
             var query = new GetApplicantDetailQuery(id);
@@ -44,7 +44,7 @@ namespace Capstone.Api.Module.Applicants.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        [AllowAnonymous]
+        [Authorize(Roles = "DELETE_APPLICANT")]
         public async Task<IActionResult> DeleteApplicant(Guid id)
         {
             var command = new DeleteApplicantCommand(id);
@@ -59,7 +59,7 @@ namespace Capstone.Api.Module.Applicants.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = "ADD_APPLICANT")]
         public async Task<IActionResult> AddApplicant([FromForm] AddApplicantCommand command)
         {
             var applicantDto = await _mediator.Send(command);
@@ -67,7 +67,7 @@ namespace Capstone.Api.Module.Applicants.Controllers
         }
 
         [HttpPut]
-        [AllowAnonymous]
+        [Authorize(Roles = "UPDATE_APPLICANT")]
         public async Task<IActionResult> Update([FromForm] UpdateApplicantCommand command)
         {
             var applicantDto = await _mediator.Send(command);
