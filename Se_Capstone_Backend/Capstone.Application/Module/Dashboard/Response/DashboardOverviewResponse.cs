@@ -10,15 +10,12 @@ namespace Capstone.Application.Module.Dashboard.Response
     {
         public int OngoingTasks { get; set; }
         public int TotalTasks { get; set; }
-        public int UnfinishedProjects { get; set; }
-        public int ProjectsDueThisMonth { get; set; }
-        public int PausedTasks { get; set; }
-        public List<TaskCompletionRate> TaskCompletionRate { get; set; } = new List<TaskCompletionRate>();
+        
+        public int TotalProjects { get; set; }
+
+        public int TotalProjectsDone { get; set; }
+
+        public int TotalSkillsEmployee { get; set; }
     }
 
-    public class TaskCompletionRate
-    {
-        public string Status { get; set; } = string.Empty;
-        public double Percentage { get; set; }
-    }
 }
