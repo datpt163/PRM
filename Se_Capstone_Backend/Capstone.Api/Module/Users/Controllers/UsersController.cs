@@ -24,7 +24,7 @@ namespace Capstone.Api.Module.Users.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "GET_USER")]
+        // [Authorize(Roles = "GET_USER")]
         public async Task<IActionResult> GetUsers([FromBody] GetUserListQuery query)
         {
             var response = await _mediator.Send(query);
@@ -34,7 +34,7 @@ namespace Capstone.Api.Module.Users.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        [Authorize(Roles = "GET_USER")]
+        [Authorize(Roles = "GET_DETAIL_USER")]
         public async Task<IActionResult> GetUserDetail(Guid id)
         {
             var query = new GetUserDetailQuery(id);
