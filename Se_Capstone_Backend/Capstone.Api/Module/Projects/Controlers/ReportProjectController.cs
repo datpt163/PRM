@@ -50,5 +50,23 @@ namespace Capstone.Api.Module.Projects.Controllers
             return ResponseOk(result, "Task overview retrieved successfully.");
         }
 
+        [HttpPost("tasks/completion-chart")]
+        //[Authorize(Roles = "REPORT_PROJECT")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetTaskCompletionChart([FromBody] TaskCompletionChartRequest request)
+        {
+            var query = new GetTaskCompletionChartQuery
+            {
+                ProjectId = request.ProjectId,
+                StartDate = request.StartDate,
+                EndDate = request.EndDate,
+                PhaseId = request.PhaseId,
+            };
+
+            var result = await _mediator.Send(query);
+            return ResponseOk(result, "Task completion chart data retrieved successfully.");
+        }
+
+
     }
 }
