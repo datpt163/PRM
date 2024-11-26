@@ -2,12 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Capstone.Application.Module.Dashboard.Query;
 using MediatR;
+using Capstone.Api.Common.ResponseApi.Controllers;
 
 namespace Capstone.Api.Module.Dashboard.Controllers
 {
     [Route("api/dashboard")]
     [ApiController]
-    public class DashboardController : ControllerBase
+    public class DashboardController : BaseController
     {
         private readonly IMediator _mediator;
 
@@ -23,7 +24,30 @@ namespace Capstone.Api.Module.Dashboard.Controllers
         {
             var query = new GetDashboardOverviewQuery();
             var result = await _mediator.Send(query);
-            return Ok(result);
+            return ResponseOk(result);
         }
+
+        [HttpGet("projects-by-month")]
+        //[Authorize(Roles = "VIEW_DASHBOARD")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetProjectStatsByMonth([FromQuery] DateTime date)
+        {
+            var query = new GetProjectStatsByMonthQuery { Date = date };
+            var result = await _mediator.Send(query);
+            return ResponseOk(result);
+        }
+
+        [HttpGet("projects-by-year")]
+        //[Authorize(Roles = "VIEW_DASHBOARD")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetProjectStatsByYear([FromQuery] int year)
+        {
+            var query = new GetProjectStatsByYearQuery { Year = year };
+            var result = await _mediator.Send(query);
+
+            return ResponseOk(result);
+        }
+
+
     }
 }
