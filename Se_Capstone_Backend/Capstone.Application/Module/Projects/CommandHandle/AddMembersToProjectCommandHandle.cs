@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.Email.EmailQueue;
 using Capstone.Application.Common.EmailHTML;
+using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Projects.Command;
 using Capstone.Domain.Entities;
@@ -17,14 +18,20 @@ namespace Capstone.Application.Module.Projects.CommandHandle
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPublishEndpoint _publisher;
-        public AddMembersToProjectCommandHandle(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint)
+        private readonly IJwtService _jwtService;
+        public AddMembersToProjectCommandHandle(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, IJwtService jwtService)
         {
+            _jwtService = jwtService;
             _publisher = publishEndpoint;
             _unitOfWork = unitOfWork;
         }
 
         public async Task<ResponseMediator> Handle(AddMembersToProject request, CancellationToken cancellationToken)
         {
+            var userAsign = await _jwtService.VerifyTokenAsync(request.Token);
+            if(userAsign == null)
+                return new ResponseMediator("User not found", null, 404);
+
             var project = _unitOfWork.Projects.Find(x => x.Id == request.ProjectId).Include(c => c.UserProjects).FirstOrDefault();
             if (project == null)
                 return new ResponseMediator("Project not found", null, 404);
@@ -37,7 +44,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
                 var user = _unitOfWork.Users.FindOne(x => x.Id == userId);
                 if (user != null)
                 {
-                    _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = user.Id, Type = "assignMember", Data = JsonSerializer.Serialize(new { projectId = project.Id, projectName = project.Name }) });
+                    _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = user.Id, Type = "assignMember", Data = JsonSerializer.Serialize(new { type = "assignMember", projectId = project.Id, projectName = project.Name, assignerName = userAsign.FullName, assignerUsername = userAsign.UserName, assignerAvatar = userAsign.Avatar }) });
                     await _publisher.Publish(new SendEmailMessage() { ToEmail = user.Email == null ? "" : user.Email, Body = EmailMessage.AssignMember(project.Name, user.UserName == null ? "" : user.UserName, project.Description, project.Id), Subject = $"Welcome to the {project.Name} Team!" });
                 }
             }

@@ -136,6 +136,8 @@ namespace Capstone.Api.Module.Projects.Controlers
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
         public async Task<IActionResult> AddMember(AddMembersToProject request)
         {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            request.Token = token;
             var result = await _mediator.Send(request);
             if (result.StatusCode == 200)
             {

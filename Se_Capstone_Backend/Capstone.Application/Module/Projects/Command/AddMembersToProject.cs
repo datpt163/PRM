@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using MediatR;
+using System.Text.Json.Serialization;
 
 
 namespace Capstone.Application.Module.Projects.Command
@@ -8,5 +9,7 @@ namespace Capstone.Application.Module.Projects.Command
     {
         public Guid ProjectId { get; set; }
         public List<Guid> MemberIds { get; set; } = new List<Guid>();
+        [JsonIgnore]
+        public string Token { get; set; } = string.Empty;
     }
 }
