@@ -8,6 +8,7 @@ namespace Capstone.Application.Common.Paging
         public PagingSP? Paging { get; set; }
         public IList<T> Data { get; set; }
         public string ErrorMessage { get; set; } = string.Empty;
+        public int Count { get; set; } 
 
         public PagingResultSP(List<Module.Projects.Response.ProjectDTO> projects)
         {

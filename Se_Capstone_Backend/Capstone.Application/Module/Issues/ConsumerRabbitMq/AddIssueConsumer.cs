@@ -35,14 +35,14 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
                 issue.Position = position;
                 _unitOfWork.Issues.Add(issue);
                 await _unitOfWork.SaveChangesAsync();
-                await context.RespondAsync(new UserResponse() { Success = true });
+                await context.RespondAsync(new UserResponse() { UserId = issue.Id + "" });
             }
-            await context.RespondAsync(new UserResponse() { Success = true });
+            await context.RespondAsync(new UserResponse() { UserId = "" });
         }
     }
 
     public record UserResponse
     {
-        public bool Success { get; set; } = false;
+        public string UserId { get; set; } = string.Empty;
     }
 }

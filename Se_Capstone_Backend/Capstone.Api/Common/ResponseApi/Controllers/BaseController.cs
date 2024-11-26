@@ -24,6 +24,20 @@ namespace Capstone.Api.Common.ResponseApi.Controllers
             return StatusCode((int)HttpStatusCode.OK, response);
         }
 
+        protected IActionResult ResponseOk<T>(IEnumerable<T> data, PagingSP? paging, int unReadCount, string message = "")
+        {
+            var response = new
+            {
+                Data = data,
+                Meta = paging,
+                Message = message,
+                statusCode = (int)HttpStatusCode.OK,
+                UnReadCount = unReadCount
+            };
+
+            return StatusCode((int)HttpStatusCode.OK, response);
+        }
+
         protected IActionResult ResponseCreated(dynamic? dataResponse = null, string? messageResponse = null)
         {
             return StatusCode((int)HttpStatusCode.Created, new { data = dataResponse, message = messageResponse, statusCode = (int)HttpStatusCode.Created });

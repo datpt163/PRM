@@ -31,6 +31,7 @@ namespace Capstone.Application.Module.Notifications.QueryHandle
                 return new PagingResultSP<Notification>() { ErrorMessage = "Wrong Token" };
 
             var notifications = _unitOfWork.Notifications.Find(x => x.UserId == user.Id).OrderByDescending(x => x.CreatedAt).ToList();
+            var unReadCount = notifications.Where(x => x.HasRead == false).Count();
             if (request.PageIndex.HasValue && request.PageSize.HasValue)
             {
                 if (request.PageIndex.Value < 1 || request.PageSize.Value < 0)
@@ -39,7 +40,7 @@ namespace Capstone.Application.Module.Notifications.QueryHandle
                 int skip = (request.PageIndex.Value - 1) * request.PageSize.Value;
                 var notificationPaging = notifications.Skip(skip).Take(request.PageSize.Value).ToList();
                 var totalCount = notifications.Count();
-                var result = new PagingResultSP<Notification>(notificationPaging, totalCount, request.PageIndex.Value, request.PageSize.Value);
+                var result = new PagingResultSP<Notification>(notificationPaging, totalCount, request.PageIndex.Value, request.PageSize.Value) { Count = unReadCount };
                 return result;
             }
             return new PagingResultSP<Notification>() { Data = notifications };
