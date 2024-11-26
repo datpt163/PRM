@@ -41,7 +41,7 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
         }
     }
 
-    public record UserResponse
+    public class UserResponse
     {
         public string UserId { get; set; } = string.Empty;
     }

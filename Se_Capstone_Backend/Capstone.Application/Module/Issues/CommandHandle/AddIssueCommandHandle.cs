@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Capstone.Application.Common.Email.EmailQueue;
+using Capstone.Application.Common.EmailHTML;
 using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Issues.Command;
@@ -16,6 +17,7 @@ using MassTransit.RabbitMqTransport;
 using MassTransit.Transports;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Pipelines.Sockets.Unofficial.Arenas;
 using System.Reflection.Emit;
 using System.Text.Json;
 
@@ -124,10 +126,10 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             var response = _mapper.Map<IssueDTO>(issue);
             if(responseSuccess == 205)
             {
-                _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = userAssignee.Id, Type = "assignIssue", Data = JsonSerializer.Serialize(new { assignerFullName = user.FullName, assignerUsername = user.UserName, issueName = request.Title, }) });
-                //await _publisher.Publish(new SendEmailMessage() { ToEmail = toEmail == null ? "" : toEmail, Body = EmailMessage.AssignLeader(request.Name, userDto.Name, projectCreate.Id), Subject = $"🎉 congratulations! you’ve been assigned as the project leader for {request.Name}" });
+                _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = userAssignee.Id, Type = "assignIssue", Data = JsonSerializer.Serialize(new { type = "assignIssue", assignerName = user.FullName, assignerUsername = user.UserName, assignerAvatar = user.Avatar, projectId = status.ProjectId, issueName = request.Title, issueId = Guid.Parse(response2.Message.UserId) , issueIndex = index, issueStatusName = status.Name}) });
+                await _unitOfWork.SaveChangesAsync();
+                await _publisher.Publish(new SendEmailMessage() { ToEmail = userAssignee.Email == null ? "" : userAssignee.Email, Body = EmailMessage.AssignIssue(request.Title, request.Description, request.StartDate, request.DueDate, response2.Message.UserId, status.ProjectId + ""), Subject = $"[ {status.Project.Name} ]You are assigned to issue {request.Title}" });
             }
-
             return new ResponseMediator("", response);
         }
 

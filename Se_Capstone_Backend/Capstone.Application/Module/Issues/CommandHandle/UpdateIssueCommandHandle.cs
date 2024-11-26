@@ -48,6 +48,9 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             if (request.EstimatedTime.HasValue && request.EstimatedTime.Value <= 0)
                 return new ResponseMediator("Estimated time must be greater than 0 hour", null, 400);
 
+            if (request.ActualTime.HasValue && request.ActualTime.Value <= 0)
+                return new ResponseMediator("Actual time must be greater than 0 hour", null, 400);
+
             if (request.EstimatedTime.HasValue && request.EstimatedTime.Value <= 0)
                 return new ResponseMediator("Estimated time must be greater than 0 hour", null, 400);
 
@@ -95,6 +98,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             issue.StatusId = request.StatusId;
             issue.LabelId = request.LabelId;
             issue.PhaseId = request.PhaseId;
+            issue.ActualTime = request.ActualTime;
             _unitOfWork.Issues.Update(issue);
             await _unitOfWork.SaveChangesAsync();
             var response = _mapper.Map<IssueDTO?>(issue);

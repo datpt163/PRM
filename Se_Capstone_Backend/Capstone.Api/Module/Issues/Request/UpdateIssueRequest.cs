@@ -16,5 +16,6 @@ namespace Capstone.Api.Module.Issues.Request
         public Guid StatusId { get; set; }
         public Guid? LabelId { get; set; }
         public Guid? PhaseId { get; set; }
+        public float? ActualTime { get; set; } = 0;
     }
 }
