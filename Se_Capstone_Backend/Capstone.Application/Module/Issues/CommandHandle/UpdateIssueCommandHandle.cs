@@ -45,11 +45,11 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             if (request.Percentage < 0 && request.Percentage > 100)
                 return new ResponseMediator("Percentage must be greater or equal than 0 and less or equal than 100", null, 400);
 
-            if (request.EstimatedTime.HasValue && request.EstimatedTime.Value <= 0)
-                return new ResponseMediator("Estimated time must be greater than 0 hour", null, 400);
+            if (request.EstimatedTime.HasValue && request.EstimatedTime.Value < 0)
+                return new ResponseMediator("Estimated time must be greater or equal than 0 hour", null, 400);
 
-            if (request.ActualTime.HasValue && request.ActualTime.Value <= 0)
-                return new ResponseMediator("Actual time must be greater than 0 hour", null, 400);
+            if (request.ActualTime.HasValue && request.ActualTime.Value < 0)
+                return new ResponseMediator("Actual time must be greater or equal than 0 hour", null, 400);
 
             if (request.EstimatedTime.HasValue && request.EstimatedTime.Value <= 0)
                 return new ResponseMediator("Estimated time must be greater than 0 hour", null, 400);
