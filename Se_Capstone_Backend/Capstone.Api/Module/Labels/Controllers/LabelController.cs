@@ -68,6 +68,7 @@ namespace Capstone.Api.Module.Labels.Controllers
         }
 
         [HttpGet("default")]
+        [Authorize(Roles = "READ_DEFAULT_LABEL")]
         public async Task<IActionResult> GetListLabelDefault()
         {
             var result = await _mediator.Send(new GetListLabelDefaultQuery());

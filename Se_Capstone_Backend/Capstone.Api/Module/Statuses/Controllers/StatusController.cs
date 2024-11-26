@@ -67,6 +67,7 @@ namespace Capstone.Api.Module.Statuses.Controllers
         }
 
         [HttpGet("default")]
+        [Authorize(Roles = "READ_DEFAULT_STATUS")]
         public async Task<IActionResult> GetListStatusDefault()
         {
             var result = await _mediator.Send(new GetListStatusDefaultQuery());
