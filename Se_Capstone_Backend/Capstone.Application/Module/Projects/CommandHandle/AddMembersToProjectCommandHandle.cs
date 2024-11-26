@@ -35,8 +35,6 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             var project = _unitOfWork.Projects.Find(x => x.Id == request.ProjectId).Include(c => c.UserProjects).FirstOrDefault();
             if (project == null)
                 return new ResponseMediator("Project not found", null, 404);
-            if(request.MemberIds.Count() == 0)
-                return new ResponseMediator("List member empty", null, 400);
 
             var userIds = request.MemberIds.Except(project.UserProjects.Select(x => x.UserId).ToList());
             foreach (var userId in userIds)
