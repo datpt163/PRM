@@ -59,6 +59,11 @@ namespace Capstone.Infrastructure.DbContexts
               .Property(e => e.Id)
               .HasDefaultValueSql("gen_random_uuid()");
 
+            modelBuilder.Entity<Notification>()
+             .Property(e => e.Data)
+              .HasColumnType("json");
+
+
             modelBuilder.Entity<Attendance>()
                .Property(e => e.Id)
                .HasDefaultValueSql("gen_random_uuid()");

@@ -15,6 +15,7 @@ using Pipelines.Sockets.Unofficial.Arenas;
 using System.Text.Json;
 using Capstone.Application.Common.EmailHTML;
 using MassTransit;
+using Capstone.Application.Common.Jwt;
 namespace Capstone.Application.Module.Projects.CommandHandle
 {
     public class CreateProjectCommandHandle : IRequestHandler<CreateProjectCommand, ResponseMediator>
@@ -24,8 +25,10 @@ namespace Capstone.Application.Module.Projects.CommandHandle
         private readonly IMapper _mappper;
         private readonly IFileService _fileService;
         private readonly IPublishEndpoint _publisher;
-        public CreateProjectCommandHandle(IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper, IFileService fileService, IPublishEndpoint publisher)
+        private readonly IJwtService _jwtService;
+        public CreateProjectCommandHandle(IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper, IFileService fileService, IPublishEndpoint publisher, IJwtService jwtService)
         {
+            _jwtService = jwtService;
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _mappper = mapper;
@@ -34,6 +37,10 @@ namespace Capstone.Application.Module.Projects.CommandHandle
         }
         public async Task<ResponseMediator> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
+            var userAssign = await _jwtService.VerifyTokenAsync(request.Token);
+            if(userAssign == null)
+                return new ResponseMediator("User not found", null);
+
             int statusCodeSuccess = 200;
             var toEmail = "";
             var project = _unitOfWork.Projects.Find(p => p.Code.Trim().ToUpper().Equals(request.Code.Trim().ToUpper())).FirstOrDefault();
@@ -82,7 +89,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             await _unitOfWork.SaveChangesAsync();
             if (statusCodeSuccess == 205)
             {
-                _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = userDto.Id, Type = "assignLeader", Data = JsonSerializer.Serialize(new { projectId = projectCreate.Id, projectName = request.Name }) });
+                _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = userDto.Id, Type = "assignLeader", Data = JsonSerializer.Serialize(new { type = "assignLeader", projectId = projectCreate.Id, projectName = request.Name, assignerName = userAssign.FullName, assignerUserName = userAssign.UserName, assignerAvatar = userAssign.Avatar }) });
                 await _publisher.Publish(new SendEmailMessage() { ToEmail = toEmail == null ? "" : toEmail, Body = EmailMessage.AssignLeader(request.Name, userDto.Name, projectCreate.Id), Subject = $"🎉 congratulations! you’ve been assigned as the project leader for {request.Name}" });
             }
             var defaultStatueses = await CreateDefaultStatus(projectCreate.Id);

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.SignalR;
 using Swashbuckle.AspNetCore.Annotations;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Text.RegularExpressions;
+using System.Text.Json;
 
 namespace Capstone.Api.Module.Projects.Controlers
 {
@@ -36,7 +37,8 @@ namespace Capstone.Api.Module.Projects.Controlers
         [Authorize(Roles = "ADD_PROJECT")]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectCommand request)
         {
-           
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            request.Token = token;
             var result = await _mediator.Send(request);
             if (result.StatusCode == 205)
             {
@@ -57,7 +59,8 @@ namespace Capstone.Api.Module.Projects.Controlers
         [Authorize(Roles = "UPDATE_PROJECT")]
         public async Task<IActionResult> UpdateProject(Guid id, [FromBody] UpdateProjectRequest request)
         {
-            var result = await _mediator.Send(new UpdateProjectCommand(id, request.Name, request.Code, request.Description, request.StartDate, request.EndDate, request.LeadId, request.Status));
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var result = await _mediator.Send(new UpdateProjectCommand(id, request.Name, request.Code, request.Description, request.StartDate, request.EndDate, request.LeadId, request.Status) { Token = token});
             if (result.StatusCode == 205)
             {
                 await _hubContext.Clients.Group(result.ErrorMessage == null ? "" : result.ErrorMessage)
@@ -134,8 +137,19 @@ namespace Capstone.Api.Module.Projects.Controlers
         public async Task<IActionResult> AddMember(AddMembersToProject request)
         {
             var result = await _mediator.Send(request);
-            if (string.IsNullOrEmpty(result.ErrorMessage))
-                return ResponseNoContent();
+            if (result.StatusCode == 200)
+            {
+                if (!string.IsNullOrEmpty(result.ErrorMessage))
+                {
+                    var ids = JsonSerializer.Deserialize<List<Guid>>(result.ErrorMessage);
+                    foreach(var id in (ids == null ? new List<Guid>() : ids))
+                    {
+                        await _hubContext.Clients.Group(id + "")
+                                               .SendAsync("NotificationResponse", "Success");
+                    }
+                }
+                return ResponseOk(result.Data);
+            }
             else
             {
                 if(result.StatusCode == 404)

@@ -1,17 +1,25 @@
-﻿using Capstone.Application.Common.ResponseMediator;
+﻿using Capstone.Application.Common.Email.EmailQueue;
+using Capstone.Application.Common.EmailHTML;
+using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Projects.Command;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
+using MassTransit;
+using MassTransit.RabbitMqTransport;
+using MassTransit.Transports;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Capstone.Application.Module.Projects.CommandHandle
 {
     public class AddMembersToProjectCommandHandle : IRequestHandler<AddMembersToProject, ResponseMediator>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public AddMembersToProjectCommandHandle(IUnitOfWork unitOfWork)
+        private readonly IPublishEndpoint _publisher;
+        public AddMembersToProjectCommandHandle(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint)
         {
+            _publisher = publishEndpoint;
             _unitOfWork = unitOfWork;
         }
 
@@ -22,6 +30,17 @@ namespace Capstone.Application.Module.Projects.CommandHandle
                 return new ResponseMediator("Project not found", null, 404);
             if(request.MemberIds.Count() == 0)
                 return new ResponseMediator("List member empty", null, 400);
+
+            var userIds = request.MemberIds.Except(project.UserProjects.Select(x => x.UserId).ToList());
+            foreach (var userId in userIds)
+            {
+                var user = _unitOfWork.Users.FindOne(x => x.Id == userId);
+                if (user != null)
+                {
+                    _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = user.Id, Type = "assignMember", Data = JsonSerializer.Serialize(new { projectId = project.Id, projectName = project.Name }) });
+                    await _publisher.Publish(new SendEmailMessage() { ToEmail = user.Email == null ? "" : user.Email, Body = EmailMessage.AssignMember(project.Name, user.UserName == null ? "" : user.UserName, project.Description, project.Id), Subject = $"Welcome to the {project.Name} Team!" });
+                }
+            }
 
             project.UserProjects = new List<UserProject>();
             foreach (var s in request.MemberIds)
@@ -34,7 +53,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             }
             _unitOfWork.Projects.Update(project);
             await _unitOfWork.SaveChangesAsync();
-            return new ResponseMediator("", null);
+            return new ResponseMediator(JsonSerializer.Serialize(userIds), null, 200);
         }
     }
 }

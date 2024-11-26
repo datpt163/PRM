@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using MediatR;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 
 namespace Capstone.Application.Module.Projects.Command
@@ -16,5 +17,7 @@ namespace Capstone.Application.Module.Projects.Command
         public DateTime? EndDate { get; set; }
         public bool? IsVisible { get; set; }
         public Guid? LeadId { get; set; }
+        [JsonIgnore]
+        public string Token { get; set; } = string.Empty;
     }
 }

@@ -26,7 +26,7 @@ namespace Capstone.Api.Module.Notification
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var result = await _mediator.Send(new GetListNotificationQuery() { PageIndex = pageIndex , PageSize = pageSize, Token = token});
             if (string.IsNullOrEmpty(result.ErrorMessage))
-                return ResponseOk(result.Data, result.Paging);
+                return ResponseOk(result.Data, result.Paging, result.Count);
             else
             {
                 return ResponseBadRequest(messageResponse: result.ErrorMessage);

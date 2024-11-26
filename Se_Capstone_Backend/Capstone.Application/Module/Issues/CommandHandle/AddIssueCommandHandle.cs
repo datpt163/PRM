@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Capstone.Application.Common.Email.EmailQueue;
 using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Issues.Command;
@@ -11,10 +12,12 @@ using Capstone.Domain.Enums;
 using Capstone.Infrastructure.Redis;
 using Capstone.Infrastructure.Repository;
 using MassTransit;
+using MassTransit.RabbitMqTransport;
 using MassTransit.Transports;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
+using System.Text.Json;
 
 
 namespace Capstone.Application.Module.Issues.CommandHandle
@@ -25,7 +28,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
         private readonly IJwtService _jwtService;
         private readonly RedisContext _redisContext;
         private readonly IMapper _mapper;
-        public readonly IPublishEndpoint _publishEndpoint;
+        public readonly IPublishEndpoint _publisher;
         private readonly IRequestClient<AddIssueMessage2> _requestClient;
 
         //public AddIssueCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService, RedisContext redisContext, IMapper mapper, IPublishEndpoint publishEndpoint)
@@ -37,36 +40,37 @@ namespace Capstone.Application.Module.Issues.CommandHandle
         //    _redisContext = redisContext;
         //}
 
-        public AddIssueCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService, RedisContext redisContext, IMapper mapper, IRequestClient<AddIssueMessage2> requestClient)
+        public AddIssueCommandHandle(IPublishEndpoint publishEndpoint, IUnitOfWork unitOfWork, IJwtService jwtService, RedisContext redisContext, IMapper mapper, IRequestClient<AddIssueMessage2> requestClient)
         {
             _requestClient = requestClient;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _jwtService = jwtService;
             _redisContext = redisContext;
+            _publisher = publishEndpoint;
         }
 
         public async Task<ResponseMediator> Handle(AddIssueCommand request, CancellationToken cancellationToken)
         {
-           if(string.IsNullOrEmpty(request.Title))
+            int responseSuccess = 200;
+            var userAssignee = new User();
+            if (string.IsNullOrEmpty(request.Title))
                 return new ResponseMediator("Title empty", null, 400);
 
-           if(request.StartDate.HasValue && request.DueDate.HasValue && request.StartDate.Value.Date > request.DueDate.Value.Date)
+            if (request.StartDate.HasValue && request.DueDate.HasValue && request.StartDate.Value.Date > request.DueDate.Value.Date)
                 return new ResponseMediator("Due date must greater or equal start date", null, 400);
 
-            if (request.Priority.HasValue && ( (int)request.Priority < 1 || (int)request.Priority > 5 ) )
+            if (request.Priority.HasValue && ((int)request.Priority < 1 || (int)request.Priority > 5))
                 return new ResponseMediator("Priority must be between 1 and 5", null, 400);
 
             if (request.EstimatedTime.HasValue && request.EstimatedTime.Value <= 0)
                 return new ResponseMediator("Estimated time must be greater than 0 hour", null, 400);
 
             if (request.ParentIssueId.HasValue)
-                if(_unitOfWork.Issues.FindOne(x => x.Id ==  request.ParentIssueId.Value) == null)
+                if (_unitOfWork.Issues.FindOne(x => x.Id == request.ParentIssueId.Value) == null)
                     return new ResponseMediator("Parent issue not found", null, 404);
-            if(request.AssignedToId.HasValue &&  _unitOfWork.Users.FindOne(x => x.Id == request.AssignedToId) == null)
-                return new ResponseMediator("Assigned user not found", null, 404);
 
-            if(request.LabelId.HasValue && _unitOfWork.Labels.FindOne(x => x.Id == request.LabelId) == null )
+            if (request.LabelId.HasValue && _unitOfWork.Labels.FindOne(x => x.Id == request.LabelId) == null)
                 return new ResponseMediator("Label  not found", null, 404);
 
             var status = _unitOfWork.Statuses.Find(x => x.Id == request.StatusId).Include(c => c.Project).ThenInclude(c => c.Phases).Include(c => c.Issues).FirstOrDefault();
@@ -74,8 +78,19 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 return new ResponseMediator("Status  not found", null, 404);
 
             var user = await _jwtService.VerifyTokenAsync(request.Token);
-            if(user == null)
+            if (user == null)
                 return new ResponseMediator("User  not found", null, 404);
+
+
+            if (request.AssignedToId.HasValue)
+            {
+                var assignee = _unitOfWork.Users.FindOne(x => x.Id == request.AssignedToId);
+                if (assignee == null)
+                    return new ResponseMediator("Assigned user not found", null, 404);
+                responseSuccess = 205;
+                userAssignee = assignee;
+            }
+
 
             var lastUpdateById = user.Id;
             var assignedById = user.Id;
@@ -83,7 +98,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
 
             Guid? phaseId = null;
             var result = status.Project.GetStatusPhaseOfProject();
-            if((result.status == PhaseStatus.Running || result.status == PhaseStatus.Complete) && result.phaseRunning != null)
+            if ((result.status == PhaseStatus.Running || result.status == PhaseStatus.Complete) && result.phaseRunning != null)
                 phaseId = result.phaseRunning.Id;
 
             var issue = new Issue()
@@ -106,7 +121,13 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             var response2 = await _requestClient.GetResponse<UserResponse>(new AddIssueMessage2 { Issue = issue, StatusId = request.StatusId });
             //await _publishEndpoint.Publish(new AddIssueMessage2() { Issue = issue, StatusId = request.StatusId });
             //await Task.Delay(350, cancellationToken);
-            var response =  _mapper.Map<IssueDTO>(issue);
+            var response = _mapper.Map<IssueDTO>(issue);
+            if(responseSuccess == 205)
+            {
+                _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = userAssignee.Id, Type = "assignIssue", Data = JsonSerializer.Serialize(new { assignerFullName = user.FullName, assignerUsername = user.UserName, issueName = request.Title, }) });
+                //await _publisher.Publish(new SendEmailMessage() { ToEmail = toEmail == null ? "" : toEmail, Body = EmailMessage.AssignLeader(request.Name, userDto.Name, projectCreate.Id), Subject = $"🎉 congratulations! you’ve been assigned as the project leader for {request.Name}" });
+            }
+
             return new ResponseMediator("", response);
         }
 
