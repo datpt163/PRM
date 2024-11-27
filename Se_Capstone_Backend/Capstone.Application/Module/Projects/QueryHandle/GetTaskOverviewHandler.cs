@@ -86,7 +86,7 @@ namespace Capstone.Application.Module.Projects.Query
             }
 
             var overallCompletionRate = totalTasks > 0
-                ? (double)doneTasks * 100 / totalTasks
+                ? Math.Round((double)doneTasks * 100 / totalTasks, 2)
                 : 0;
 
             return new TaskOverviewResponse
@@ -94,7 +94,8 @@ namespace Capstone.Application.Module.Projects.Query
                 OngoingTasks = ongoingTasks,
                 TotalTasks = totalTasks,
                 DoneTasks = doneTasks,
-                TaskCompletionRate = taskCompletionRate
+                TaskCompletionRate = taskCompletionRate,
+                OverallCompletionRate = overallCompletionRate
             };
         }
     }
