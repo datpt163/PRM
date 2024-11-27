@@ -50,6 +50,7 @@ namespace Capstone.Api.Module.Comments.Controllers
                         await _hubContext.Clients.Group(id + "")
                                                .SendAsync("NotificationResponse", "Success");
                     }
+                    return ResponseOk(result.Data);
                 }
                 return ResponseBadRequest(messageResponse: result.ErrorMessage);
             }
