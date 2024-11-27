@@ -20,6 +20,9 @@ namespace Capstone.Application.Module.Projects.QueryHandle
         {
             var project = await _unitOfWork.Projects.GetQueryNoTracking()
                 .Include(x=> x.Lead)
+                .Include(p=> p.Phases)
+                .ThenInclude(i=> i.Issues)
+                .ThenInclude(s=> s.Status)
                 .Include(x => x.UserProjects)
                 .ThenInclude(up => up.User)
                 .Include(x => x.Statuses)
