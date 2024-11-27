@@ -77,6 +77,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
                 userDto.Id = user.Id;
                 userDto.Name = user.FullName;
                 toEmail = user.Email;
+                if(user.Id != userAssign.Id)
                 statusCodeSuccess = 205;
             }
 

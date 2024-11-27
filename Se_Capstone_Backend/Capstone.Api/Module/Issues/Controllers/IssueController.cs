@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Capstone.Api.Resources;
+using Microsoft.AspNetCore.SignalR;
+using Capstone.Api.Module.Statuses.SignalR;
 
 namespace Capstone.Api.Module.Issues.Controllers
 {
@@ -20,9 +22,11 @@ namespace Capstone.Api.Module.Issues.Controllers
     public class IssueController : BaseController
     {
         private readonly IMediator _mediator;
+        private readonly IHubContext<StatusHub> _hubContext;
 
-        public IssueController(IMediator mediator)
+        public IssueController(IMediator mediator, IHubContext<StatusHub> context)
         {
+            _hubContext = context;
             _mediator = mediator;
         }
 
@@ -33,8 +37,12 @@ namespace Capstone.Api.Module.Issues.Controllers
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var result = await _mediator.Send(new AddIssueCommand(token, request.Title, request.Description, request.StartDate, request.DueDate, request.Priority, request.EstimatedTime, request.ParentIssueId, request.AssigneeId, request.StatusId, request.LabelId));
-            if (string.IsNullOrEmpty(result.ErrorMessage))
+            if (result.StatusCode == 205)
+            {
+                await _hubContext.Clients.Group(result.ErrorMessage == null ? "" : result.ErrorMessage)
+                    .SendAsync("NotificationResponse", "Success");
                 return ResponseOk(result.Data);
+            }
             else
             {
                 if (result.StatusCode == 404)
