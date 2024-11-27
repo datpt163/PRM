@@ -38,7 +38,7 @@ namespace Capstone.Api.Module.Issues.Controllers
             else
             {
                 if (result.StatusCode == 404)
-                    return ResponseNotFound(messageResponse: Messages.String1);
+                    return ResponseNotFound(messageResponse: result.ErrorMessage);
                 return ResponseBadRequest(messageResponse: result.ErrorMessage);
             }
         }
