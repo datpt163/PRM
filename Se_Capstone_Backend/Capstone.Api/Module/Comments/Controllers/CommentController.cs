@@ -2,6 +2,7 @@
 using Capstone.Api.Common.ResponseApi.Model;
 using Capstone.Api.Module.Comments.Request;
 using Capstone.Api.Module.Labels.Requests;
+using Capstone.Api.Module.Statuses.SignalR;
 using Capstone.Application.Module.Comments.Command;
 using Capstone.Application.Module.Labels.Command;
 using Capstone.Application.Module.Labels.Query;
@@ -9,7 +10,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Text.Json;
 
 namespace Capstone.Api.Module.Comments.Controllers
 {
@@ -18,9 +21,11 @@ namespace Capstone.Api.Module.Comments.Controllers
     public class CommentController : BaseController
     {
         private readonly IMediator _mediator;
+        private readonly IHubContext<StatusHub> _hubContext;
 
-        public CommentController(IMediator mediator)
+        public CommentController(IMediator mediator, IHubContext<StatusHub> hubContext)
         {
+            _hubContext = hubContext;
             _mediator = mediator;
         }
 
@@ -31,14 +36,28 @@ namespace Capstone.Api.Module.Comments.Controllers
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var result = await _mediator.Send(new AddCommentCommand() { Content = request.Content, IssueId = request.IssueId, Token = token});
-            if (string.IsNullOrEmpty(result.ErrorMessage))
+            if (result.StatusCode == 200)
+            {
                 return ResponseOk(result.Data);
+            }
+            else if(result.StatusCode == 205)
+            {
+                if (!string.IsNullOrEmpty(result.ErrorMessage))
+                {
+                    var ids = JsonSerializer.Deserialize<List<Guid>>(result.ErrorMessage);
+                    foreach (var id in (ids == null ? new List<Guid>() : ids))
+                    {
+                        await _hubContext.Clients.Group(id + "")
+                                               .SendAsync("NotificationResponse", "Success");
+                    }
+                }
+                return ResponseBadRequest(messageResponse: result.ErrorMessage);
+            }
             else
             {
                 if (result.StatusCode == 404)
                     return ResponseNotFound(messageResponse: result.ErrorMessage);
                 return ResponseBadRequest(messageResponse: result.ErrorMessage);
-
             }
         }
 
