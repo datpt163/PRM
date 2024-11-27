@@ -55,8 +55,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "GET_POSITION")]
-
+        //[Authorize(Roles = "GET_POSITION")]
         public async Task<IActionResult> Get(Guid id)
         {
             var query = new GetPositionQuery { Id = id };
@@ -69,7 +68,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "GET_POSITION")]
+        //[Authorize(Roles = "GET_POSITION")]
         public async Task<IActionResult> GetList([FromQuery] GetPositionsListQuery request)
         {
 
@@ -78,7 +77,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        [Authorize(Roles = "USER_POSITION")]
+        //[Authorize(Roles = "USER_POSITION")]
         public async Task<IActionResult> GetPositionsByUserId(Guid userId)
         {
             var query = new GetPositionsByUserIdQuery { UserId = userId };
@@ -87,7 +86,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpDelete("user")]
-        [Authorize(Roles = "USER_POSITION")]
+        //[Authorize(Roles = "USER_POSITION")]
         public async Task<IActionResult> RemovePositionFromUser([FromBody] RemovePositionFromUserRequest request)
         {
             try
@@ -114,7 +113,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpDelete("user/multiple")]
-        [Authorize(Roles = "USER_POSITION")]
+        //[Authorize(Roles = "USER_POSITION")]
         public async Task<IActionResult> RemovePositionsFromUser([FromBody] RemovePositionsFromUserRequest request)
         {
             try
@@ -141,7 +140,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpPost("user")]
-        [Authorize(Roles = "USER_POSITION")]
+        //[Authorize(Roles = "USER_POSITION")]
         public async Task<IActionResult> AddPositionToUser([FromBody] AddPositionToUserRequest request)
         {
             try
@@ -168,7 +167,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpPost("user/multiple")]
-        [Authorize(Roles = "USER_POSITION")]
+        //[Authorize(Roles = "USER_POSITION")]
         public async Task<IActionResult> AddMultiplePositionsToUser([FromBody] AddMultiplePositionsToUserRequest request)
         {
             try

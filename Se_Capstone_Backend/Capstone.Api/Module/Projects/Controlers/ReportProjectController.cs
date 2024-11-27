@@ -20,7 +20,7 @@ namespace Capstone.Api.Module.Projects.Controllers
         }
 
         [HttpPost("tasks")]
-        [Authorize(Roles = "REPORT_PROJECT")]
+        //[Authorize(Roles = "REPORT_PROJECT")]
         public async Task<IActionResult> GenerateReport([FromBody] GenerateReportTask request)
         {
             var query = new GetReportTaskQuery
@@ -36,7 +36,7 @@ namespace Capstone.Api.Module.Projects.Controllers
         }
 
         [HttpPost("tasks/overview")]
-        [Authorize(Roles = "REPORT_PROJECT")]
+        //[Authorize(Roles = "REPORT_PROJECT")]
         public async Task<IActionResult> GetTaskOverview([FromBody] TaskOverviewRequest request)
         {
             var query = new GetTaskOverviewQuery
