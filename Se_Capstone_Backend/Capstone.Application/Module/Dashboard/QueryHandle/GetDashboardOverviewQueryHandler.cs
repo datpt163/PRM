@@ -38,6 +38,7 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
 
 
             var totalSkillsEmployee = await _unitOfWork.Skills.GetQueryNoTracking().CountAsync(cancellationToken);
+            var totalEmployee = await _unitOfWork.Users.GetQueryNoTracking().Where(x=> x.Status != UserStatus.Inacitve).CountAsync(cancellationToken);
 
             return new DashboardOverviewResponse
             {
@@ -45,7 +46,8 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
                 TotalTasks = totalTasks,
                 TotalProjects = totalProjects,
                 TotalProjectsDone = totalProjectsDone,
-                TotalSkillsEmployee = totalSkillsEmployee
+                TotalSkillsEmployee = totalSkillsEmployee,
+                TotalEmployee = totalEmployee
             };
         }
     }
