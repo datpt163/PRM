@@ -41,6 +41,8 @@ namespace Capstone.Api.Module.Issues.Controllers
             {
                 await _hubContext.Clients.Group(result.ErrorMessage == null ? "" : result.ErrorMessage)
                     .SendAsync("NotificationResponse", "Success");
+            }else if(result.StatusCode == 200)
+            {
                 return ResponseOk(result.Data);
             }
             else

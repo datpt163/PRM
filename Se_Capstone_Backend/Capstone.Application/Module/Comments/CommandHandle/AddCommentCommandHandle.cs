@@ -38,6 +38,7 @@ namespace Capstone.Application.Module.Comments.CommandHandle
 
         public async Task<ResponseMediator> Handle(AddCommentCommand request, CancellationToken cancellationToken)
         {
+            var responseSuccess = 200;
             var user = await _jwtService.VerifyTokenAsync(request.Token);
             if(user == null)
                 return new ResponseMediator("User not found", null);
@@ -67,13 +68,14 @@ namespace Capstone.Application.Module.Comments.CommandHandle
             await _unitOfWork.SaveChangesAsync();
             foreach(var u in users)
             {
+                responseSuccess = 205;
                 _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = u.Id, Type = "createComment", Data = JsonSerializer.Serialize(new { type = "createComment", projectId  = issue.Status.ProjectId, issueId = issue.Id, commentId = comment.Id, issueName = issue.Title, issueIndex = issue.Index, issueStatusName = issue.Status.Name, commenterName = user.FullName, commenterUsername = user.UserName, commenterAvatar  = user.Avatar}) });
                 await _unitOfWork.SaveChangesAsync();
                 await _publisher.Publish(new SendEmailMessage() { ToEmail = u.Email == null ? "" : u.Email, Body = EmailMessage.CreateComment(issue.Title, issue.Id + "", issue.Status.ProjectId + ""), Subject = $"[{issue.Title}]Comment on issue" });
 
             }
             var response = _mapper.Map<CommentDTO>(comment);
-            return new ResponseMediator("", response);
+            return new ResponseMediator(JsonSerializer.Serialize(users.Select(x => x.Id)), response, responseSuccess);
 
         }
     }
