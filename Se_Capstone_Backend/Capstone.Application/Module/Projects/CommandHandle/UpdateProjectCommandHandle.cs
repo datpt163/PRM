@@ -39,8 +39,8 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             if (userAssign == null)
                 return new ResponseMediator("User not found", null);
             int statusCodeSuccess = 200;
-            if ( !(request.Status == ProjectStatus.NotStarted || request.Status == ProjectStatus.InProgress || request.Status == ProjectStatus.Finished ))
-                return new ResponseMediator("Status must more than 0 or less than 4", null);
+            if ( !(request.Status == ProjectStatus.NotStarted || request.Status == ProjectStatus.InProgress || request.Status == ProjectStatus.Finished || request.Status == ProjectStatus.Canceled ))
+                return new ResponseMediator("Status must more than 0 or less than 5", null);
 
             var projectCheckCode = _unitOfWork.Projects.Find(p => p.Code.Trim().ToUpper().Equals(request.Code.Trim().ToUpper()) && request.Id != p.Id).FirstOrDefault();
 
