@@ -30,8 +30,8 @@ namespace Capstone.Application.Module.Projects.QueryHandle
         public async Task<PagingResultSP<ProjectDTO>> Handle(GetListProjectQuery request, CancellationToken cancellationToken)
         {
             if (request.Status.HasValue)
-                if (!(request.Status == ProjectStatus.NotStarted || request.Status == ProjectStatus.InProgress || request.Status == ProjectStatus.Finished))
-                    return new PagingResultSP<ProjectDTO>() { ErrorMessage = "Status must more than 0 or less than 4" };
+                if (!(request.Status == ProjectStatus.NotStarted || request.Status == ProjectStatus.InProgress || request.Status == ProjectStatus.Finished || request.Status == ProjectStatus.Canceled))
+                    return new PagingResultSP<ProjectDTO>() { ErrorMessage = "Status must more than 0 or less than 5" };
 
             var projectsQuery = new List<Project>();
 
