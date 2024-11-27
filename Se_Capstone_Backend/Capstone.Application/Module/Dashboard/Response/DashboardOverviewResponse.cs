@@ -9,6 +9,7 @@ namespace Capstone.Application.Module.Dashboard.Response
     public class DashboardOverviewResponse
     {
         public int OngoingTasks { get; set; }
+
         public int TotalTasks { get; set; }
         
         public int TotalProjects { get; set; }
@@ -16,6 +17,8 @@ namespace Capstone.Application.Module.Dashboard.Response
         public int TotalProjectsDone { get; set; }
 
         public int TotalSkillsEmployee { get; set; }
+
+        public int TotalEmployee { get; set; }
     }
 
 }

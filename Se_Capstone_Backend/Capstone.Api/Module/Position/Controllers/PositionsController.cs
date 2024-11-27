@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Capstone.Application.Module.Positions.Query;
 using Capstone.Api.Module.Positions.Request;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Capstone.Api.Module.positions.Controllers
 {
@@ -19,6 +20,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "CREATE_POSITION")]
         public async Task<IActionResult> Create([FromBody] CreatePositionCommand command)
         {
             var positionDto = await _mediator.Send(command);
@@ -26,6 +28,8 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "UPDATE_POSITION")]
+
         public async Task<IActionResult> Update([FromBody] UpdatePositionCommand command)
         {
             var positionDto = await _mediator.Send(command);
@@ -37,6 +41,8 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "DELETE_POSITION")]
+
         public async Task<IActionResult> Delete(Guid id)
         {
             var command = new DeletePositionCommand { Id = id };
@@ -49,6 +55,8 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "GET_POSITION")]
+
         public async Task<IActionResult> Get(Guid id)
         {
             var query = new GetPositionQuery { Id = id };
@@ -61,6 +69,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "GET_POSITION")]
         public async Task<IActionResult> GetList([FromQuery] GetPositionsListQuery request)
         {
 
@@ -69,6 +78,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpGet("user/{userId}")]
+        [Authorize(Roles = "USER_POSITION")]
         public async Task<IActionResult> GetPositionsByUserId(Guid userId)
         {
             var query = new GetPositionsByUserIdQuery { UserId = userId };
@@ -77,6 +87,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpDelete("user")]
+        [Authorize(Roles = "USER_POSITION")]
         public async Task<IActionResult> RemovePositionFromUser([FromBody] RemovePositionFromUserRequest request)
         {
             try
@@ -103,6 +114,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpDelete("user/multiple")]
+        [Authorize(Roles = "USER_POSITION")]
         public async Task<IActionResult> RemovePositionsFromUser([FromBody] RemovePositionsFromUserRequest request)
         {
             try
@@ -129,6 +141,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpPost("user")]
+        [Authorize(Roles = "USER_POSITION")]
         public async Task<IActionResult> AddPositionToUser([FromBody] AddPositionToUserRequest request)
         {
             try
@@ -155,6 +168,7 @@ namespace Capstone.Api.Module.positions.Controllers
         }
 
         [HttpPost("user/multiple")]
+        [Authorize(Roles = "USER_POSITION")]
         public async Task<IActionResult> AddMultiplePositionsToUser([FromBody] AddMultiplePositionsToUserRequest request)
         {
             try
