@@ -232,7 +232,6 @@ namespace Capstone.Api.Module.Projects.Controlers
         }
 
         [HttpPost("suggest")]
-        [Authorize(Roles = "GET_SUGGEST")]
         public async Task<IActionResult> GetSuggestProject([FromBody] SuggestInvMemberRequest request)
         {
             var query = new SuggestProjectQuery
