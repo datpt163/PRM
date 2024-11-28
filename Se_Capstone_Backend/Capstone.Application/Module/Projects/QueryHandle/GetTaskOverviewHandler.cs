@@ -15,90 +15,78 @@ namespace Capstone.Application.Module.Projects.Query
 
         public async Task<TaskOverviewResponse> Handle(GetTaskOverviewQuery request, CancellationToken cancellationToken)
         {
-
             var project = await _unitOfWork.Projects
                            .GetQueryNoTracking()
-                           .Include(s=> s.Statuses)
+                           .Include(s => s.Statuses)
+                           .ThenInclude(x => x.Issues)
                            .Include(x => x.Phases
                                .Where(phase => phase.ProjectId == request.ProjectId &&
                                                (request.PhaseId == null || phase.Id == request.PhaseId)))
                            .ThenInclude(phase => phase.Issues)
-                           .ThenInclude(s=> s.Status)
-                           .FirstOrDefaultAsync(cancellationToken);
+                           .ThenInclude(s => s.Status)
+                           .FirstOrDefaultAsync(x=> x.Id == request.ProjectId,cancellationToken);
 
             if (project == null)
             {
                 throw new Exception("Project is not exist!");
             }
+
             var ongoingTasks = 0;
             var totalTasks = 0;
             var doneTasks = 0;
-            var taskCompletionRate = new List<TaskCompletionRate> ();
+            var taskCompletionRate = new List<TaskCompletionRate>();
 
-            if (!project.Phases.Any())
+            var allIssues = request.PhaseId == null
+                ? project.Statuses.SelectMany(status => status.Issues).ToList()
+                : project.Phases.SelectMany(phase => phase.Issues).ToList();
+
+            totalTasks = allIssues.Count;
+
+            foreach (var issue in allIssues)
             {
-                return new TaskOverviewResponse
+                if (issue.Status?.IsDone == true)
                 {
-                    OngoingTasks = ongoingTasks,
-                    TotalTasks = totalTasks,
-                    DoneTasks = doneTasks,
-                    TaskCompletionRate = taskCompletionRate
-                };
-            }
-
-            foreach (var phase in project.Phases)
-            {
-
-                totalTasks += phase.Issues.Count();
-                
-            }
-
-
-            foreach (var status in project.Statuses)
-            {
-                int statusTaskCount = 0;
-
-                foreach (var phase in project.Phases)
-                {
-                    foreach (var issue in phase.Issues)
-                    {
-
-                        if (issue.Status?.Id == status.Id)
-                        {
-                            statusTaskCount++;
-
-                            if (issue.Status?.IsDone == true)
-                            {
-                                doneTasks++;
-                            }
-                            else if (issue.Status?.IsDone == false)
-                            {
-                                ongoingTasks++;
-                            }
-                        }
-                    }
+                    doneTasks++;
                 }
+                else if (issue.Status?.IsDone == false || issue?.Status?.IsDone == null)
+                {
+                    ongoingTasks++;
+                }
+            }
 
-                if (statusTaskCount > 0)
+            double remainingPercentage = 100;
+            int statusesCount = project.Statuses.Count;
+
+            for (int i = 0; i < statusesCount; i++)
+            {
+                var status = project.Statuses.ElementAt(i);
+                int statusTaskCount = allIssues.Count(issue => issue.Status?.Id == status.Id);
+
+                if (i == statusesCount - 1)
                 {
                     taskCompletionRate.Add(new TaskCompletionRate
                     {
                         Status = status.Name,
-                        Percentage = (double)statusTaskCount * 100 / totalTasks
+                        Percentage = Math.Round(remainingPercentage, 2)
                     });
                 }
                 else
                 {
+                    double percentage = totalTasks > 0
+                        ? Math.Round((double)statusTaskCount * 100 / totalTasks, 2)
+                        : 0;
+
+                    remainingPercentage -= percentage;
                     taskCompletionRate.Add(new TaskCompletionRate
                     {
                         Status = status.Name,
-                        Percentage = 0
+                        Percentage = percentage
                     });
                 }
             }
 
             var overallCompletionRate = totalTasks > 0
-                ? (double)doneTasks * 100 / totalTasks
+                ? Math.Round((double)doneTasks * 100 / totalTasks, 2)
                 : 0;
 
             return new TaskOverviewResponse
@@ -106,7 +94,8 @@ namespace Capstone.Application.Module.Projects.Query
                 OngoingTasks = ongoingTasks,
                 TotalTasks = totalTasks,
                 DoneTasks = doneTasks,
-                TaskCompletionRate = taskCompletionRate
+                TaskCompletionRate = taskCompletionRate,
+                OverallCompletionRate = overallCompletionRate
             };
         }
     }

@@ -16,7 +16,7 @@ namespace Capstone.Domain.Entities
         public int Percentage { get; set; } = 0;
         public Priority? Priority { get; set; }
         public float? EstimatedTime { get; set; } 
-        public float? ActualTime { get; set; } = 0;
+        public float? ActualTime { get; set; } 
         public int Position { get; set; }
         public Guid? ParentIssueId { get; set; }
         public Guid ReporterId { get; set; }

@@ -32,16 +32,6 @@ namespace Capstone.Application.Module.Issues.CommandHandle
         private readonly IMapper _mapper;
         public readonly IPublishEndpoint _publisher;
         private readonly IRequestClient<AddIssueMessage2> _requestClient;
-
-        //public AddIssueCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService, RedisContext redisContext, IMapper mapper, IPublishEndpoint publishEndpoint)
-        //{
-        //    _publishEndpoint = publishEndpoint;
-        //    _mapper = mapper;
-        //    _unitOfWork = unitOfWork;
-        //    _jwtService = jwtService;
-        //    _redisContext = redisContext;
-        //}
-
         public AddIssueCommandHandle(IPublishEndpoint publishEndpoint, IUnitOfWork unitOfWork, IJwtService jwtService, RedisContext redisContext, IMapper mapper, IRequestClient<AddIssueMessage2> requestClient)
         {
             _requestClient = requestClient;
@@ -89,7 +79,8 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 var assignee = _unitOfWork.Users.FindOne(x => x.Id == request.AssignedToId);
                 if (assignee == null)
                     return new ResponseMediator("Assigned user not found", null, 404);
-                responseSuccess = 205;
+                if(assignee.Id != user.Id)
+                    responseSuccess = 205;
                 userAssignee = assignee;
             }
 
@@ -130,7 +121,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 await _unitOfWork.SaveChangesAsync();
                 await _publisher.Publish(new SendEmailMessage() { ToEmail = userAssignee.Email == null ? "" : userAssignee.Email, Body = EmailMessage.AssignIssue(request.Title, request.Description, request.StartDate, request.DueDate, response2.Message.UserId, status.ProjectId + ""), Subject = $"[ {status.Project.Name} ]You are assigned to issue {request.Title}" });
             }
-            return new ResponseMediator("", response);
+            return new ResponseMediator(userAssignee.Id + "", response, responseSuccess);
         }
 
 

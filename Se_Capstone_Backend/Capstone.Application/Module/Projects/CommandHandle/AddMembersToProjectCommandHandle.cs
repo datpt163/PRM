@@ -35,8 +35,10 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             var project = _unitOfWork.Projects.Find(x => x.Id == request.ProjectId).Include(c => c.UserProjects).FirstOrDefault();
             if (project == null)
                 return new ResponseMediator("Project not found", null, 404);
-
-            var userIds = request.MemberIds.Except(project.UserProjects.Select(x => x.UserId).ToList());
+            var userIds = new List<Guid>();
+            userIds.AddRange(request.MemberIds);
+            userIds.RemoveAll(x => x == userAsign.Id);
+            userIds = userIds.Except(project.UserProjects.Select(x => x.UserId).ToList()).ToList();
             foreach (var userId in userIds)
             {
                 var user = _unitOfWork.Users.FindOne(x => x.Id == userId);
