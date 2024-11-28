@@ -112,11 +112,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 #region MigrateDbContext
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dbContext = scope.ServiceProvider.GetRequiredService<SeCapstoneContext>();
-//    dbContext.Database.Migrate();
-//}
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<SeCapstoneContext>();
+    dbContext.Database.Migrate();
+}
 #endregion
 
 

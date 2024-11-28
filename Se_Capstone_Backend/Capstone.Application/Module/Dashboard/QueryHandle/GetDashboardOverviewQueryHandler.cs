@@ -23,21 +23,21 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
 
         public async Task<DashboardOverviewResponse> Handle(GetDashboardOverviewQuery request, CancellationToken cancellationToken)
         {
-            var totalTasks = await _unitOfWork.Issues.GetQueryNoTracking().CountAsync(cancellationToken);
+            var totalTasks = await _unitOfWork.Issues.GetQueryNoTracking().Where(x => !x.IsDeleted).CountAsync(cancellationToken);
 
-            var ongoingTasks = await _unitOfWork.Issues.GetQueryNoTracking()
+            var ongoingTasks = await _unitOfWork.Issues.GetQueryNoTracking().Where(x=> !x.IsDeleted)
                 .Include(x => x.Status).CountAsync(i => i.Status != null && i.Status.IsDone == false, cancellationToken);
 
-            var totalProjects = await _unitOfWork.Projects.GetQueryNoTracking().CountAsync(cancellationToken);
+            var totalProjects = await _unitOfWork.Projects.GetQueryNoTracking().Where(x=> !x.IsDeleted).CountAsync(cancellationToken);
 
             var currentYear = DateTime.Now.Year;
 
             var totalProjectsDone = await _unitOfWork.Projects.GetQueryNoTracking()
-                .Where(p => p.Status == ProjectStatus.Finished && ((p.StartDate.HasValue && p.StartDate.Value.Year == currentYear)|| (p.EndDate.HasValue && p.EndDate.Value.Year == currentYear)))
+                .Where(p => !p.IsDeleted && p.Status == ProjectStatus.Finished && ((p.StartDate.HasValue && p.StartDate.Value.Year == currentYear)|| (p.EndDate.HasValue && p.EndDate.Value.Year == currentYear)))
                 .CountAsync(cancellationToken);
 
 
-            var totalSkillsEmployee = await _unitOfWork.Skills.GetQueryNoTracking().CountAsync(cancellationToken);
+            var totalSkillsEmployee = await _unitOfWork.Skills.GetQueryNoTracking().Where(x=> !x.IsDeleted).CountAsync(cancellationToken);
             var totalEmployee = await _unitOfWork.Users.GetQueryNoTracking().Where(x=> x.Status != UserStatus.Inacitve).CountAsync(cancellationToken);
 
             return new DashboardOverviewResponse
