@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Capstone.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class BackupNewDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -63,31 +63,17 @@ namespace Capstone.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "logEntries",
+                name: "positions",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    errorMessage = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    isChecked = table.Column<bool>(type: "boolean", nullable: false),
+                    title = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    description = table.Column<string>(type: "text", nullable: true),
                     createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     isDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     createdBy = table.Column<Guid>(type: "uuid", maxLength: 100, nullable: true),
                     updatedBy = table.Column<Guid>(type: "uuid", maxLength: 100, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_logEntries", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "positions",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -100,6 +86,7 @@ namespace Capstone.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
+                    color = table.Column<string>(type: "text", nullable: false),
                     name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     normalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     concurrencyStamp = table.Column<string>(type: "text", nullable: true)
@@ -115,7 +102,7 @@ namespace Capstone.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    description = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     isDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -125,6 +112,43 @@ namespace Capstone.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_skills", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "users",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    avatar = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    address = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    status = table.Column<short>(type: "smallint", nullable: false, defaultValue: (short)1),
+                    gender = table.Column<short>(type: "smallint", maxLength: 30, nullable: false, defaultValue: (short)1),
+                    dob = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    fullName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    bankAccount = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    bankAccountName = table.Column<string>(type: "text", nullable: true),
+                    createDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    updateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    deleteDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    refreshToken = table.Column<string>(type: "text", nullable: true),
+                    userName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    normalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    normalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    emailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    passwordHash = table.Column<string>(type: "text", nullable: true),
+                    securityStamp = table.Column<string>(type: "text", nullable: true),
+                    concurrencyStamp = table.Column<string>(type: "text", nullable: true),
+                    phoneNumber = table.Column<string>(type: "text", nullable: true),
+                    phoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    twoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    lockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    lockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    accessFailedCount = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_users", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -176,50 +200,6 @@ namespace Capstone.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "users",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    avatar = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    address = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    status = table.Column<short>(type: "smallint", nullable: false, defaultValue: (short)1),
-                    gender = table.Column<short>(type: "smallint", maxLength: 30, nullable: false, defaultValue: (short)1),
-                    dob = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    fullName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    bankAccount = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    bankAccountName = table.Column<string>(type: "text", nullable: true),
-                    createDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    updateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    deleteDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    positionId = table.Column<Guid>(type: "uuid", nullable: true),
-                    refreshToken = table.Column<string>(type: "text", nullable: true),
-                    userName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    normalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    normalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    emailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    passwordHash = table.Column<string>(type: "text", nullable: true),
-                    securityStamp = table.Column<string>(type: "text", nullable: true),
-                    concurrencyStamp = table.Column<string>(type: "text", nullable: true),
-                    phoneNumber = table.Column<string>(type: "text", nullable: true),
-                    phoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    twoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    lockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    lockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    accessFailedCount = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_users", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_users_positions_positionId",
-                        column: x => x.positionId,
-                        principalTable: "positions",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "roleClaims",
                 columns: table => new
                 {
@@ -236,54 +216,6 @@ namespace Capstone.Infrastructure.Migrations
                         name: "FK_roleClaims_roles_roleId",
                         column: x => x.roleId,
                         principalTable: "roles",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "rolePermissions",
-                columns: table => new
-                {
-                    permissionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    roleId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_rolePermissions", x => new { x.permissionId, x.roleId });
-                    table.ForeignKey(
-                        name: "FK_rolePermissions_permissions_permissionId",
-                        column: x => x.permissionId,
-                        principalTable: "permissions",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_rolePermissions_roles_roleId",
-                        column: x => x.roleId,
-                        principalTable: "roles",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "applicantJobs",
-                columns: table => new
-                {
-                    applicantId = table.Column<Guid>(type: "uuid", nullable: false),
-                    jobId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_applicantJobs", x => new { x.applicantId, x.jobId });
-                    table.ForeignKey(
-                        name: "FK_applicantJobs_applicants_applicantId",
-                        column: x => x.applicantId,
-                        principalTable: "applicants",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_applicantJobs_jobs_jobId",
-                        column: x => x.jobId,
-                        principalTable: "jobs",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -316,30 +248,21 @@ namespace Capstone.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "leave_logs",
+                name: "Notifications",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    reason = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    isFullDay = table.Column<bool>(type: "boolean", nullable: false),
-                    isPaid = table.Column<bool>(type: "boolean", nullable: false),
-                    isApprove = table.Column<bool>(type: "boolean", nullable: false),
-                    startTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    endTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    isChecked = table.Column<bool>(type: "boolean", nullable: false),
                     userId = table.Column<Guid>(type: "uuid", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    isDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    createdBy = table.Column<Guid>(type: "uuid", maxLength: 100, nullable: true),
-                    updatedBy = table.Column<Guid>(type: "uuid", maxLength: 100, nullable: true)
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    type = table.Column<string>(type: "text", nullable: false),
+                    data = table.Column<string>(type: "json", nullable: false),
+                    hasRead = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_leave_logs", x => x.id);
+                    table.PrimaryKey("PK_Notifications", x => x.id);
                     table.ForeignKey(
-                        name: "FK_leave_logs_users_userId",
+                        name: "FK_Notifications_users_userId",
                         column: x => x.userId,
                         principalTable: "users",
                         principalColumn: "id",
@@ -354,8 +277,8 @@ namespace Capstone.Infrastructure.Migrations
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    startDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    endDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    startDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    endDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     status = table.Column<short>(type: "smallint", nullable: false, defaultValue: (short)2),
                     isVisible = table.Column<bool>(type: "boolean", nullable: false),
                     leadId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -509,6 +432,54 @@ namespace Capstone.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "rolePermissions",
+                columns: table => new
+                {
+                    permissionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    roleId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_rolePermissions", x => new { x.permissionId, x.roleId });
+                    table.ForeignKey(
+                        name: "FK_rolePermissions_permissions_permissionId",
+                        column: x => x.permissionId,
+                        principalTable: "permissions",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_rolePermissions_roles_roleId",
+                        column: x => x.roleId,
+                        principalTable: "roles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "applicantJobs",
+                columns: table => new
+                {
+                    applicantId = table.Column<Guid>(type: "uuid", nullable: false),
+                    jobId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_applicantJobs", x => new { x.applicantId, x.jobId });
+                    table.ForeignKey(
+                        name: "FK_applicantJobs_applicants_applicantId",
+                        column: x => x.applicantId,
+                        principalTable: "applicants",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_applicantJobs_jobs_jobId",
+                        column: x => x.jobId,
+                        principalTable: "jobs",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "labels",
                 columns: table => new
                 {
@@ -553,30 +524,6 @@ namespace Capstone.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "projectUsers",
-                columns: table => new
-                {
-                    projectId = table.Column<Guid>(type: "uuid", nullable: false),
-                    userId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_projectUsers", x => new { x.projectId, x.userId });
-                    table.ForeignKey(
-                        name: "FK_projectUsers_projects_projectId",
-                        column: x => x.projectId,
-                        principalTable: "projects",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_projectUsers_users_userId",
-                        column: x => x.userId,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "statuses",
                 columns: table => new
                 {
@@ -585,6 +532,7 @@ namespace Capstone.Infrastructure.Migrations
                     description = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     position = table.Column<int>(type: "integer", nullable: false),
                     color = table.Column<string>(type: "text", nullable: false),
+                    isDone = table.Column<bool>(type: "boolean", nullable: true),
                     projectId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
@@ -594,6 +542,45 @@ namespace Capstone.Infrastructure.Migrations
                         name: "FK_statuses_projects_projectId",
                         column: x => x.projectId,
                         principalTable: "projects",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "userProjects",
+                columns: table => new
+                {
+                    userId = table.Column<Guid>(type: "uuid", nullable: false),
+                    projectId = table.Column<Guid>(type: "uuid", nullable: false),
+                    positionId = table.Column<Guid>(type: "uuid", nullable: true),
+                    isProjectConfigurator = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    isIssueConfigurator = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    isCommentConfigurator = table.Column<bool>(type: "boolean", nullable: false),
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    isDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    createdBy = table.Column<Guid>(type: "uuid", maxLength: 100, nullable: true),
+                    updatedBy = table.Column<Guid>(type: "uuid", maxLength: 100, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_userProjects", x => new { x.userId, x.projectId });
+                    table.ForeignKey(
+                        name: "FK_userProjects_positions_positionId",
+                        column: x => x.positionId,
+                        principalTable: "positions",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_userProjects_projects_projectId",
+                        column: x => x.projectId,
+                        principalTable: "projects",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_userProjects_users_userId",
+                        column: x => x.userId,
+                        principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -610,9 +597,8 @@ namespace Capstone.Infrastructure.Migrations
                     dueDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     percentage = table.Column<int>(type: "integer", nullable: false),
                     priority = table.Column<short>(type: "smallint", nullable: true, defaultValue: (short)1),
-                    estimatedTime = table.Column<int>(type: "integer", nullable: true),
-                    actualTime = table.Column<int>(type: "integer", nullable: true),
-                    percentDone = table.Column<int>(type: "integer", nullable: false),
+                    estimatedTime = table.Column<float>(type: "real", nullable: true),
+                    actualTime = table.Column<float>(type: "real", nullable: true),
                     position = table.Column<int>(type: "integer", nullable: false),
                     parentIssueId = table.Column<Guid>(type: "uuid", nullable: true),
                     reporterId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -767,8 +753,8 @@ namespace Capstone.Infrastructure.Migrations
                 column: "projectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_leave_logs_userId",
-                table: "leave_logs",
+                name: "IX_Notifications_userId",
+                table: "Notifications",
                 column: "userId");
 
             migrationBuilder.CreateIndex(
@@ -785,11 +771,6 @@ namespace Capstone.Infrastructure.Migrations
                 name: "IX_projects_leadId",
                 table: "projects",
                 column: "leadId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_projectUsers_userId",
-                table: "projectUsers",
-                column: "userId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_roleClaims_roleId",
@@ -833,6 +814,16 @@ namespace Capstone.Infrastructure.Migrations
                 column: "userId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_userProjects_positionId",
+                table: "userProjects",
+                column: "positionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_userProjects_projectId",
+                table: "userProjects",
+                column: "projectId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_userRoles_roleId",
                 table: "userRoles",
                 column: "roleId");
@@ -841,11 +832,6 @@ namespace Capstone.Infrastructure.Migrations
                 name: "EmailIndex",
                 table: "users",
                 column: "normalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_users_positionId",
-                table: "users",
-                column: "positionId");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -870,13 +856,7 @@ namespace Capstone.Infrastructure.Migrations
                 name: "comments");
 
             migrationBuilder.DropTable(
-                name: "leave_logs");
-
-            migrationBuilder.DropTable(
-                name: "logEntries");
-
-            migrationBuilder.DropTable(
-                name: "projectUsers");
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "roleClaims");
@@ -897,6 +877,9 @@ namespace Capstone.Infrastructure.Migrations
                 name: "userLogins");
 
             migrationBuilder.DropTable(
+                name: "userProjects");
+
+            migrationBuilder.DropTable(
                 name: "userRoles");
 
             migrationBuilder.DropTable(
@@ -913,6 +896,9 @@ namespace Capstone.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "skills");
+
+            migrationBuilder.DropTable(
+                name: "positions");
 
             migrationBuilder.DropTable(
                 name: "roles");
@@ -937,9 +923,6 @@ namespace Capstone.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "users");
-
-            migrationBuilder.DropTable(
-                name: "positions");
         }
     }
 }
