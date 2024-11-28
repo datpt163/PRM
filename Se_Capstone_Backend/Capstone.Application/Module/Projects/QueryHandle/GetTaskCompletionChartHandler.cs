@@ -22,6 +22,12 @@ namespace Capstone.Application.Module.Projects.QueryHandle
 
         public async Task<List<TaskCompletionPoint>> Handle(GetTaskCompletionChartQuery request, CancellationToken cancellationToken)
         {
+            if (request.StartDate > request.EndDate)
+            {
+                throw new Exception("Start date cannot be greater than end date!");
+            }
+
+
             var project = await _unitOfWork.Projects
                 .GetQueryNoTracking()
                 .Include(p => p.Statuses)
@@ -40,16 +46,16 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                 : project.Phases.SelectMany(phase => phase.Issues.Where(x=> x.Status.IsDone == true)).ToList();
 
             var completedIssues = relevantIssues
-                .Where(issue => issue.DueDate.HasValue &&
-                                issue.DueDate >= request.StartDate &&
-                                issue.DueDate <= request.EndDate)
+                .Where(issue => issue.ActualDate.HasValue &&
+                                issue.ActualDate >= request.StartDate &&
+                                issue.ActualDate <= request.EndDate)
                 .ToList();
 
             var groupedData = completedIssues
                 .GroupBy(issue => new
                 {
-                    Year = issue.DueDate!.Value.Year,
-                    Month = issue.DueDate!.Value.Month
+                    Year = issue.ActualDate!.Value.Year,
+                    Month = issue.ActualDate!.Value.Month
                 })
                 .Select(group => new TaskCompletionPoint
                 {

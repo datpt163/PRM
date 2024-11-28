@@ -6,5 +6,7 @@ namespace Capstone.Application.Module.Projects.Query
     {
         public Guid ProjectId { get; set; }
         public Guid? PhaseId { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
     }
 }

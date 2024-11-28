@@ -48,6 +48,16 @@ namespace Capstone.Api.Module.Dashboard.Controllers
             return ResponseOk(result);
         }
 
+        [HttpGet("user-overview/{userId}")]
+        //[Authorize(Roles = "VIEW_USER_DASHBOARD")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserOverview(Guid userId)
+        {
+            var query = new GetUserOverviewQuery { UserId = userId };
+            var result = await _mediator.Send(query);
+            return ResponseOk(result);
+        }
+
 
     }
 }

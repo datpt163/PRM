@@ -15,6 +15,11 @@ namespace Capstone.Application.Module.Projects.Query
 
         public async Task<TaskOverviewResponse> Handle(GetTaskOverviewQuery request, CancellationToken cancellationToken)
         {
+            if (request.StartDate.HasValue && request.EndDate.HasValue && request.StartDate > request.EndDate)
+            {
+                throw new Exception("Start date cannot be greater than end date!");
+            }
+
             var project = await _unitOfWork.Projects
                            .GetQueryNoTracking()
                            .Include(s => s.Statuses)
@@ -39,6 +44,9 @@ namespace Capstone.Application.Module.Projects.Query
             var allIssues = request.PhaseId == null
                 ? project.Statuses.SelectMany(status => status.Issues).ToList()
                 : project.Phases.SelectMany(phase => phase.Issues).ToList();
+
+            allIssues = allIssues.Where(issue => (!request.StartDate.HasValue || issue.StartDate >= request.StartDate) &&
+                                (!request.EndDate.HasValue || issue.DueDate <= request.EndDate)).ToList();
 
             totalTasks = allIssues.Count;
 

@@ -18,6 +18,11 @@ namespace Capstone.Application.Module.Projects.QueryHandle
 
         public async Task<ResponseReportTask> Handle(GetReportTaskQuery request, CancellationToken cancellationToken)
         {
+            if (request.StartDate.HasValue && request.EndDate.HasValue && request.StartDate > request.EndDate)
+            {
+                throw new Exception("Start date cannot be greater than end date!");
+            }
+
             var project = await _unitOfWork.Projects.GetQueryNoTracking()
                 .Include(x=> x.Lead)
                 .Include(p=> p.Phases)
