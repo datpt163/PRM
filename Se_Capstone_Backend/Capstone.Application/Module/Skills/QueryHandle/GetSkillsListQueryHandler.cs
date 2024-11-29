@@ -36,7 +36,6 @@ namespace Capstone.Application.Module.Skills.QueryHandle
                 query = query.Where(x => x.Description.ToLower().Contains(request.Description.ToLower()));
             }
 
-            query = query.OrderBy(x => x.CreatedAt);
             int totalCount = await query.CountAsync(cancellationToken);
 
             if (request.PageIndex <= 0) request.PageIndex = 1;
