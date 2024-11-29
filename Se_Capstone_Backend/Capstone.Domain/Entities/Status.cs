@@ -14,7 +14,7 @@ namespace Capstone.Domain.Entities
         public string? Description { get; set; } = string.Empty;
         public int Position { get; set; }
         public string Color { get; set; } = string.Empty;
-        public bool? IsDone { get; set; } 
+        public bool? IsDone { get; set; } = false;
         public Guid ProjectId { get; set; }
         [JsonIgnore]
         public Project Project { get; set; } = null!;

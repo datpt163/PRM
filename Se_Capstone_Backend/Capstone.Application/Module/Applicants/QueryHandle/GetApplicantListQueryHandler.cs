@@ -88,7 +88,7 @@ namespace Capstone.Application.Module.Applicants.QueryHandle
                     UpdatedAt = a.UpdatedAt,
                     UpdatedBy = a.UpdatedBy,
                     IsDeleted = a.IsDeleted,
-                }).ToListAsync(cancellationToken);
+                }).OrderByDescending(x=> x.CreatedAt).ToListAsync(cancellationToken);
 
             return new PagingResultSP<ApplicantDto>(pagedApplicants, totalCount, request.PageIndex, request.PageSize);
         }
