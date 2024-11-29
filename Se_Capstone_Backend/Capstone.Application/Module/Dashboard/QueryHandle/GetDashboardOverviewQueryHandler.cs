@@ -26,7 +26,7 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
             var totalTasks = await _unitOfWork.Issues.GetQueryNoTracking().Where(x => !x.IsDeleted).CountAsync(cancellationToken);
 
             var ongoingTasks = await _unitOfWork.Issues.GetQueryNoTracking().Where(x=> !x.IsDeleted)
-                .Include(x => x.Status).CountAsync(i => i.Status != null && i.Status.IsDone == false, cancellationToken);
+                .Include(x => x.Status).CountAsync(i => i.Status != null && (i.Status.IsDone == false || i.Status.IsDone == null), cancellationToken);
 
             var totalProjects = await _unitOfWork.Projects.GetQueryNoTracking().Where(x=> !x.IsDeleted).CountAsync(cancellationToken);
 

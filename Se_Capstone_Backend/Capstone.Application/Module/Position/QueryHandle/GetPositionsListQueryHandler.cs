@@ -47,13 +47,13 @@ namespace Capstone.Application.Module.Positions.QueryHandle
                 {
                     Id = position.Id,
                     Title = position.Title,
-                    Description = position.Description,
+                    Description = position.Description ?? string.Empty,
                     CreatedAt = position.CreatedAt,
                     UpdatedAt = position.UpdatedAt,
                     IsDeleted = position.IsDeleted,
                     CreatedBy = position.CreatedBy,
                     UpdatedBy = position.UpdatedBy
-                }).ToListAsync(cancellationToken);
+                }).OrderByDescending(x => x.CreatedAt).ToListAsync(cancellationToken);
 
             return new PagingResultSP<PositionDto>(pagedPositions, totalCount, request.PageIndex, request.PageSize);
         }

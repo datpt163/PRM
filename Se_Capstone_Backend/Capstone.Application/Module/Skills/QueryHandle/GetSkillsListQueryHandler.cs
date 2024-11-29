@@ -53,7 +53,7 @@ namespace Capstone.Application.Module.Skills.QueryHandle
                     IsDeleted = skill.IsDeleted,
                     CreatedBy = skill.CreatedBy,
                     UpdatedBy = skill.UpdatedBy
-                }).ToListAsync(cancellationToken);
+                }).OrderByDescending(x => x.CreatedAt).ToListAsync(cancellationToken);
 
             return new PagingResultSP<SkillDto>(pagedSkills, totalCount, request.PageIndex, request.PageSize);
         }
