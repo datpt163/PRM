@@ -46,7 +46,7 @@ namespace Capstone.Api.Module.Projects.Controllers
                 ProjectId = request.ProjectId,
                 PhaseId = request.PhaseId,
                 EndDate = request.EndDate,
-                PhaseId = request.PhaseId,
+                StartDate = request.StartDate,
             };
 
             var result = await _mediator.Send(query);
