@@ -99,6 +99,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             issue.LabelId = request.LabelId;
             issue.PhaseId = request.PhaseId;
             issue.ActualTime = request.ActualTime;
+            issue.ActualDate = request.ActualDate;
             _unitOfWork.Issues.Update(issue);
             await _unitOfWork.SaveChangesAsync();
             var response = _mapper.Map<IssueDTO?>(issue);

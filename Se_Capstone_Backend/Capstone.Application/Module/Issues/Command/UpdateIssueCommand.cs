@@ -34,6 +34,7 @@ namespace Capstone.Application.Module.Issues.Command
         public string? Description { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? DueDate { get; set; }
+        public DateTime? ActualDate { get; set; }
         public int Percentage { get; set; }
         public Priority? Priority { get; set; }
         public float? EstimatedTime { get; set; }

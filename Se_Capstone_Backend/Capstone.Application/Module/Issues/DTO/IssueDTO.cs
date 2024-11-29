@@ -18,6 +18,7 @@ namespace Capstone.Application.Module.Issues.DTO
         public string? Description { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? DueDate { get; set; }
+        public DateTime? ActualDate { get; set; }
         public int Percentage { get; set; } = 0;
         public Priority? Priority { get; set; }
         public float? EstimatedTime { get; set; }
@@ -47,6 +48,7 @@ namespace Capstone.Application.Module.Issues.DTO
         public string? Description { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? DueDate { get; set; }
+        public DateTime? ActualDate { get; set; }
         public int Percentage { get; set; } = 0;
         public Priority? Priority { get; set; }
         public float? EstimatedTime { get; set; }
