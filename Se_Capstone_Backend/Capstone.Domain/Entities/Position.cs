@@ -11,7 +11,7 @@ namespace Capstone.Domain.Entities
         public Guid Id { get; set; }
         [MaxLength(250)]
         public string Title { get; set; } = string.Empty;
-        public string? Description {  get; set; }
+        public string? Description {  get; set; } = string.Empty;
         public ICollection<UserProject> UserProjects { get; set; } = new List<UserProject>();
     }
 }

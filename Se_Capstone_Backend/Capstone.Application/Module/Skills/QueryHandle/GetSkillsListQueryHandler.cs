@@ -36,6 +36,7 @@ namespace Capstone.Application.Module.Skills.QueryHandle
                 query = query.Where(x => x.Description.ToLower().Contains(request.Description.ToLower()));
             }
 
+            query = query.OrderByDescending(x => x.CreatedAt);
             int totalCount = await query.CountAsync(cancellationToken);
 
             if (request.PageIndex <= 0) request.PageIndex = 1;
@@ -53,7 +54,7 @@ namespace Capstone.Application.Module.Skills.QueryHandle
                     IsDeleted = skill.IsDeleted,
                     CreatedBy = skill.CreatedBy,
                     UpdatedBy = skill.UpdatedBy
-                }).OrderByDescending(x => x.CreatedAt).ToListAsync(cancellationToken);
+                }).ToListAsync(cancellationToken);
 
             return new PagingResultSP<SkillDto>(pagedSkills, totalCount, request.PageIndex, request.PageSize);
         }
