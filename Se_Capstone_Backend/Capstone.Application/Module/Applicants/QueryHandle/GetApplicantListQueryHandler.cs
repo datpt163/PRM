@@ -71,14 +71,14 @@ namespace Capstone.Application.Module.Applicants.QueryHandle
             {
                 applicantsQuery = applicantsQuery.Where(a => request.MainJobIds.Contains(a.MainJobId));
             }
-            applicantsQuery = applicantsQuery.OrderBy(x => x.CreatedAt);
-
 
 
             int totalCount = await applicantsQuery.CountAsync(cancellationToken);
-            var pagedApplicants = await applicantsQuery
-                .Skip((request.PageIndex - 1) * request.PageSize)
-                .Take(request.PageSize)
+            if (request.PageIndex <= 0) request.PageIndex = 1;
+            if (request.PageSize <= 0) request.PageSize = 10;
+            var pagedPositionsQuery = applicantsQuery.OrderByAndPaginate(request);
+
+            var pagedApplicants = await pagedPositionsQuery
                 .Select(a => new ApplicantDto
                 {
                     Id = a.Id,
