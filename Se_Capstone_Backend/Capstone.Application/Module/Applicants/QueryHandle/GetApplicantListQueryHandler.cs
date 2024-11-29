@@ -7,6 +7,7 @@ using Capstone.Infrastructure.Helpers;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace Capstone.Application.Module.Applicants.QueryHandle
@@ -70,6 +71,9 @@ namespace Capstone.Application.Module.Applicants.QueryHandle
             {
                 applicantsQuery = applicantsQuery.Where(a => request.MainJobIds.Contains(a.MainJobId));
             }
+            applicantsQuery = applicantsQuery.OrderByDescending(x => x.CreatedAt);
+
+
 
             int totalCount = await applicantsQuery.CountAsync(cancellationToken);
             var pagedApplicants = await applicantsQuery
@@ -88,7 +92,7 @@ namespace Capstone.Application.Module.Applicants.QueryHandle
                     UpdatedAt = a.UpdatedAt,
                     UpdatedBy = a.UpdatedBy,
                     IsDeleted = a.IsDeleted,
-                }).OrderByDescending(x=> x.CreatedAt).ToListAsync(cancellationToken);
+                }).ToListAsync(cancellationToken);
 
             return new PagingResultSP<ApplicantDto>(pagedApplicants, totalCount, request.PageIndex, request.PageSize);
         }

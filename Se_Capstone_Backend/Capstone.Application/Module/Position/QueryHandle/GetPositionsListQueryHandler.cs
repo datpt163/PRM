@@ -36,6 +36,8 @@ namespace Capstone.Application.Module.Positions.QueryHandle
                 query = query.Where(x => x.Description.ToLower().Contains(request.Description.ToLower()));
             }
 
+            query = query.OrderByDescending(x => x.CreatedAt);
+
             int totalCount = await query.CountAsync(cancellationToken);
 
             if (request.PageIndex <= 0) request.PageIndex = 1;
@@ -53,7 +55,7 @@ namespace Capstone.Application.Module.Positions.QueryHandle
                     IsDeleted = position.IsDeleted,
                     CreatedBy = position.CreatedBy,
                     UpdatedBy = position.UpdatedBy
-                }).OrderByDescending(x => x.CreatedAt).ToListAsync(cancellationToken);
+                }).ToListAsync(cancellationToken);
 
             return new PagingResultSP<PositionDto>(pagedPositions, totalCount, request.PageIndex, request.PageSize);
         }
