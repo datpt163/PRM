@@ -24,7 +24,7 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
                 .Include(x => x.LeadProjects)
                 .Include(x=> x.UserProjects)
                 .ThenInclude(x=> x.Project)
-                .ThenInclude(x=> x.Status)
+                //.ThenInclude(x=> x.Status)
                 .Include(x => x.AssinedIssues)
                 .ThenInclude(x=> x.Status)
                 .FirstOrDefaultAsync(x=> x.Id == request.UserId,cancellationToken);
