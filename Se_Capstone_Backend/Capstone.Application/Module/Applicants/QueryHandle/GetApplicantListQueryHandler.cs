@@ -71,7 +71,7 @@ namespace Capstone.Application.Module.Applicants.QueryHandle
             {
                 applicantsQuery = applicantsQuery.Where(a => request.MainJobIds.Contains(a.MainJobId));
             }
-            applicantsQuery = applicantsQuery.OrderByDescending(x => x.CreatedAt);
+            applicantsQuery = applicantsQuery.OrderBy(x => x.CreatedAt);
 
 
 
