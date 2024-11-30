@@ -86,8 +86,20 @@ namespace Capstone.Api.Module.Comments.Controllers
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var result = await _mediator.Send(new UpdateCommentCommand() { Id = id, Content = request.Content, Token = token });
-            if (string.IsNullOrEmpty(result.ErrorMessage))
-                return ResponseOk(result.Data);
+            if (result.StatusCode == 200)
+            {
+                if (!string.IsNullOrEmpty(result.ErrorMessage))
+                {
+                    var ids = JsonSerializer.Deserialize<List<Guid>>(result.ErrorMessage);
+                    foreach (var userId in (ids == null ? new List<Guid>() : ids))
+                    {
+                        await _hubContext.Clients.Group(userId + "")
+                                               .SendAsync("NotificationResponse", "Success");
+                    }
+                    return ResponseOk(result.Data);
+                }
+                return ResponseBadRequest(messageResponse: result.ErrorMessage);
+            }
             else
             {
                 if (result.StatusCode == 404)
