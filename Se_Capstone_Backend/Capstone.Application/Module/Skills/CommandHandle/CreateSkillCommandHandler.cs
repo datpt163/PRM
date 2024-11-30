@@ -30,7 +30,6 @@ namespace Capstone.Application.Module.Skills.CommandHandle
                 Title = request.Title,
                 Description = request.Description,
                 CreatedAt = DateTime.Now,
-                CreatedBy = null,
                 IsDeleted = false
             };
 
