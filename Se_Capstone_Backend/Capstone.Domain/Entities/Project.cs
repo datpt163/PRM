@@ -33,6 +33,7 @@ namespace Capstone.Domain.Entities
 
         [MaxLength(100)]
         public string Code { get; set; } = string.Empty;
+        public float? TotalEffort { get; set; } = 0;
 
         [MaxLength(100)]
         public string Description { get; set; } = string.Empty;

@@ -83,6 +83,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
 
 
             var projectCreate = new Project(request.Name.Trim(), request.Code.Trim(), request.Description, request.StartDate, request.EndDate, request.LeadId, false);
+            projectCreate.TotalEffort = request.TotalEffort;
             if (request.IsVisible != null)
                 projectCreate.IsVisible = request.IsVisible.Value;
 

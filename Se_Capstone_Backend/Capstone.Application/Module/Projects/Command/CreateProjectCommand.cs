@@ -19,5 +19,6 @@ namespace Capstone.Application.Module.Projects.Command
         public Guid? LeadId { get; set; }
         [JsonIgnore]
         public string Token { get; set; } = string.Empty;
+        public float? TotalEffort { get; set; } = 0;
     }
 }

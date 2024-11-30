@@ -6,6 +6,8 @@
         public int TotalTasks { get; set; }
         public int DoneTasks { get; set; }
         public double OverallCompletionRate { get; set; }
+        public float? TotalEffort { get; set; }
+        public float? ActualEffot { get; set; } = 0;
 
         public List<TaskCompletionRate> TaskCompletionRate { get; set; } = new List<TaskCompletionRate>();
     }

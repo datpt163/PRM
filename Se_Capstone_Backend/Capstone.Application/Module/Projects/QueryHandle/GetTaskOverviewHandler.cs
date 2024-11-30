@@ -45,6 +45,16 @@ namespace Capstone.Application.Module.Projects.Query
                 ? project.Statuses.SelectMany(status => status.Issues).ToList()
                 : project.Phases.SelectMany(phase => phase.Issues).ToList();
 
+            var totalEffort = project.TotalEffort ?? 0;
+            float estimateEffort = 0;
+            float actualEffort = 0;
+            foreach(var issue in allIssues)
+            {
+                actualEffort = actualEffort - (issue.ActualTime ?? 0);
+
+                estimateEffort = actualEffort - (issue.EstimatedTime ?? 0);
+            }
+            
             allIssues = allIssues.Where(issue => (!request.StartDate.HasValue || issue.StartDate >= request.StartDate) &&
                                 (!request.EndDate.HasValue || issue.DueDate <= request.EndDate)).ToList();
 
@@ -103,7 +113,8 @@ namespace Capstone.Application.Module.Projects.Query
                 TotalTasks = totalTasks,
                 DoneTasks = doneTasks,
                 TaskCompletionRate = taskCompletionRate,
-                OverallCompletionRate = overallCompletionRate
+                OverallCompletionRate = overallCompletionRate,
+                TotalEffort = totalEffort
             };
         }
     }
