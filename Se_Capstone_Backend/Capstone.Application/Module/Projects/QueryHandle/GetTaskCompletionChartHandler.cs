@@ -46,9 +46,9 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                 : project.Phases.SelectMany(phase => phase.Issues.Where(x=> x.Status.IsDone == true)).ToList();
 
             var completedIssues = relevantIssues
-                .Where(issue => issue.ActualDate.HasValue &&
-                                issue.ActualDate >= request.StartDate &&
-                                issue.ActualDate <= request.EndDate)
+                .Where(issue => issue.ActualDate.HasValue &&(
+                                issue.ActualDate >= request.StartDate ||
+                                issue.ActualDate <= request.EndDate))
                 .ToList();
 
             var groupedData = completedIssues

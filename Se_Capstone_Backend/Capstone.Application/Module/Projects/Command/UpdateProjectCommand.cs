@@ -19,6 +19,7 @@ namespace Capstone.Application.Module.Projects.Command
         public ProjectStatus Status { get; set; }
         public Guid? TeamLeadId { get; set; }
         public string Token { get; set; } = string.Empty;
+        public float? TotalEffort { get; set; } 
 
         public UpdateProjectCommand(Guid id, string name, string code, string description, DateTime startDate, DateTime endDate, Guid? teamLeadId, ProjectStatus projectStatus)
         {

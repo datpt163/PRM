@@ -87,6 +87,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             project.UpdatedAt = DateTime.Now;
             project.Status = request.Status;
             project.LeadId = request.TeamLeadId;
+            project.TotalEffort = request.TotalEffort;
             _unitOfWork.Projects.Update(project);
             await _unitOfWork.SaveChangesAsync();
             var response = _mapper.Map<ProjectDTO>(project);

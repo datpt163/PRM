@@ -71,6 +71,54 @@ namespace Capstone.Api.Module.Projects.Controllers
             return ResponseOk(result, "Task completion chart data retrieved successfully.");
         }
 
+        [HttpPost("tasks/issue-completion")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetIssueCompletionData([FromBody] IssueCompletionDataRequest request)
+        {
+            var query = new GetIssueCompletionDataQuery
+            {
+                ProjectId = request.ProjectId,
+                PhaseId = request.PhaseId,
+                UserId = request.UserId,
+                StartDate = request.StartDate,
+                EndDate = request.EndDate
+            };
+
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpPost("user/tasks/issue-completion")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserIssueCompletionData([FromBody] IssueCompletionDataRequest request)
+        {
+            var query = new GetIssueCompletionDataQuery
+            {
+                ProjectId = request.ProjectId,
+                PhaseId = request.PhaseId,
+                UserId = request.UserId,
+                StartDate = request.StartDate,
+                EndDate = request.EndDate
+            };
+
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpPost("user/issues-task-summary")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetIssueTaskSummary([FromBody] IssueTaskSummaryRequest request)
+        {
+            var query = new GetIssueTaskSummaryQuery
+            {
+                ProjectId = request.ProjectId,
+                PhaseId = request.PhaseId,
+                UserId = request.UserId
+            };
+
+            var result = await _mediator.Send(query);
+            return ResponseOk(result, "Summary data retrieved successfully.");
+        }
 
     }
 }
