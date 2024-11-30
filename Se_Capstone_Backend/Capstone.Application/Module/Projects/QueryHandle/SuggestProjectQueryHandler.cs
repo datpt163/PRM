@@ -31,26 +31,43 @@ namespace Capstone.Application.Module.Projects.QueryHandle
 
         public async Task<List<SuggestMapping>> Handle(SuggestProjectQuery request, CancellationToken cancellationToken)
         {
-            string systemMessage = "You are a helpful assistant that provides potential employee suggestions based on project requirements. " +
+            try
+            {
+                string systemMessage = "You are a helpful assistant that provides potential employee suggestions based on project requirements. " +
                 "Please just return the result of top 3 suggest UID UserStatistics as a JSON array of GUIDs example [\"\", \"\", \"\"]. You need to return just result, don't add anything superfluous";
-            var maxTokens = 4096;
-            var requestJson = JsonSerializer.Serialize(request);
-            //var response = await _chatGptService.GetChatGptResponseAsync(requestJson, systemMessage, maxTokens);
-            //var response = await _huggingFaceService.GetResponseAsync(requestJson, systemMessage, maxTokens);
-            var response = await _cohereService.GetResponseAsync(requestJson, systemMessage, maxTokens);
+                var maxTokens = 4096;
+                var requestJson = JsonSerializer.Serialize(request);
+                //var response = await _chatGptService.GetChatGptResponseAsync(requestJson, systemMessage, maxTokens);
+                //var response = await _huggingFaceService.GetResponseAsync(requestJson, systemMessage, maxTokens);
+                var response = await _cohereService.GetResponseAsync(requestJson, systemMessage, maxTokens);
 
-            var potentialEmployeeIds = ParseGptResponse(response);
+                var potentialEmployeeIds = ParseGptResponse(response);
 
-            var suggestMappings = request.UserStatistics
-                  .Where(us => potentialEmployeeIds.Contains(us.Id))
-                  .Select(us => new SuggestMapping
-                  {
-                      UserId = us.Id,
-                      Name = us.FullName ?? string.Empty,
-                  })
-                  .ToList();
+                var suggestMappings = request.UserStatistics
+                      .Where(us => potentialEmployeeIds.Contains(us.Id))
+                      .Select(us => new SuggestMapping
+                      {
+                          UserId = us.Id,
+                          Name = us.FullName ?? string.Empty,
+                      })
+                      .ToList();
 
-            return suggestMappings;
+                return suggestMappings;
+            }catch(Exception e)
+            {
+                await Console.Out.WriteLineAsync(e.Message);
+                var suggestMappings = request.UserStatistics.OrderBy(x=> x.ActiveProjectCount)
+                        .Take(3)
+                      .Select(us => new SuggestMapping
+                      {
+                          UserId = us.Id,
+                          Name = us.FullName ?? string.Empty,
+                      })
+                      .ToList();
+
+                return suggestMappings;
+            }
+            
         }
         private List<Guid> ParseGptResponse(string gptResponse)
         {
