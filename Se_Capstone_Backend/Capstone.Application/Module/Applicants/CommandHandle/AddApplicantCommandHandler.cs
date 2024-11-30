@@ -56,7 +56,8 @@ namespace Capstone.Application.Module.Applicants.CommandHandler
                 Email = command.Email,
                 StartDate = command.StartDate,
                 PhoneNumber = command.PhoneNumber,
-                CvLink = cvUrl
+                CvLink = cvUrl,
+                CreatedAt = DateTime.Now,
             };
 
              _applicantRepository.Add(applicant);
