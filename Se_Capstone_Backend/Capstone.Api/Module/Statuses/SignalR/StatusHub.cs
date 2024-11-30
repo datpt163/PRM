@@ -1,12 +1,18 @@
-﻿using Capstone.Application.Common.Jwt;
+﻿using Capstone.Application.Common.Email.EmailQueue;
+using Capstone.Application.Common.EmailHTML;
+using Capstone.Application.Common.Jwt;
 using Capstone.Application.Module.Issues.ConsumerRabbitMq.Message;
 using Capstone.Application.Module.Status.ConsumerRabbitMq.Message;
+using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MassTransit;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using System.Threading;
+using static MassTransit.ValidationResultExtensions;
 namespace Capstone.Api.Module.Statuses.SignalR
 {
      [Authorize]
@@ -14,11 +20,17 @@ namespace Capstone.Api.Module.Statuses.SignalR
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPublishEndpoint _publishEndpoint;
+        private readonly IJwtService _jwtService;
+        private readonly IPublishEndpoint _publisher;
+        private readonly IHubContext<StatusHub> _hubContext;
 
-        public StatusHub(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint)
+        public StatusHub(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, IJwtService jwtService, IPublishEndpoint publisher, IHubContext<StatusHub> hubContext)
         {
             _unitOfWork = unitOfWork;
             _publishEndpoint = publishEndpoint;
+            _jwtService = jwtService;
+            _publisher = publisher;
+            _hubContext = hubContext;
         }
 
         public override async Task OnConnectedAsync()
@@ -70,13 +82,11 @@ namespace Capstone.Api.Module.Statuses.SignalR
         {
             try
             {
-                var httpContext = Context.GetHttpContext();
-
                 var status = _unitOfWork.Statuses.Find(x => x.Id == statusId).Include(c => c.Issues).FirstOrDefault();
                 if (status == null)
                     throw new Exception("Status not found.");
 
-                var issue = _unitOfWork.Issues.Find(x => x.Id == issueId).FirstOrDefault();
+                var issue = _unitOfWork.Issues.Find(x => x.Id == issueId).Include(c => c.Reporter).Include(c => c.Assignee).Include(c => c.Status).FirstOrDefault();
                 if (issue == null)
                     throw new Exception("Issue not found.");
 
@@ -85,6 +95,33 @@ namespace Capstone.Api.Module.Statuses.SignalR
 
                 if (position > status.Issues.Count())
                     throw new Exception("Some thing wrong with position");
+                var httpContext = Context.GetHttpContext();
+                var token = httpContext?.Request.Headers["Authorization"].ToString();
+                token = token?.Replace("Bearer ", "");
+                var users = new List<User>();
+                users.Add(issue.Reporter);
+                if(issue.Assignee != null)
+                    users.Add(issue.Assignee);
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    var userQuery =  await _jwtService.VerifyTokenAsync(token);
+                    if(userQuery != null)
+                    {
+                        users.RemoveAll(x => x.Id != userQuery.Id);
+                        if (issue.StatusId != statusId)
+                        {
+                            foreach (var u in users)
+                            {
+                                _unitOfWork.Notifications.Add(new Domain.Entities.Notification() { CreatedAt = DateTime.Now, UserId = u.Id, Type = "updateIssue", Data = JsonSerializer.Serialize(new { type = "updateIssue", projectId = issue.Status.ProjectId, issueId = issue.Id, issueName = issue.Title, issueIndex = issue.Index, issueStatusName = status.Name, updaterName = userQuery.FullName, updaterUserName = userQuery.UserName, updaterAvatar = userQuery.Avatar }) });
+                                await _unitOfWork.SaveChangesAsync();
+                                await _publisher.Publish(new SendEmailMessage() { ToEmail = u.Email == null ? "" : u.Email, Body = EmailMessage.UpdateIssue(issue.Title, issue.Id + "", issue.Status.ProjectId + ""), Subject = $"[ {issue.Title} ]You have a new update" });
+                                await _hubContext.Clients.Group(u.Id + "")
+                                     .SendAsync("NotificationResponse", "Success");
+                            }
+                        }
+                    }
+                }
                 await _publishEndpoint.Publish(new OrderIssueMessage() {  StatusId = statusId, Position = position, IssueId = issueId });
                 await Task.Delay(250);
                 await Clients.Group(groupId).SendAsync("IssueOrderResponse", "Success");
