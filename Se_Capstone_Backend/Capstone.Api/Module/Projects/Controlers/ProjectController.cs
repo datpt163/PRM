@@ -60,7 +60,7 @@ namespace Capstone.Api.Module.Projects.Controlers
         public async Task<IActionResult> UpdateProject(Guid id, [FromBody] UpdateProjectRequest request)
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var result = await _mediator.Send(new UpdateProjectCommand(id, request.Name, request.Code, request.Description, request.StartDate, request.EndDate, request.LeadId, request.Status) { Token = token});
+            var result = await _mediator.Send(new UpdateProjectCommand(id, request.Name, request.Code, request.Description, request.StartDate, request.EndDate, request.LeadId, request.Status,request.TotalEffort) { Token = token});
             if (result.StatusCode == 205)
             {
                 await _hubContext.Clients.Group(result.ErrorMessage == null ? "" : result.ErrorMessage)

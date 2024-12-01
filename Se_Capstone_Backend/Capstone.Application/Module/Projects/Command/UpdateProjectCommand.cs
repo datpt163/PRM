@@ -21,7 +21,7 @@ namespace Capstone.Application.Module.Projects.Command
         public string Token { get; set; } = string.Empty;
         public float? TotalEffort { get; set; } 
 
-        public UpdateProjectCommand(Guid id, string name, string code, string description, DateTime startDate, DateTime endDate, Guid? teamLeadId, ProjectStatus projectStatus)
+        public UpdateProjectCommand(Guid id, string name, string code, string description, DateTime startDate, DateTime endDate, Guid? teamLeadId, ProjectStatus projectStatus, float? totalEffort)
         {
             Id = id;
             Name = name;
@@ -31,6 +31,7 @@ namespace Capstone.Application.Module.Projects.Command
             EndDate = endDate;
             TeamLeadId = teamLeadId;
             Status = projectStatus;
+            TotalEffort = totalEffort;
         }
     }
 }
