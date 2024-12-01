@@ -14,5 +14,7 @@ namespace Capstone.Api.Module.Projects.Request
         public DateTime EndDate { get; set; }
         public ProjectStatus Status { get; set; }
         public Guid? LeadId { get; set; }
+        public float? TotalEffort { get; set; }
+
     }
 }
