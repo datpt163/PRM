@@ -28,8 +28,7 @@ namespace Capstone.Api.Module.Dashboard.Controllers
         }
 
         [HttpGet("projects-by-month")]
-        //[Authorize(Roles = "VIEW_DASHBOARD")]
-        [AllowAnonymous]
+        [Authorize(Roles = "VIEW_DASHBOARD")]
         public async Task<IActionResult> GetProjectStatsByMonth([FromQuery] DateTime date)
         {
             var query = new GetProjectStatsByMonthQuery { Date = date };
@@ -38,8 +37,7 @@ namespace Capstone.Api.Module.Dashboard.Controllers
         }
 
         [HttpGet("projects-by-year")]
-        //[Authorize(Roles = "VIEW_DASHBOARD")]
-        [AllowAnonymous]
+        [Authorize(Roles = "VIEW_DASHBOARD")]
         public async Task<IActionResult> GetProjectStatsByYear([FromQuery] int year)
         {
             var query = new GetProjectStatsByYearQuery { Year = year };
