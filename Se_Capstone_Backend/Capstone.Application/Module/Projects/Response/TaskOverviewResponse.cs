@@ -8,6 +8,7 @@
         public double OverallCompletionRate { get; set; }
         public float? TotalEffort { get; set; }
         public float? ActualEffot { get; set; } = 0;
+        public float? EstimateEffort { get; set; } = 0;
 
         public List<TaskCompletionRate> TaskCompletionRate { get; set; } = new List<TaskCompletionRate>();
     }

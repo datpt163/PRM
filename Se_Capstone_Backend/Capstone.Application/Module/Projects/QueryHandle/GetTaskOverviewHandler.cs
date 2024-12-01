@@ -114,7 +114,8 @@ namespace Capstone.Application.Module.Projects.Query
                 DoneTasks = doneTasks,
                 TaskCompletionRate = taskCompletionRate,
                 OverallCompletionRate = overallCompletionRate,
-                TotalEffort = totalEffort
+                TotalEffort = totalEffort,
+                EstimateEffort = estimateEffort,
             };
         }
     }
