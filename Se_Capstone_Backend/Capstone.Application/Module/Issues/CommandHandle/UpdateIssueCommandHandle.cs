@@ -42,7 +42,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             var users = new List<User>();
             bool checkAssign = false;
             var userAssignee = new User();
-            var issue = _unitOfWork.Issues.Find(x => x.Id == request.Id).Include(c => c.Phase).Include(c => c.Label).Include(c => c.Status).ThenInclude(c => c.Issues).Include(c => c.LastUpdateBy).Include(c => c.ParentIssue).Include(c => c.Reporter).Include(c => c.Assignee).Include(c => c.SubIssues).Include(c => c.Comments).FirstOrDefault();
+            var issue = _unitOfWork.Issues.Find(x => x.Id == request.Id).Include(c => c.Status).Include(c => c.Phase).Include(c => c.Label).Include(c => c.Status).ThenInclude(c => c.Issues).Include(c => c.LastUpdateBy).Include(c => c.ParentIssue).Include(c => c.Reporter).Include(c => c.Assignee).Include(c => c.SubIssues).Include(c => c.Comments).FirstOrDefault();
             if (issue == null)
                 return new ResponseMediator("Issue not found", null);
 
@@ -112,6 +112,11 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 issue.Position = 1;
             }
 
+            if (issue.Status.IsDone.HasValue && issue.Status.IsDone.Value && (status.IsDone == false || status.IsDone == null))
+                issue.ActualDate = null;
+            if((issue.Status.IsDone == null || issue.Status.IsDone == false) && ( status.IsDone == true ))
+                issue.ActualDate = DateTime.Now;
+
             issue.Title = request.Title;
             issue.Description = request.Description;
             issue.StartDate = request.StartDate;
@@ -126,7 +131,6 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             issue.LabelId = request.LabelId;
             issue.PhaseId = request.PhaseId;
             issue.ActualTime = request.ActualTime;
-            issue.ActualDate = request.ActualDate;
             _unitOfWork.Issues.Update(issue);
             users.Add(issue.Reporter);
 
