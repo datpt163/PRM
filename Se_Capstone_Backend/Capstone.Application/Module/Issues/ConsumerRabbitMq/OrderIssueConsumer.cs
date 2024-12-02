@@ -20,6 +20,7 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
 
         public async Task Consume(ConsumeContext<OrderIssueMessage2> context)
         {
+            Console.WriteLine("téttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaattttttttt");
             var status = _unitOfWork.Statuses.Find(x => x.Id == context.Message.StatusId).Include(c => c.Issues).FirstOrDefault();
             if (status == null)
                 throw new Exception("Status not found.");
@@ -40,6 +41,7 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
             _unitOfWork.Issues.Update(issue);
             _unitOfWork.Statuses.Update(status);
             await _unitOfWork.SaveChangesAsync();
+            await context.RespondAsync(new UserResponse() { UserId = "" });
         }
     }
 }

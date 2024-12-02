@@ -67,10 +67,10 @@ namespace Capstone.Api.Module.Statuses.SignalR
                 var status = _unitOfWork.Statuses.Find(x => x.Id == statusId).Include(c => c.Project).ThenInclude(c => c.Statuses).FirstOrDefault();
                 if (status == null)
                     throw new Exception("Status not found.");
-                if(position > status.Project.Statuses.Count())
-                    throw new Exception("Some thing wrong with position");
-                if (position < 1)
-                    throw new Exception("Some thing wrong with position");
+                //if(position > status.Project.Statuses.Count())
+                //    throw new Exception("Some thing wrong with position");
+                //if (position < 1)
+                //    throw new Exception("Some thing wrong with position");
                 if (position == status.Position)
                     throw new Exception("Old position same new position");
                 var response2 = await _requestClient.GetResponse<UserResponse>(new OrderStatusMessage2() { Status = status, Position = position });
@@ -96,11 +96,11 @@ namespace Capstone.Api.Module.Statuses.SignalR
                 if (issue == null)
                     throw new Exception("Issue not found.");
 
-                if (position < 0)
-                    throw new Exception("Some thing wrong with position");
+                //if (position < 0)
+                //    throw new Exception("Some thing wrong with position");
 
-                if (position > status.Issues.Count())
-                    throw new Exception("Some thing wrong with position");
+                //if (position > status.Issues.Count())
+                //    throw new Exception("Some thing wrong with position");
                 var httpContext = Context.GetHttpContext();
                 var token = httpContext?.Request.Headers["Authorization"].ToString();
                 token = token?.Replace("Bearer ", "");

@@ -1,4 +1,5 @@
-﻿using Capstone.Application.Module.Status.ConsumerRabbitMq.Message;
+﻿using Capstone.Application.Module.Issues.ConsumerRabbitMq;
+using Capstone.Application.Module.Status.ConsumerRabbitMq.Message;
 using Capstone.Infrastructure.Repository;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,7 @@ namespace Capstone.Application.Module.Status.ConsumerRabbitMq
                 status.Position = position;
                 _unitOfWork.Statuses.Update(status);
                 await _unitOfWork.SaveChangesAsync();
+                await context.RespondAsync(new UserResponse() { UserId = "" });
             }
         }
     }
