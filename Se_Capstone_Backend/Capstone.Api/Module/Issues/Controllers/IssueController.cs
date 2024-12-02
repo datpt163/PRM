@@ -120,7 +120,7 @@ namespace Capstone.Api.Module.Issues.Controllers
         public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateIssueRequest request)
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var result = await _mediator.Send(new UpdateIssueCommand(id, token, request.Title, request.Description, request.StartDate, request.DueDate, request.Percentage, request.Priority, request.EstimatedTime, request.ParentIssueId, request.AssigneeId, request.StatusId, request.LabelId) { PhaseId = request.PhaseId, ActualTime = request.ActualTime, ActualDate = request.ActualDate });
+            var result = await _mediator.Send(new UpdateIssueCommand(id, token, request.Title, request.Description, request.StartDate, request.DueDate, request.Percentage, request.Priority, request.EstimatedTime, request.ParentIssueId, request.AssigneeId, request.StatusId, request.LabelId) { PhaseId = request.PhaseId, ActualTime = request.ActualTime });
             if (result.StatusCode == 200)
             {
                 if (!string.IsNullOrEmpty(result.ErrorMessage))
