@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.Email.EmailQueue;
 using Capstone.Application.Common.EmailHTML;
 using Capstone.Application.Common.Jwt;
+using Capstone.Application.Module.Issues.ConsumerRabbitMq;
 using Capstone.Application.Module.Issues.ConsumerRabbitMq.Message;
 using Capstone.Application.Module.Status.ConsumerRabbitMq.Message;
 using Capstone.Domain.Entities;
@@ -23,14 +24,18 @@ namespace Capstone.Api.Module.Statuses.SignalR
         private readonly IJwtService _jwtService;
         private readonly IPublishEndpoint _publisher;
         private readonly IHubContext<StatusHub> _hubContext;
+        private readonly IRequestClient<OrderStatusMessage> _requestClient;
+        private readonly IRequestClient<OrderIssueMessage> _requestClient2;
 
-        public StatusHub(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, IJwtService jwtService, IPublishEndpoint publisher, IHubContext<StatusHub> hubContext)
+        public StatusHub(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, IJwtService jwtService, IPublishEndpoint publisher, IHubContext<StatusHub> hubContext, IRequestClient<OrderStatusMessage> requestClient, IRequestClient<OrderIssueMessage> requestClient2)
         {
             _unitOfWork = unitOfWork;
             _publishEndpoint = publishEndpoint;
             _jwtService = jwtService;
             _publisher = publisher;
             _hubContext = hubContext;
+            _requestClient = requestClient;
+            _requestClient2 = requestClient2;
         }
 
         public override async Task OnConnectedAsync()
@@ -68,8 +73,9 @@ namespace Capstone.Api.Module.Statuses.SignalR
                     throw new Exception("Some thing wrong with position");
                 if (position == status.Position)
                     throw new Exception("Old position same new position");
-                await _publishEndpoint.Publish(new OrderStatusMessage() { Status = status, Position = position });
-                await Task.Delay(250);
+                var response2 = await _requestClient.GetResponse<UserResponse>(new OrderStatusMessage() { Status = status, Position = position });
+                //await _publishEndpoint.Publish(new OrderStatusMessage() { Status = status, Position = position });
+                //await Task.Delay(250);
                 await Clients.Group(groupId).SendAsync("StatusOrderResponse", "Success");
             }
             catch (Exception ex)
@@ -122,8 +128,9 @@ namespace Capstone.Api.Module.Statuses.SignalR
                         }
                     }
                 }
-                await _publishEndpoint.Publish(new OrderIssueMessage() {  StatusId = statusId, Position = position, IssueId = issueId });
-                await Task.Delay(250);
+                var response2 = await _requestClient2.GetResponse<UserResponse>(new OrderIssueMessage() { StatusId = statusId, Position = position, IssueId = issueId });
+                //await _publishEndpoint.Publish(new OrderIssueMessage() {  StatusId = statusId, Position = position, IssueId = issueId });
+                //await Task.Delay(250);
                 await Clients.Group(groupId).SendAsync("IssueOrderResponse", "Success");
 
             }
