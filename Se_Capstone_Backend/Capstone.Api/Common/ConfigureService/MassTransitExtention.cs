@@ -19,7 +19,6 @@ namespace Capstone.Api.Common.ConfigureService
             {
                 //busConfiguration.SetKebabCaseEndpointNameFormatter();
 
-
                 busConfiguration.AddConsumer<OrderStatusConsumer>();
                 busConfiguration.AddConsumer<AddIssueConsumer>();
                 busConfiguration.AddConsumer<OrderIssueConsumer>();
@@ -33,7 +32,27 @@ namespace Capstone.Api.Common.ConfigureService
                         h.Username(userName);
                         h.Password(password);
                     });
-                    configuration.ConfigureEndpoints(context);
+
+                    configuration.ReceiveEndpoint("order-status-endpoint", e =>
+                    {
+                        e.ConfigureConsumer<OrderStatusConsumer>(context);
+                    });
+
+                    configuration.ReceiveEndpoint("add-issue-endpoint", e =>
+                    {
+                        e.ConfigureConsumer<AddIssueConsumer>(context);
+                    });
+
+                    configuration.ReceiveEndpoint("order-issue-endpoint", e =>
+                    {
+                        e.ConfigureConsumer<OrderIssueConsumer>(context);
+                    });
+
+                    configuration.ReceiveEndpoint("send-email-endpoint", e =>
+                    {
+                        e.ConfigureConsumer<SendEmailConsumer>(context);
+                    });
+                    //configuration.ConfigureEndpoints(context);
                 });
 
                 //busConfiguration.AddRequestClient<AddIssueMessage>();
