@@ -73,7 +73,7 @@ namespace Capstone.Api.Module.Statuses.SignalR
                     throw new Exception("Some thing wrong with position");
                 if (position == status.Position)
                     throw new Exception("Old position same new position");
-                var response2 = await _requestClient.GetResponse<UserResponse>(new OrderStatusMessage() { Status = status, Position = position });
+                var response2 = await _requestClient.GetResponse<UserResponse>(new OrderStatusMessage2() { Status = status, Position = position });
                 //await _publishEndpoint.Publish(new OrderStatusMessage() { Status = status, Position = position });
                 //await Task.Delay(250);
                 await Clients.Group(groupId).SendAsync("StatusOrderResponse", "Success");
@@ -128,7 +128,7 @@ namespace Capstone.Api.Module.Statuses.SignalR
                         }
                     }
                 }
-                var response2 = await _requestClient2.GetResponse<UserResponse>(new OrderIssueMessage() { StatusId = statusId, Position = position, IssueId = issueId });
+                var response2 = await _requestClient2.GetResponse<UserResponse>(new OrderIssueMessage2() { StatusId = statusId, Position = position, IssueId = issueId });
                 //await _publishEndpoint.Publish(new OrderIssueMessage() {  StatusId = statusId, Position = position, IssueId = issueId });
                 //await Task.Delay(250);
                 await Clients.Group(groupId).SendAsync("IssueOrderResponse", "Success");
