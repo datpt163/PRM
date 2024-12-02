@@ -24,10 +24,10 @@ namespace Capstone.Api.Module.Statuses.SignalR
         private readonly IJwtService _jwtService;
         private readonly IPublishEndpoint _publisher;
         private readonly IHubContext<StatusHub> _hubContext;
-        private readonly IRequestClient<OrderStatusMessage> _requestClient;
-        private readonly IRequestClient<OrderIssueMessage> _requestClient2;
+        private readonly IRequestClient<OrderStatusMessage2> _requestClient;
+        private readonly IRequestClient<OrderIssueMessage2> _requestClient2;
 
-        public StatusHub(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, IJwtService jwtService, IPublishEndpoint publisher, IHubContext<StatusHub> hubContext, IRequestClient<OrderStatusMessage> requestClient, IRequestClient<OrderIssueMessage> requestClient2)
+        public StatusHub(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, IJwtService jwtService, IPublishEndpoint publisher, IHubContext<StatusHub> hubContext, IRequestClient<OrderStatusMessage2> requestClient, IRequestClient<OrderIssueMessage2> requestClient2)
         {
             _unitOfWork = unitOfWork;
             _publishEndpoint = publishEndpoint;

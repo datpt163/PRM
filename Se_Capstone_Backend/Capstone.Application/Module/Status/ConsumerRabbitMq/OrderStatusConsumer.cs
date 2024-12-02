@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Capstone.Application.Module.Status.ConsumerRabbitMq
 {
-    public class OrderStatusConsumer : IConsumer<OrderStatusMessage>
+    public class OrderStatusConsumer : IConsumer<OrderStatusMessage2>
     {
         private readonly IUnitOfWork _unitOfWork;
         public OrderStatusConsumer(IUnitOfWork unitOfWork)
@@ -13,7 +13,7 @@ namespace Capstone.Application.Module.Status.ConsumerRabbitMq
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Consume(ConsumeContext<OrderStatusMessage> context)
+        public async Task Consume(ConsumeContext<OrderStatusMessage2> context)
         {
             var position = context.Message.Position;
             var status = _unitOfWork.Statuses.Find(x => x.Id == context.Message.Status.Id).Include(c => c.Project).ThenInclude(c => c.Statuses).FirstOrDefault();
