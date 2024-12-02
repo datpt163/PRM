@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Capstone.Application.Module.Issues.ConsumerRabbitMq.Message
 {
-    public class OrderIssueMessage
+    public class OrderIssueMessage2
     {
         public Guid IssueId { get; set; }
         public Guid StatusId { get; set; }
