@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
 {
-    public class OrderIssueConsumer : IConsumer<OrderIssueMessage>
+    public class OrderIssueConsumer : IConsumer<OrderIssueMessage2>
     {
         private readonly IUnitOfWork _unitOfWork;
         public OrderIssueConsumer(IUnitOfWork unitOfWork)
@@ -18,7 +18,7 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Consume(ConsumeContext<OrderIssueMessage> context)
+        public async Task Consume(ConsumeContext<OrderIssueMessage2> context)
         {
             var status = _unitOfWork.Statuses.Find(x => x.Id == context.Message.StatusId).Include(c => c.Issues).FirstOrDefault();
             if (status == null)
