@@ -116,7 +116,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 issue.ActualDate = null;
             if((issue.Status.IsDone == null || issue.Status.IsDone == false) && ( status.IsDone == true ))
                 issue.ActualDate = DateTime.Now;
-
+            issue.ActualDate = request.ActualDate;
             issue.Title = request.Title;
             issue.Description = request.Description;
             issue.StartDate = request.StartDate;
@@ -146,7 +146,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             users.Add(issue.Reporter);
             if (issue.Assignee != null)
                 users.Add(issue.Assignee);
-            users.RemoveAll(x => x.Id != user.Id);
+            users.RemoveAll(x => x.Id == user.Id);
 
             foreach(var u in users)
             {
