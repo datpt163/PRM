@@ -20,7 +20,6 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
 
         public async Task Consume(ConsumeContext<OrderIssueMessage2> context)
         {
-            Console.WriteLine("téttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaattttttttt");
             var status = _unitOfWork.Statuses.Find(x => x.Id == context.Message.StatusId).Include(c => c.Issues).FirstOrDefault();
             if (status == null)
                 throw new Exception("Status not found.");
@@ -28,6 +27,11 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
             var issue = _unitOfWork.Issues.Find(x => x.Id == context.Message.IssueId).Include(c => c.Status).ThenInclude(c => c.Issues).FirstOrDefault();
             if (issue == null)
                 throw new Exception("Issue not found.");
+
+            if (issue.Status.IsDone.HasValue && issue.Status.IsDone.Value && (status.IsDone == false || status.IsDone == null))
+                issue.ActualDate = null;
+            if ((issue.Status.IsDone == null || issue.Status.IsDone == false) && (status.IsDone == true))
+                issue.ActualDate = DateTime.Now;
 
             foreach (var iss in issue.Status.Issues)
                 if (iss.Position > issue.Position)

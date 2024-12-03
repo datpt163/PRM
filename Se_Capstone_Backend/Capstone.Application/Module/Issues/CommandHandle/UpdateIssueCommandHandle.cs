@@ -112,11 +112,12 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 issue.Position = 1;
             }
 
+    
+            issue.ActualDate = request.ActualDate;
             if (issue.Status.IsDone.HasValue && issue.Status.IsDone.Value && (status.IsDone == false || status.IsDone == null))
                 issue.ActualDate = null;
-            if((issue.Status.IsDone == null || issue.Status.IsDone == false) && ( status.IsDone == true ))
+            if ((issue.Status.IsDone == null || issue.Status.IsDone == false) && (status.IsDone == true))
                 issue.ActualDate = DateTime.Now;
-            issue.ActualDate = request.ActualDate;
             issue.Title = request.Title;
             issue.Description = request.Description;
             issue.StartDate = request.StartDate;
