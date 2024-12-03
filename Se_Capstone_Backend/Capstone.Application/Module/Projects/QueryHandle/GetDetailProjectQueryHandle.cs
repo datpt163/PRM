@@ -30,6 +30,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
 
         public async Task<ResponseMediator> Handle(GetDetailProjectQuery request, CancellationToken cancellationToken)
         {
+
             var project = await _unitOfWork.Projects.Find(x => x.Id == request.Id).Include(c => c.Lead).Include(c => c.UserProjects).ThenInclude(c => c.User).FirstOrDefaultAsync();
 
             if (project == null)

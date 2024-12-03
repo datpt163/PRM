@@ -109,7 +109,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
 
                 foreach (var issu in status.Issues)
                     issu.Position++;
-                issue.Position = 1;
+                issue.Position = 0;
             }
 
     
