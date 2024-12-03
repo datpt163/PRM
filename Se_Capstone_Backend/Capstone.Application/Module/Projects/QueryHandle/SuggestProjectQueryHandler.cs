@@ -56,16 +56,26 @@ namespace Capstone.Application.Module.Projects.QueryHandle
             }catch(Exception e)
             {
                 await Console.Out.WriteLineAsync(e.Message);
-                var suggestMappings = request.UserStatistics.OrderBy(x=> x.ActiveProjectCount)
-                        .Take(3)
-                      .Select(us => new SuggestMapping
-                      {
-                          UserId = us.Id,
-                          Name = us.FullName ?? string.Empty,
-                      })
-                      .ToList();
+                var req = request.ProjectDetail;
+
+                var keywords = req.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                          .Select(k => k.Trim().ToLower())
+                          .ToHashSet();
+
+                var suggestMappings = request.UserStatistics
+                .OrderByDescending(us => us.Skills.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                                                  .Any(skill => keywords.Contains(skill.Trim().ToLower())))
+                .ThenBy(us => us.ActiveProjectCount)
+                .Take(3)
+                .Select(us => new SuggestMapping
+                {
+                    UserId = us.Id,
+                    Name = us.FullName ?? string.Empty,
+                })
+                .ToList();
 
                 return suggestMappings;
+
             }
             
         }
