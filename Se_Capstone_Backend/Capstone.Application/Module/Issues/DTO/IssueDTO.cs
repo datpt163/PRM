@@ -22,7 +22,7 @@ namespace Capstone.Application.Module.Issues.DTO
         public int Percentage { get; set; } = 0;
         public Priority? Priority { get; set; }
         public float? EstimatedTime { get; set; }
-        public int? ActualTime { get; set; } = 0;
+        public float? ActualTime { get; set; } = 0;
         public int PercentDone { get; set; } = 0;
         public int Position { get; set; }
         public Guid? ReporterId { get;set;}
@@ -52,7 +52,7 @@ namespace Capstone.Application.Module.Issues.DTO
         public int Percentage { get; set; } = 0;
         public Priority? Priority { get; set; }
         public float? EstimatedTime { get; set; }
-        public int? ActualTime { get; set; } = 0;
+        public float? ActualTime { get; set; } = 0;
         public int PercentDone { get; set; } = 0;
         public int Position { get; set; }
         public Guid? ParentIssueId { get; set; }

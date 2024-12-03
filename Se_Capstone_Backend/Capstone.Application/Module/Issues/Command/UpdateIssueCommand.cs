@@ -43,5 +43,6 @@ namespace Capstone.Application.Module.Issues.Command
         public Guid? LabelId { get; set; }
         public Guid? PhaseId { get; set; }
         public float? ActualTime { get; set; } = 0;
+        public DateTime? ActualDate { get; set; }
     }
 }
