@@ -21,9 +21,9 @@ namespace Capstone.Api.Module.Comments.Controllers
     public class CommentController : BaseController
     {
         private readonly IMediator _mediator;
-        private readonly IHubContext<StatusHub> _hubContext;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public CommentController(IMediator mediator, IHubContext<StatusHub> hubContext)
+        public CommentController(IMediator mediator, IHubContext<NotificationHub> hubContext)
         {
             _hubContext = hubContext;
             _mediator = mediator;
