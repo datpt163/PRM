@@ -11,5 +11,6 @@ namespace Capstone.Application.Module.Issues.Query
     public class GetDetailIssueQuery : IRequest<ResponseMediator>
     {
         public Guid Id { get; set; } 
+        public string Token { get; set; } = string.Empty;
     }
 }

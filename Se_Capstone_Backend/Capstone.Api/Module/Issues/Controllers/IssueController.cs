@@ -103,7 +103,10 @@ namespace Capstone.Api.Module.Issues.Controllers
         [Authorize]
         public async Task<IActionResult> GetDetailIssue(Guid id)
         {
-            var result = await _mediator.Send(new GetDetailIssueQuery() { Id = id });
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var result = await _mediator.Send(new GetDetailIssueQuery() { Id = id, Token = token });
+            if (result.StatusCode == 403)
+                return Forbid();
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data);
             else
