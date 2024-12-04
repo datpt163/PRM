@@ -23,10 +23,10 @@ namespace Capstone.Api.Module.Projects.Controlers
     public class ProjectController : BaseController
     {
         private readonly IMediator _mediator;
-        private readonly IHubContext<StatusHub> _hubContext;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
 
-        public ProjectController(IMediator mediator, IHubContext<StatusHub> hubContext)
+        public ProjectController(IMediator mediator, IHubContext<NotificationHub> hubContext)
         {
             _hubContext = hubContext;
             _mediator = mediator;

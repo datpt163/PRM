@@ -23,9 +23,9 @@ namespace Capstone.Api.Module.Issues.Controllers
     public class IssueController : BaseController
     {
         private readonly IMediator _mediator;
-        private readonly IHubContext<StatusHub> _hubContext;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public IssueController(IMediator mediator, IHubContext<StatusHub> context)
+        public IssueController(IMediator mediator, IHubContext<NotificationHub> context)
         {
             _hubContext = context;
             _mediator = mediator;
