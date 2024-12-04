@@ -110,6 +110,8 @@ namespace Capstone.Api.Module.Projects.Controlers
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var result = await _mediator.Send(new GetDetailProjectQuery() { Id = id, Token = token });
+            if(result.StatusCode == 403)
+                return Forbid();
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(dataResponse: result.Data);
             else

@@ -28,7 +28,7 @@ namespace Capstone.Api.Module.Auths.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "UPSERT_ROLE")]
+        [Authorize(Roles = "ADD_ROLE")]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleCommand request)
         {
             var result = await _mediator.Send(request);
@@ -50,7 +50,7 @@ namespace Capstone.Api.Module.Auths.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "ADD_ROLE")]
+        [Authorize(Roles = "UPSERT_ROLE")]
         public async Task<IActionResult> CreateRole([FromBody] UpdateRoleCommand request)
         {
             var result = await _mediator.Send(request);
