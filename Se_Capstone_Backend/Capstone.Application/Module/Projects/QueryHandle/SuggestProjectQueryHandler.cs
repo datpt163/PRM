@@ -33,8 +33,14 @@ namespace Capstone.Application.Module.Projects.QueryHandle
         {
             try
             {
-                string systemMessage = "You are a helpful assistant that provides potential employee suggestions based on project requirements. " +
-                "Please just return the result of top 3 suggest UID UserStatistics as a JSON array of GUIDs example [\"\", \"\", \"\"]. You need to return just result, don't add anything superfluous";
+                string systemMessage = "You are a specialized assistant capable of analyzing project requirements and employee data. " +
+                       "Your role is to carefully evaluate the 'ProjectDetail' and 'Skill' field in the provided data and select exactly 3 unique user IDs (UIDs) " +
+                       "that best align with the described requirements. " +
+                       "The selection criteria are based on relevance and fit to the ProjectDetail field. " +
+                       "The output must be a valid JSON array of exactly 3 GUID strings, strictly formatted as [\"GUID1\", \"GUID2\", \"GUID3\"]. " +
+                       "Do not include any comments, explanations, or additional text in your response. Return only the JSON array. " +
+                       "If there is insufficient data to select 3 UIDs, return an empty JSON array: [].";
+
                 var maxTokens = 4096;
                 var requestJson = JsonSerializer.Serialize(request);
                 //var response = await _chatGptService.GetChatGptResponseAsync(requestJson, systemMessage, maxTokens);
@@ -56,7 +62,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
             }catch(Exception e)
             {
                 await Console.Out.WriteLineAsync(e.Message);
-                var req = request.ProjectDetail;
+                var req = RemoveCommonWords(request.ProjectDetail);
 
                 var keywords = req.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
                           .Select(k => k.Trim().ToLower())
@@ -99,6 +105,28 @@ namespace Capstone.Application.Module.Projects.QueryHandle
             return JsonSerializer.Deserialize<List<Guid>>(jsonArrayString) ?? new List<Guid>();
         }
 
+        private string RemoveCommonWords(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return input;
+
+            var stopWords = new List<string>
+            {
+                "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself", "yourselves",
+                "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs", "themselves",
+                "what", "which", "who", "whom", "this", "that", "these", "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had",
+                "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while", "of", "at", "by", "for",
+                "with", "about", "against", "between", "into", "through", "during", "before", "after", "above", "below", "to", "from", "up", "down", "in",
+                "out", "on", "off", "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both",
+                "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very", "s", "t", "can",
+                "will", "just", "don", "should", "now"
+            };
+
+            var words = input.Split(new[] { ' ', ',', '.', '!', '?' }, StringSplitOptions.RemoveEmptyEntries);
+
+            var filteredWords = words.Where(word => !stopWords.Contains(word, StringComparer.OrdinalIgnoreCase));
+
+            return string.Join(" ", filteredWords);
+        }
 
     }
 }
