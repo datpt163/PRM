@@ -1,6 +1,7 @@
 ﻿using Capstone.Api.Common.ResponseApi.Controllers;
 using Capstone.Api.Common.ResponseApi.Model;
 using Capstone.Api.Module.Labels.Requests;
+using Capstone.Application.Common.ProjectAuthorize;
 using Capstone.Application.Module.Labels.Command;
 using Capstone.Application.Module.Labels.Query;
 using MediatR;
@@ -15,9 +16,11 @@ namespace Capstone.Api.Module.Labels.Controllers
     public class LabelController : BaseController
     {
         private readonly IMediator _mediator;
+        private readonly IManagePermissionProject _managePermissionProject;
 
-        public LabelController(IMediator mediator)
+        public LabelController(IMediator mediator, IManagePermissionProject managePermissionProject)
         {
+            _managePermissionProject = managePermissionProject;
             _mediator = mediator;
         }
 
@@ -26,6 +29,14 @@ namespace Capstone.Api.Module.Labels.Controllers
         [Authorize]
         public async Task<IActionResult> CreateLabel([FromBody] CreateLabelCommand request)
         {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            (bool isAuthorize, int status) = await _managePermissionProject.IsAuthorizedAsync(token, "IsProjectConfigurator", projectId: request.ProjectId);
+            if (status == 404)
+                return ResponseNotFound(messageResponse: "Not found");
+
+            if (!isAuthorize)
+                return Forbid();
+
             var result = await _mediator.Send(request);
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data);
@@ -85,6 +96,14 @@ namespace Capstone.Api.Module.Labels.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteLabel(Guid id)
         {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            (bool isAuthorize, int status) = await _managePermissionProject.IsAuthorizedAsync(token, "IsProjectConfigurator", labelId: id);
+            if (status == 404)
+                return ResponseNotFound(messageResponse: "Not found");
+
+            if (!isAuthorize)
+                return Forbid();
+
             var result = await _mediator.Send(new DeleteLabelCommand() { Id = id });
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseNoContent();
@@ -117,6 +136,14 @@ namespace Capstone.Api.Module.Labels.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateLabel(Guid id, [FromBody] UpdateLabelRequest request)
         {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            (bool isAuthorize, int status) = await _managePermissionProject.IsAuthorizedAsync(token, "IsProjectConfigurator", labelId: id);
+            if (status == 404)
+                return ResponseNotFound(messageResponse: "Not found");
+
+            if (!isAuthorize)
+                return Forbid();
+
             var result = await _mediator.Send(new UpdateLabelCommand() { Id = id, Title = request.Title, Description = request.Description });
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data);

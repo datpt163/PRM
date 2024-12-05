@@ -5,6 +5,7 @@ using Capstone.Application.Common.FileService;
 using Capstone.Application.Common.Gpt;
 using Capstone.Application.Common.Helper;
 using Capstone.Application.Common.HuggingFace;
+using Capstone.Application.Common.ProjectAuthorize;
 using Capstone.Application.Common.RabbitMQ;
 using Capstone.Application.Common.TokenService;
 using Capstone.Domain.Module.Auth.TokenBlackList;
@@ -18,6 +19,7 @@ namespace Capstone.Api.Common.ConfigureService
         public static void AddGreetingService(this IServiceCollection services, IConfiguration configuration)
         {
             #region ServiceCommon
+            services.AddScoped<IManagePermissionProject, ManagePermissionProject>();
             services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
             services.AddScoped<IEmailService, EmailService>();
             //Rabbit

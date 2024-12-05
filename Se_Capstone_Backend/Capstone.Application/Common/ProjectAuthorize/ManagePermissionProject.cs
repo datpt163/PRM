@@ -14,7 +14,8 @@ namespace Capstone.Application.Common.ProjectAuthorize
 {
     public interface IManagePermissionProject
     {
-        public Task<bool> IsAuthorizedAsync(string token, Project project, string typeAuthorize);
+        public Task<(bool,int)> IsAuthorizedAsync(string token, string typeAuthorize, Guid? projectId = null, Guid? issueId = null, Guid? phaseId = null, Guid? labelId = null, Guid? statusId = null, Guid? commentId = null);
+        public Task<(List<string>, int)> GetPermissionAsync(string token, Guid? projectId = null, Guid? issueId = null, Guid? phaseId = null, Guid? labelId = null, Guid? statusId = null, Guid? commentId = null);
     }
     public class ManagePermissionProject : IManagePermissionProject
     {
@@ -28,18 +29,77 @@ namespace Capstone.Application.Common.ProjectAuthorize
             _userManager = userManager;
         }
 
-        public async Task<bool> IsAuthorizedAsync(string token, Project project, string typeAuthorize)
+        public async Task<(bool,int)> IsAuthorizedAsync(string token, string typeAuthorize, Guid? projectId = null, Guid? issueId = null, Guid? phaseId = null, Guid? labelId = null, Guid? statusId = null, Guid? commentId = null)
         {
-            var permissions = await GetPermissionAsync(token, project);
+            (List<string> permissions, int statusCode ) = await GetPermissionAsync(token, projectId: projectId, issueId: issueId, phaseId: phaseId, labelId: labelId, statusId: statusId, commentId: commentId);
 
-            if(permissions.Contains(typeAuthorize)) 
-                return true;
-            return false;
+            if (statusCode == 404)
+                return (false, 404);
+            else
+            {
+                if (permissions.Contains(typeAuthorize))
+                    return (true,200);
+                return (false,200);
+            }
         }
 
-        public async Task<List<string>> GetPermissionAsync(string token, Project project)
+        public async Task<(List<string>,int)> GetPermissionAsync(string token, Guid? projectId = null, Guid? issueId = null, Guid? phaseId = null, Guid? labelId = null, Guid? statusId = null, Guid? commentId = null)
         {
             var permissions = new List<string>();
+            Project? project = new Project();
+            if(projectId != null)
+            {
+                project = _unitOfWork.Projects.Find(x => x.Id == projectId).Include(c => c.UserProjects).FirstOrDefault();
+                if (project == null)
+                    return (permissions, 404);
+            }
+
+            if(issueId != null)
+            {
+                var issue = _unitOfWork.Issues.Find(x => x.Id == issueId).Include(c => c.Status).ThenInclude(c => c.Project).ThenInclude(c => c.UserProjects).FirstOrDefault();
+                if (issue == null)
+                    return (permissions, 404);
+
+                project = issue.Status.Project;
+            }
+
+            if (phaseId != null)
+            {
+                var phase = _unitOfWork.Phases.Find(x => x.Id == phaseId).Include(c => c.Project).ThenInclude(c => c.UserProjects).FirstOrDefault();
+                if (phase == null)
+                    return (permissions, 404);
+
+                project = phase.Project;
+            }
+
+            if (statusId != null)
+            {
+                var status = _unitOfWork.Statuses.Find(x => x.Id == statusId).Include(c => c.Project).ThenInclude(c => c.UserProjects).FirstOrDefault();
+                if (status == null)
+                    return (permissions, 404);
+
+                project = status.Project;
+            }
+
+
+            if (labelId != null)
+            {
+                var label = _unitOfWork.Labels.Find(x => x.Id == labelId).Include(c => c.Project).ThenInclude(c => c.UserProjects).FirstOrDefault();
+                if (label == null)
+                    return (permissions, 404);
+
+                project = label.Project;
+            }
+
+
+            if (commentId != null)
+            {
+                var comment = _unitOfWork.Comments.Find(x => x.Id == commentId).Include(c => c.Issue).ThenInclude(c => c.Status).ThenInclude(c => c.Project).ThenInclude(c => c.UserProjects).FirstOrDefault();
+                if (comment == null)
+                    return (permissions, 404);
+
+                project = comment.Issue.Status.Project;
+            }
 
             var myUser = await _jwtService.VerifyTokenAsync(token);
             if (myUser != null)
@@ -73,7 +133,7 @@ namespace Capstone.Application.Common.ProjectAuthorize
                     }
                 }
             }
-            return permissions;
+            return (permissions, 200);
         }
     }
 }
