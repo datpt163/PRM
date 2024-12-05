@@ -25,7 +25,25 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
 
         public async Task Consume(ConsumeContext<AddIssueMessage2> context)
         {
-            var issue = context.Message.Issue;
+            Console.WriteLine("vaooooooooooooooooooo");
+            var issue = new Issue()
+            {
+                Index = context.Message.Index,
+                Title = context.Message.Title,
+                Description = context.Message.Description,
+                StartDate = context.Message.StartDate,
+                DueDate = context.Message.DueDate,
+                Priority = context.Message.Priority,
+                EstimatedTime = context.Message.EstimatedTime,
+                ParentIssueId = context.Message.ParentIssueId,
+                ReporterId = context.Message.ReporterId,
+                AssigneeId = context.Message.AssigneeId,
+                LastUpdateById = context.Message.LastUpdateById,
+                StatusId = context.Message.StatusId,
+                LabelId = context.Message.LabelId,
+                PhaseId = context.Message.PhaseId
+            };
+
             if (issue != null)
             {
                 var status = _unitOfWork.Statuses.Find(x => x.Id == context.Message.StatusId).Include(c => c.Project).ThenInclude(c => c.Phases).Include(c => c.Issues).FirstOrDefault();

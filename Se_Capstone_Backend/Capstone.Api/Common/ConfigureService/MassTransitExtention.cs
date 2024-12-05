@@ -38,7 +38,7 @@ namespace Capstone.Api.Common.ConfigureService
                         e.ConfigureConsumer<OrderStatusConsumer>(context);
                     });
 
-                    configuration.ReceiveEndpoint("add-issue-endpoint", e =>
+                    configuration.ReceiveEndpoint("add-issue-endpoint10", e =>
                     {
                         e.ConfigureConsumer<AddIssueConsumer>(context);
                     });
