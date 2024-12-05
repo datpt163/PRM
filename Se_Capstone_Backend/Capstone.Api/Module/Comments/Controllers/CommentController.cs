@@ -3,6 +3,7 @@ using Capstone.Api.Common.ResponseApi.Model;
 using Capstone.Api.Module.Comments.Request;
 using Capstone.Api.Module.Labels.Requests;
 using Capstone.Api.Module.Statuses.SignalR;
+using Capstone.Application.Common.ProjectAuthorize;
 using Capstone.Application.Module.Comments.Command;
 using Capstone.Application.Module.Labels.Command;
 using Capstone.Application.Module.Labels.Query;
@@ -22,9 +23,11 @@ namespace Capstone.Api.Module.Comments.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly IManagePermissionProject _managePermissionProject;
 
-        public CommentController(IMediator mediator, IHubContext<NotificationHub> hubContext)
+        public CommentController(IMediator mediator, IHubContext<NotificationHub> hubContext, IManagePermissionProject managePermissionProject)
         {
+            _managePermissionProject = managePermissionProject;
             _hubContext = hubContext;
             _mediator = mediator;
         }

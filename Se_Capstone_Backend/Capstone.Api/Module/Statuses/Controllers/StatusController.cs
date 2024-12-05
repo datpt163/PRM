@@ -1,6 +1,7 @@
 ﻿using Capstone.Api.Common.ResponseApi.Controllers;
 using Capstone.Api.Common.ResponseApi.Model;
 using Capstone.Api.Module.Statuses.Requests;
+using Capstone.Application.Common.ProjectAuthorize;
 using Capstone.Application.Module.Status.Command;
 using Capstone.Application.Module.Status.Query;
 using MediatR;
@@ -15,9 +16,11 @@ namespace Capstone.Api.Module.Statuses.Controllers
     public class StatusController : BaseController
     {
         private readonly IMediator _mediator;
+        private readonly IManagePermissionProject _managePermissionProject;
 
-        public StatusController(IMediator mediator)
+        public StatusController(IMediator mediator, IManagePermissionProject managePermissionProject)
         {
+            _managePermissionProject = managePermissionProject;
             _mediator = mediator;
         }
 
@@ -26,6 +29,13 @@ namespace Capstone.Api.Module.Statuses.Controllers
         [Authorize]
         public async Task<IActionResult> CreateStatus([FromBody] CreateStatusCommand request)
         {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            (bool isAuthorize, int status) = await _managePermissionProject.IsAuthorizedAsync(token, "IsProjectConfigurator", projectId: request.ProjectId);
+            if (status == 404)
+                return ResponseNotFound(messageResponse: "Not found");
+
+            if (!isAuthorize)
+                return Forbid();
             var result = await _mediator.Send(request);
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data);
@@ -84,6 +94,13 @@ namespace Capstone.Api.Module.Statuses.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteStatus(Guid id, [FromBody] DeleteStatusRequest newStatus)
         {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            (bool isAuthorize, int status) = await _managePermissionProject.IsAuthorizedAsync(token, "IsProjectConfigurator", statusId: id);
+            if (status == 404)
+                return ResponseNotFound(messageResponse: "Not found");
+
+            if (!isAuthorize)
+                return Forbid();
             var result = await _mediator.Send(new DeleteStatusCommand() { Id = id, NewStatusId = newStatus.newStatusId });
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseNoContent();
@@ -116,6 +133,13 @@ namespace Capstone.Api.Module.Statuses.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateStatusRequest request)
         {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            (bool isAuthorize, int status) = await _managePermissionProject.IsAuthorizedAsync(token, "IsProjectConfigurator", statusId: id);
+            if (status == 404)
+                return ResponseNotFound(messageResponse: "Not found");
+
+            if (!isAuthorize)
+                return Forbid();
             var result = await _mediator.Send(new UpdateStatusCommand() { Id = id, Name = request.Name, Description = request.Description, Color = request.Color, IsDone = request.IsDone });
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data);

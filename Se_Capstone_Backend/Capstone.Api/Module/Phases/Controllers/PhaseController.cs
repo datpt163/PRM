@@ -1,6 +1,7 @@
 ﻿using Capstone.Api.Common.ResponseApi.Controllers;
 using Capstone.Api.Common.ResponseApi.Model;
 using Capstone.Api.Module.Phases.Request;
+using Capstone.Application.Common.ProjectAuthorize;
 using Capstone.Application.Module.Phase.Command;
 using Capstone.Application.Module.Phase.Query;
 using Capstone.Application.Module.Status.Query;
@@ -16,9 +17,11 @@ namespace Capstone.Api.Module.Phases.Controllers
     public class PhaseController : BaseController
     {
         private readonly IMediator _mediator;
+        private readonly IManagePermissionProject _managePermissionProject;
 
-        public PhaseController(IMediator mediator)
+        public PhaseController(IMediator mediator, IManagePermissionProject managePermissionProject)
         {
+            _managePermissionProject = managePermissionProject;
             _mediator = mediator;
         }
 
@@ -27,6 +30,13 @@ namespace Capstone.Api.Module.Phases.Controllers
         [Authorize]
         public async Task<IActionResult> CreatePhase([FromBody] CreatePhaseCommand request)
         {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            (bool isAuthorize, int status) = await _managePermissionProject.IsAuthorizedAsync(token, "IsProjectConfigurator", projectId: request.ProjectId);
+            if (status == 404)
+                return ResponseNotFound(messageResponse: "Not found");
+
+            if (!isAuthorize)
+                return Forbid();
             var result = await _mediator.Send(request);
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data);
@@ -44,6 +54,13 @@ namespace Capstone.Api.Module.Phases.Controllers
         [Authorize]
         public async Task<IActionResult> UpdatePhase(Guid id, [FromBody] UpdatePhaseRequest request)
         {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            (bool isAuthorize, int status) = await _managePermissionProject.IsAuthorizedAsync(token, "IsProjectConfigurator", phaseId: id);
+            if (status == 404)
+                return ResponseNotFound(messageResponse: "Not found");
+
+            if (!isAuthorize)
+                return Forbid();
             var result = await _mediator.Send(new UpdatePhaseCommand() { Id = id, Title = request.Title, Description = request.Description, ExpectedEndDate = request.ExpectedEndDate, ExpectedStartDate = request.ExpectedStartDate});
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(result.Data);
@@ -60,6 +77,13 @@ namespace Capstone.Api.Module.Phases.Controllers
         [Authorize]
         public async Task<IActionResult> UpdatePhase(Guid id)
         {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            (bool isAuthorize, int status) = await _managePermissionProject.IsAuthorizedAsync(token, "IsProjectConfigurator", phaseId: id);
+            if (status == 404)
+                return ResponseNotFound(messageResponse: "Not found");
+
+            if (!isAuthorize)
+                return Forbid();
             var result = await _mediator.Send(new DeletePhaseCommand() { Id = id});
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseNoContent();
