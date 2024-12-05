@@ -59,28 +59,48 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                       .ToList();
 
                 return suggestMappings;
-            }catch(Exception e)
+
+            }
+            catch (Exception e)
             {
                 await Console.Out.WriteLineAsync(e.Message);
                 var req = RemoveCommonWords(request.ProjectDetail);
 
                 var keywords = req.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                          .Select(k => k.Trim().ToLower())
-                          .ToHashSet();
+                                  .Select(k => k.Trim())
+                                  .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-                var suggestMappings = request.UserStatistics
-                .OrderByDescending(us => us.Skills.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                                                  .Any(skill => keywords.Contains(skill.Trim().ToLower())))
-                .ThenBy(us => us.ActiveProjectCount)
-                .Take(3)
-                .Select(us => new SuggestMapping
+                var matchedUsers = request.UserStatistics
+                    .Select(us => new
+                    {
+                        User = us,
+                        MatchCount = us.Skills.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                                              .Count(skill => keywords.Contains(skill.Trim()))
+                    })
+                    .OrderByDescending(x => x.MatchCount)
+                    .ThenBy(x => x.User.ActiveProjectCount)
+                    .Take(3)
+                    .Select(x => new SuggestMapping
+                    {
+                        UserId = x.User.Id,
+                        Name = x.User.FullName ?? string.Empty,
+                    })
+                    .ToList();
+
+                if (!matchedUsers.Any())
                 {
-                    UserId = us.Id,
-                    Name = us.FullName ?? string.Empty,
-                })
-                .ToList();
+                    matchedUsers = request.UserStatistics
+                        .OrderByDescending(us => us.ActiveProjectCount)
+                        .Take(3)
+                        .Select(us => new SuggestMapping
+                        {
+                            UserId = us.Id,
+                            Name = us.FullName ?? string.Empty,
+                        })
+                        .ToList();
+                }
 
-                return suggestMappings;
+                return matchedUsers;
 
             }
             

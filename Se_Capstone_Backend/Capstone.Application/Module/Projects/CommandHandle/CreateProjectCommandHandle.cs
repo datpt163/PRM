@@ -97,7 +97,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             var defaultStatueses = await CreateDefaultStatus(projectCreate.Id);
             var listDefaultStatus = new List<Domain.Entities.Status>();
             foreach (var s in defaultStatueses)
-                listDefaultStatus.Add(new Domain.Entities.Status() { Name = s.Name, Position = s.Position, Description = s.Description, ProjectId = s.ProjectId, Color = s.Color });
+                listDefaultStatus.Add(new Domain.Entities.Status() { Name = s.Name, Position = s.Position, Description = s.Description, ProjectId = s.ProjectId, Color = s.Color, IsDone = s.IsDone });
             _unitOfWork.Statuses.AddRange(listDefaultStatus);
             var defaultLabels = await CreateDefaultLabels(projectCreate.Id);
             var listDefaultLabels = new List<Label>();

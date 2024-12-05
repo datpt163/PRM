@@ -122,4 +122,5 @@ using (var scope = app.Services.CreateScope())
 
 
 app.MapHub<StatusHub>("/statusHub");
+app.MapHub<NotificationHub>("/notificationHub");
 app.Run();

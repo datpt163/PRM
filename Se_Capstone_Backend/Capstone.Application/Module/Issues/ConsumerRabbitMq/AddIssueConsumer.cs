@@ -31,7 +31,7 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
                 var status = _unitOfWork.Statuses.Find(x => x.Id == context.Message.StatusId).Include(c => c.Project).ThenInclude(c => c.Phases).Include(c => c.Issues).FirstOrDefault();
                 if (status == null)
                     return;
-                var position = status.Issues.Where(x => x.ParentIssue == null).Count() + 1;
+                var position = status.Issues.Where(x => x.ParentIssue == null).Count();
                 issue.Position = position;
                 _unitOfWork.Issues.Add(issue);
                 await _unitOfWork.SaveChangesAsync();

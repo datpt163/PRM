@@ -28,6 +28,8 @@ namespace Capstone.Application.Module.Users.QueryHandle
                 .Include(u => u.Skills.Where(s => !s.IsDeleted))
                 .Include(u => u.UserProjects.Where(x=> x.Project.Status != ProjectStatus.Finished))
                 .ThenInclude(c => c.Project)
+                .Include(u => u.UserProjects.Where(x => x.Project.Status != ProjectStatus.Finished))
+                .ThenInclude(up => up.Position)
                 .Where(u => u.Status == UserStatus.Active && request.UserInProject ==null || !request.UserInProject.Contains(u.Id))
                 .ToListAsync(cancellationToken);
 
@@ -35,7 +37,7 @@ namespace Capstone.Application.Module.Users.QueryHandle
             {
                 Id = user.Id,
                 FullName = user.FullName,
-                Skills = string.Join(", ", user.Skills?.Select(s => s.Title) ?? Enumerable.Empty<string>()),
+                Skills = string.Join(", ", user.Skills?.Select(s => s.Title) ?? Enumerable.Empty<string>()) +","+ string.Join(", ", user.UserProjects.Where(x=> x.Position!=null).Select(x=> x.Position?.Title)),
                 ActiveProjectCount = user.UserProjects.Select(x => x.Project).Count()
             }).ToList();
 

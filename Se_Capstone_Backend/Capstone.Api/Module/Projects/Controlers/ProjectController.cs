@@ -23,10 +23,10 @@ namespace Capstone.Api.Module.Projects.Controlers
     public class ProjectController : BaseController
     {
         private readonly IMediator _mediator;
-        private readonly IHubContext<StatusHub> _hubContext;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
 
-        public ProjectController(IMediator mediator, IHubContext<StatusHub> hubContext)
+        public ProjectController(IMediator mediator, IHubContext<NotificationHub> hubContext)
         {
             _hubContext = hubContext;
             _mediator = mediator;
@@ -110,6 +110,8 @@ namespace Capstone.Api.Module.Projects.Controlers
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var result = await _mediator.Send(new GetDetailProjectQuery() { Id = id, Token = token });
+            if(result.StatusCode == 403)
+                return Forbid();
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseOk(dataResponse: result.Data);
             else

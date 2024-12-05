@@ -109,15 +109,22 @@ namespace Capstone.Application.Module.Issues.CommandHandle
 
                 foreach (var issu in status.Issues)
                     issu.Position++;
-                issue.Position = 1;
+                issue.Position = 0;
             }
 
-    
-            issue.ActualDate = request.ActualDate;
+            bool flag = true;
             if (issue.Status.IsDone.HasValue && issue.Status.IsDone.Value && (status.IsDone == false || status.IsDone == null))
+            {
                 issue.ActualDate = null;
+                flag = false;
+            }
             if ((issue.Status.IsDone == null || issue.Status.IsDone == false) && (status.IsDone == true))
+            {
                 issue.ActualDate = DateTime.Now;
+                flag = false;
+            }
+            if (flag)
+                issue.ActualDate = request.ActualDate;
             issue.Title = request.Title;
             issue.Description = request.Description;
             issue.StartDate = request.StartDate;
@@ -141,7 +148,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             {
                 _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = userAssignee.Id, Type = "assignIssue", Data = JsonSerializer.Serialize(new { type = "assignIssue", assignerName = user.FullName, assignerUsername = user.UserName, assignerAvatar = user.Avatar, projectId = status.ProjectId, issueName = request.Title, issueId = request.Id, issueIndex = issue.Index, issueStatusName = status.Name }) });
                 await _unitOfWork.SaveChangesAsync();
-                await _publisher.Publish(new SendEmailMessage() { ToEmail = userAssignee.Email == null ? "" : userAssignee.Email, Body = EmailMessage.AssignIssue(request.Title, request.Description, request.StartDate, request.DueDate, request.Id + "", status.ProjectId + ""), Subject = $"[ {status.Project.Name} ]You are assigned to issue {request.Title}" });
+                await _publisher.Publish(new SendEmailMessage() { ToEmail = userAssignee.Email == null ? "" : userAssignee.Email, Body = EmailMessage.AssignIssue(request.Title, request.Description, request.StartDate, request.DueDate, request.Id + "", status.ProjectId + ""), Subject = $"[ {status.Project.Name} ] You are assigned to issue {request.Title}" });
             }
 
             users.Add(issue.Reporter);

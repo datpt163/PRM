@@ -30,6 +30,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
 
         public async Task<ResponseMediator> Handle(GetDetailProjectQuery request, CancellationToken cancellationToken)
         {
+
             var project = await _unitOfWork.Projects.Find(x => x.Id == request.Id).Include(c => c.Lead).Include(c => c.UserProjects).ThenInclude(c => c.User).FirstOrDefaultAsync();
 
             if (project == null)
@@ -64,21 +65,28 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                 if (role != null && role.Name != null && role.Permissions.Select(x => x.Name).Contains("SETTING_DETAIL_ALL_PROJECTS"))
                 {
                     projectMapper.MyPermissions = new List<string>() { "IsMemberConfigurator", "IsProjectConfigurator", "IsIssueConfigurator", "IsCommentConfigurator" };
-                }else if(project.LeadId == myUser.Id)
-                {
-                    projectMapper.MyPermissions = new List<string>() { "IsMemberConfigurator", "IsProjectConfigurator", "IsIssueConfigurator", "IsCommentConfigurator" };
                 }
                 else
                 {
-                    var userProject = _unitOfWork.UserProjects.Find(x => x.ProjectId == request.Id && x.UserId == myUser.Id).FirstOrDefault();
-                    if (userProject != null)
+                    if(!(project.LeadId == myUser.Id || project.UserProjects.Select(x => x.UserId).Contains(myUser.Id)))
+                        return new ResponseMediator("", null, 403);
+
+                    if (project.LeadId == myUser.Id)
                     {
-                        if (userProject.IsIssueConfigurator == true)
-                            projectMapper.MyPermissions.Add("IsIssueConfigurator");
-                        if (userProject.IsProjectConfigurator == true)
-                            projectMapper.MyPermissions.Add("IsProjectConfigurator");
-                        if (userProject.IsCommentConfigurator == true)
-                            projectMapper.MyPermissions.Add("IsCommentConfigurator");
+                        projectMapper.MyPermissions = new List<string>() { "IsMemberConfigurator", "IsProjectConfigurator", "IsIssueConfigurator", "IsCommentConfigurator" };
+                    }
+                    else
+                    {
+                        var userProject = _unitOfWork.UserProjects.Find(x => x.ProjectId == request.Id && x.UserId == myUser.Id).FirstOrDefault();
+                        if (userProject != null)
+                        {
+                            if (userProject.IsIssueConfigurator == true)
+                                projectMapper.MyPermissions.Add("IsIssueConfigurator");
+                            if (userProject.IsProjectConfigurator == true)
+                                projectMapper.MyPermissions.Add("IsProjectConfigurator");
+                            if (userProject.IsCommentConfigurator == true)
+                                projectMapper.MyPermissions.Add("IsCommentConfigurator");
+                        }
                     }
                 }
             }
