@@ -25,7 +25,7 @@ namespace Capstone.Application.Module.Issues.ConsumerRabbitMq
 
         public async Task Consume(ConsumeContext<AddIssueMessage2> context)
         {
-            Console.WriteLine("vaooooooooooooooooooo");
+            Console.WriteLine("vaooooooooooooooooooo" + context.Message.Title);
             var issue = new Issue()
             {
                 Index = context.Message.Index,

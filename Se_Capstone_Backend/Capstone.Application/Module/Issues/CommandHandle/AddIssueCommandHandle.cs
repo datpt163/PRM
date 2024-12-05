@@ -64,7 +64,6 @@ namespace Capstone.Application.Module.Issues.CommandHandle
 
             if (request.LabelId.HasValue && _unitOfWork.Labels.FindOne(x => x.Id == request.LabelId) == null)
                 return new ResponseMediator("Label  not found", null, 404);
-
             var status = _unitOfWork.Statuses.Find(x => x.Id == request.StatusId).Include(c => c.Project).ThenInclude(c => c.Phases).Include(c => c.Issues).FirstOrDefault();
             if (status == null)
                 return new ResponseMediator("Status  not found", null, 404);
@@ -111,37 +110,40 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 LabelId = request.LabelId,
                 PhaseId = phaseId
             };
-            var issueMessage = new AddIssueMessage2
-            {
-                Index = index,
-                Title = request.Title,
-                Description = request.Description,
-                StartDate = request.StartDate,
-                DueDate = request.DueDate,
-                Priority = request.Priority,
-                EstimatedTime = request.EstimatedTime,
-                ParentIssueId = request.ParentIssueId,
-                ReporterId = assignedById,
-                AssigneeId = request.AssignedToId,
-                LastUpdateById = lastUpdateById,
-                StatusId = request.StatusId,
-                LabelId = request.LabelId,
-                PhaseId = phaseId
-            };
+            //var issueMessage = new AddIssueMessage2
+            //{
+            //    Index = index,
+            //    Title = request.Title,
+            //    Description = request.Description,
+            //    StartDate = request.StartDate,
+            //    DueDate = request.DueDate,
+            //    Priority = request.Priority,
+            //    EstimatedTime = request.EstimatedTime,
+            //    ParentIssueId = request.ParentIssueId,
+            //    ReporterId = assignedById,
+            //    AssigneeId = request.AssignedToId,
+            //    LastUpdateById = lastUpdateById,
+            //    StatusId = request.StatusId,
+            //    LabelId = request.LabelId,
+            //    PhaseId = phaseId
+            //};
 
-            var response2 = await _requestClient.GetResponse<UserResponse>(issueMessage);
+            //var response2 = await _requestClient.GetResponse<UserResponse>(issueMessage);
 
-            //await _publishEndpoint.Publish(new AddIssueMessage2() { Issue = issue, StatusId = request.StatusId });
-            //await Task.Delay(350, cancellationToken);
+         
+            var position = status.Issues.Where(x => x.ParentIssue == null).Count();
+            issue.Position = position;
+            _unitOfWork.Issues.Add(issue);
+            await _unitOfWork.SaveChangesAsync();
             var response = _mapper.Map<IssueDTO>(issue);
             if(responseSuccess == 205)
             {
                 _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, 
                                                                    UserId = userAssignee.Id, 
                                                                    Type = "assignIssue", 
-                                                                   Data = JsonSerializer.Serialize(new { type = "assignIssue", assignerName = user.FullName, assignerUsername = user.UserName, assignerAvatar = user.Avatar, projectId = status.ProjectId, issueName = request.Title, issueId = Guid.Parse(response2.Message.UserId) , issueIndex = index, issueStatusName = status.Name}) });
+                                                                   Data = JsonSerializer.Serialize(new { type = "assignIssue", assignerName = user.FullName, assignerUsername = user.UserName, assignerAvatar = user.Avatar, projectId = status.ProjectId, issueName = request.Title, issue.Id, issueIndex = index, issueStatusName = status.Name}) });
                 await _unitOfWork.SaveChangesAsync();
-                await _publisher.Publish(new SendEmailMessage() { ToEmail = userAssignee.Email == null ? "" : userAssignee.Email, Body = EmailMessage.AssignIssue(request.Title, request.Description, request.StartDate, request.DueDate, response2.Message.UserId, status.ProjectId + ""), Subject = $"[ {status.Project.Name} ]You are assigned to issue {request.Title}" });
+                await _publisher.Publish(new SendEmailMessage() { ToEmail = userAssignee.Email == null ? "" : userAssignee.Email, Body = EmailMessage.AssignIssue(request.Title, request.Description, request.StartDate, request.DueDate, issue.Id + "", status.ProjectId + ""), Subject = $"[ {status.Project.Name} ]You are assigned to issue {request.Title}" });
             }
             return new ResponseMediator(userAssignee.Id + "", response, responseSuccess);
         }
