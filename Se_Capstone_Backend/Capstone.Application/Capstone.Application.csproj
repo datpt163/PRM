@@ -53,7 +53,21 @@
     <Folder Include="Module\Position\Response\" />
 	  <Folder Include="Module\Comments\QueryHandle\" />
 	  <Folder Include="Module\Position\CommandHandle\" />
-	  <Folder Include="Resources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\Messages.en.Designer.cs">
+      <DependentUpon>Messages.en.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Messages.en.resx">
+      <LastGenOutput>Messages.en.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

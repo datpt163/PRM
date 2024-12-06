@@ -1,4 +1,5 @@
-﻿using Capstone.Application.Common.Cloudinaries;
+﻿using Capstone.Application;
+using Capstone.Application.Common.Cloudinaries;
 using Capstone.Application.Common.Cohere;
 using Capstone.Application.Common.Email;
 using Capstone.Application.Common.FileService;
@@ -54,7 +55,8 @@ namespace Capstone.Api.Common.ConfigureService
             #endregion
 
             #region Localization
-            services.AddLocalization(options => options.ResourcesPath = "Resources"); 
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+
             #endregion
 
             #region Middleware
