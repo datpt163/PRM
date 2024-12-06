@@ -49,7 +49,10 @@ namespace Capstone.Application.Module.Users.QueryHandle
                 //}
                 usersQuery = usersQuery.Where(user => user.Email != null && user.Email.ToLower().Contains(request.Email.ToLower()));
             }
-
+            if (!string.IsNullOrEmpty(request.UserName))
+            {
+                usersQuery = usersQuery.Where(user => user.UserName != null && user.UserName.ToLower().Contains(request.UserName.ToLower()));
+            }
             if (!string.IsNullOrEmpty(request.Search))
             {
                 usersQuery = usersQuery.Where(user =>
