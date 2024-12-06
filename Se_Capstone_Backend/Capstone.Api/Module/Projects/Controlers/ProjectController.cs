@@ -240,7 +240,8 @@ namespace Capstone.Api.Module.Projects.Controlers
             {
                 ProjectName = request.ProjectName,
                 ProjectDetail = request.ProjectDetail,
-                UserStatistics = request.UserStatistics
+                UserStatistics = request.UserStatistics,
+                TotalUsersNeed = request.TotalUsersNeed
             };
 
             var result = await _mediator.Send(query);
