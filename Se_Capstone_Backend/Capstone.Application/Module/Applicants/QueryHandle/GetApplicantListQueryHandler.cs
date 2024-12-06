@@ -27,27 +27,23 @@ namespace Capstone.Application.Module.Applicants.QueryHandle
                 .Where(x => !x.IsDeleted);
             if (!string.IsNullOrEmpty(request.Email))
             {
-                if (!EmailHelper.IsValidEmail(request.Email))
-                {
-                    throw new ArgumentException("Invalid email format.");
-                }
+
                 applicantsQuery = applicantsQuery.Where(a => a.Email.Contains(request.Email));
             }
 
             if (!string.IsNullOrEmpty(request.PhoneNumber))
             {
-                if (!PhoneNumberValidator.Validate(request.PhoneNumber))
-                {
-                    throw new ArgumentException("Invalid phone number format.");
-                }
+
                 applicantsQuery = applicantsQuery.Where(a => a.PhoneNumber != null && a.PhoneNumber.ToLower().Contains(request.PhoneNumber.ToLower()));
 
             }
 
             if (!string.IsNullOrEmpty(request.Name))
             {
-                applicantsQuery = applicantsQuery.Where(a => a.Name.Contains(request.Name));
+                string nameToLower = request.Name.ToLower();
+                applicantsQuery = applicantsQuery.Where(a => a.Name.ToLower().Contains(nameToLower));
             }
+
 
             if (request.IsOnBoard.HasValue)
             {
