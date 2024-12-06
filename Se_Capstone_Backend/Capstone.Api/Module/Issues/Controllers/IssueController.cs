@@ -38,6 +38,9 @@ namespace Capstone.Api.Module.Issues.Controllers
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var result = await _mediator.Send(new AddIssueCommand(token, request.Title, request.Description, request.StartDate, request.DueDate, request.Priority, request.EstimatedTime, request.ParentIssueId, request.AssigneeId, request.StatusId, request.LabelId));
+            if (result.StatusCode == 403)
+                return Forbid();
+
             if (result.StatusCode == 205)
             {
                 await _hubContext.Clients.Group(result.ErrorMessage == null ? "" : result.ErrorMessage)
@@ -87,7 +90,11 @@ namespace Capstone.Api.Module.Issues.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteStatus(Guid id)
         {
-            var result = await _mediator.Send(new DeleteIssueCommand() { Id = id });
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var result = await _mediator.Send(new DeleteIssueCommand() { Id = id, Token = token});
+            if (result.StatusCode == 403)
+                return Forbid();
+
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseNoContent();
             else
@@ -123,7 +130,10 @@ namespace Capstone.Api.Module.Issues.Controllers
         public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateIssueRequest request)
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var result = await _mediator.Send(new UpdateIssueCommand(id, token, request.Title, request.Description, request.StartDate, request.DueDate, request.Percentage, request.Priority, request.EstimatedTime, request.ParentIssueId, request.AssigneeId, request.StatusId, request.LabelId) { PhaseId = request.PhaseId, ActualTime = request.ActualTime, ActualDate = request.ActualDate });
+            var result = await _mediator.Send(new UpdateIssueCommand(id, token, request.Title, request.Description, request.StartDate, request.DueDate, request.Percentage, request.Priority, request.EstimatedTime, request.ParentIssueId, request.AssigneeId, request.StatusId, request.LabelId) { PhaseId = request.PhaseId, ActualTime = request.ActualTime, ActualDate = request.ActualDate, ReporterId = request.ReporterId });
+            if (result.StatusCode == 403)
+                return Forbid();
+
             if (result.StatusCode == 200)
             {
                 if (!string.IsNullOrEmpty(result.ErrorMessage))

@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.Jwt;
 using Capstone.Domain.Entities;
+using Capstone.Domain.Enums;
 using Capstone.Infrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +15,8 @@ namespace Capstone.Application.Common.ProjectAuthorize
 {
     public interface IManagePermissionProject
     {
-        public Task<(bool,int)> IsAuthorizedAsync(string token, string typeAuthorize, Guid? projectId = null, Guid? issueId = null, Guid? phaseId = null, Guid? labelId = null, Guid? statusId = null, Guid? commentId = null);
-        public Task<(List<string>, int)> GetPermissionAsync(string token, Guid? projectId = null, Guid? issueId = null, Guid? phaseId = null, Guid? labelId = null, Guid? statusId = null, Guid? commentId = null);
+        public Task<(bool,int)> IsAuthorizedAsync(string token, string typeAuthorize, Guid? projectId = null, Guid? issueId = null, Guid? phaseId = null, Guid? labelId = null, Guid? statusId = null, Guid? commentId = null, string? option = null);
+        public Task<(List<string>, int)> GetPermissionAsync(string token, Guid? projectId = null, Guid? issueId = null, Guid? phaseId = null, Guid? labelId = null, Guid? statusId = null, Guid? commentId = null, string? option = null);
     }
     public class ManagePermissionProject : IManagePermissionProject
     {
@@ -29,9 +30,9 @@ namespace Capstone.Application.Common.ProjectAuthorize
             _userManager = userManager;
         }
 
-        public async Task<(bool,int)> IsAuthorizedAsync(string token, string typeAuthorize, Guid? projectId = null, Guid? issueId = null, Guid? phaseId = null, Guid? labelId = null, Guid? statusId = null, Guid? commentId = null)
+        public async Task<(bool,int)> IsAuthorizedAsync(string token, string typeAuthorize, Guid? projectId = null, Guid? issueId = null, Guid? phaseId = null, Guid? labelId = null, Guid? statusId = null, Guid? commentId = null, string? option = null)
         {
-            (List<string> permissions, int statusCode ) = await GetPermissionAsync(token, projectId: projectId, issueId: issueId, phaseId: phaseId, labelId: labelId, statusId: statusId, commentId: commentId);
+            (List<string> permissions, int statusCode ) = await GetPermissionAsync(token, projectId: projectId, issueId: issueId, phaseId: phaseId, labelId: labelId, statusId: statusId, commentId: commentId, option: option);
 
             if (statusCode == 404)
                 return (false, 404);
@@ -43,7 +44,7 @@ namespace Capstone.Application.Common.ProjectAuthorize
             }
         }
 
-        public async Task<(List<string>,int)> GetPermissionAsync(string token, Guid? projectId = null, Guid? issueId = null, Guid? phaseId = null, Guid? labelId = null, Guid? statusId = null, Guid? commentId = null)
+        public async Task<(List<string>,int)> GetPermissionAsync(string token, Guid? projectId = null, Guid? issueId = null, Guid? phaseId = null, Guid? labelId = null, Guid? statusId = null, Guid? commentId = null, string? option = null)
         {
             var permissions = new List<string>();
             Project? project = new Project();
@@ -110,10 +111,21 @@ namespace Capstone.Application.Common.ProjectAuthorize
 
                 if (role != null && role.Name != null && role.Permissions.Select(x => x.Name).Contains("SETTING_DETAIL_ALL_PROJECTS"))
                 {
+                    if (option != null && option == PermissionCode.CheckMember)
+                        return (permissions, PermissionCode.IsSettingAllProjectConfigurator);
                     permissions = new List<string>() { "IsMemberConfigurator", "IsProjectConfigurator", "IsIssueConfigurator", "IsCommentConfigurator" };
                 }
                 else
                 {
+                    if (option != null && option == PermissionCode.CheckMember)
+                    {
+                        if (project.LeadId == myUser.Id)
+                            return (permissions, PermissionCode.IsLeader);
+                        if(project.UserProjects.Select(x => x.UserId).Contains(myUser.Id))
+                            return (permissions, PermissionCode.IsMember);
+                        return (permissions, PermissionCode.NotHavePermission);
+                    }
+
                     if (project.LeadId == myUser.Id)
                     {
                         permissions = new List<string>() { "IsMemberConfigurator", "IsProjectConfigurator", "IsIssueConfigurator", "IsCommentConfigurator" };
@@ -135,5 +147,14 @@ namespace Capstone.Application.Common.ProjectAuthorize
             }
             return (permissions, 200);
         }
+    }
+
+    public static class PermissionCode
+    {
+        public static int NotHavePermission = 502;
+        public static int IsMember = 503;
+        public static int IsLeader = 504;
+        public static int IsSettingAllProjectConfigurator = 504;
+        public static string CheckMember = "CHECK_MEMBER";
     }
 }

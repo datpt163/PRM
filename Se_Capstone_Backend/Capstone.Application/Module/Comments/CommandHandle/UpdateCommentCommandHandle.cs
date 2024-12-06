@@ -2,6 +2,7 @@
 using Capstone.Application.Common.Email.EmailQueue;
 using Capstone.Application.Common.EmailHTML;
 using Capstone.Application.Common.Jwt;
+using Capstone.Application.Common.ProjectAuthorize;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Comments.Command;
 using Capstone.Application.Module.Comments.CommentDTOs;
@@ -28,9 +29,11 @@ namespace Capstone.Application.Module.Comments.CommandHandle
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IPublishEndpoint _publisher;
+        private readonly IManagePermissionProject _managePermissionProject;
 
-        public UpdateCommentCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService, IMapper mapper, UserManager<User> userManager, IPublishEndpoint publishEndpoint)
+        public UpdateCommentCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService, IMapper mapper, UserManager<User> userManager, IPublishEndpoint publishEndpoint, IManagePermissionProject managePermissionProject)
         {
+            _managePermissionProject = managePermissionProject;
             _publisher = publishEndpoint;
             _userManager = userManager;
             _mapper = mapper;
@@ -51,11 +54,12 @@ namespace Capstone.Application.Module.Comments.CommandHandle
             if (user == null)
                 return new ResponseMediator("User not found", null, 404);
 
+            (bool isAuthorize, int status) = await _managePermissionProject.IsAuthorizedAsync(request.Token, "IsCommentConfigurator", commentId: request.Id);
+            if (comment.UserId != user.Id && isAuthorize == false)
+                return new ResponseMediator("", null, 403);
+
             var roles = await _userManager.GetRolesAsync(user);
             var role = _unitOfWork.Roles.Find(x => x.Name != null && x.Name == (roles.FirstOrDefault() == null ? "" : roles.FirstOrDefault())).Include(c => c.Permissions).FirstOrDefault();
-
-            if (user.Id != comment.UserId && !(role != null && role.Name != null && role.Permissions.Select(x => x.Name).Contains("UPDATE_ALL_COMMENT")) )
-                return new ResponseMediator("Do not have permission to update this comment", null);
 
             if (string.IsNullOrEmpty(request.Content))
                 return new ResponseMediator("Content empty", null);

@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.Email.EmailQueue;
 using Capstone.Application.Common.EmailHTML;
 using Capstone.Application.Common.Jwt;
+using Capstone.Application.Common.ProjectAuthorize;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Projects.Command;
 using Capstone.Domain.Entities;
@@ -9,6 +10,7 @@ using MassTransit;
 using MassTransit.RabbitMqTransport;
 using MassTransit.Transports;
 using MediatR;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
@@ -19,8 +21,10 @@ namespace Capstone.Application.Module.Projects.CommandHandle
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPublishEndpoint _publisher;
         private readonly IJwtService _jwtService;
-        public AddMembersToProjectCommandHandle(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, IJwtService jwtService)
+        private readonly IManagePermissionProject _managePermissionProject;
+        public AddMembersToProjectCommandHandle(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, IJwtService jwtService, IManagePermissionProject managePermissionProject)
         {
+            _managePermissionProject = managePermissionProject;
             _jwtService = jwtService;
             _publisher = publishEndpoint;
             _unitOfWork = unitOfWork;
@@ -35,6 +39,11 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             var project = _unitOfWork.Projects.Find(x => x.Id == request.ProjectId).Include(c => c.UserProjects).FirstOrDefault();
             if (project == null)
                 return new ResponseMediator("Project not found", null, 404);
+
+            (bool isAuthorized, int statusCode) = await _managePermissionProject.IsAuthorizedAsync(request.Token, "IsMemberConfigurator", projectId: request.ProjectId);
+            if(!isAuthorized)
+                return new ResponseMediator("", null, 403);
+
             var userIds = new List<Guid>();
             userIds.AddRange(request.MemberIds);
             userIds.RemoveAll(x => x == userAsign.Id);

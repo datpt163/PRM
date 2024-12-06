@@ -6,17 +6,12 @@ namespace Capstone.Domain.Entities
 {
     public partial class User : IdentityUser<Guid>
     {
-        [MaxLength(100)]
         public string? Avatar { get; set; }
-        [MaxLength(100)]
         public string? Address { get; set; }
         public UserStatus Status { get; set; } = UserStatus.Active;
-        [MaxLength(30)]
         public Gender Gender { get; set; } 
         public DateTime? Dob { get; set; }
-        [MaxLength(100)]
         public string FullName { get; set; } = string.Empty;
-        [MaxLength(100)]
         public string? BankAccount { get; set; }
         public string? BankAccountName { get; set; } 
         public DateTime CreateDate { get; set; }

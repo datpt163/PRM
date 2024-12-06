@@ -27,7 +27,7 @@ namespace Capstone.Application.Module.Issues.Command
             StatusId = statusId;
             LabelId = labelId;
         }
-
+        public Guid ReporterId { get; set; }
         public Guid Id { get; set; }
         public string Token { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;

@@ -39,6 +39,9 @@ namespace Capstone.Api.Module.Comments.Controllers
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var result = await _mediator.Send(new AddCommentCommand() { Content = request.Content, IssueId = request.IssueId, Token = token});
+            if (result.StatusCode == 403)
+                return Forbid();
+
             if (result.StatusCode == 200)
             {
                 return ResponseOk(result.Data);
@@ -72,6 +75,9 @@ namespace Capstone.Api.Module.Comments.Controllers
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var result = await _mediator.Send(new DeleteCommentCommand() { Id = id, Token = token });
+            if (result.StatusCode == 403)
+                return Forbid();
+
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseNoContent();
             else
@@ -89,6 +95,8 @@ namespace Capstone.Api.Module.Comments.Controllers
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var result = await _mediator.Send(new UpdateCommentCommand() { Id = id, Content = request.Content, Token = token });
+            if (result.StatusCode == 403)
+                return Forbid();
             if (result.StatusCode == 200)
             {
                 if (!string.IsNullOrEmpty(result.ErrorMessage))
