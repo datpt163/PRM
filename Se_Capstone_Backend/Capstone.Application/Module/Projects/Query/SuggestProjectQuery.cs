@@ -13,6 +13,8 @@ namespace Capstone.Application.Module.Projects.Query
         public string ProjectName { get; set; } = string.Empty;
         public string ProjectDetail { get; set; } = string.Empty;
         public List<UserStatistic> UserStatistics { get; set; } = new List<UserStatistic>();
+
+        public int TotalUsersNeed { get; set; } = 3;
     }
     public class UserStatistic
     {

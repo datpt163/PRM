@@ -13,7 +13,8 @@ namespace Capstone.Application.Common.Gpt
         public ChatGPTService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
-            _apiKey = configuration["OpenAI:ApiKey"] ?? string.Empty;
+            _apiKey = !string.IsNullOrEmpty(configuration["OpenAI:ApiKey"]) ? configuration["OpenAI:ApiKey"] : Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? string.Empty;
+
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
         }
 

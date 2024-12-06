@@ -31,10 +31,15 @@ namespace Capstone.Application.Module.Projects.QueryHandle
 
         public async Task<List<SuggestMapping>> Handle(SuggestProjectQuery request, CancellationToken cancellationToken)
         {
-            try
+            if (request.TotalUsersNeed < 1)
             {
+                throw new ArgumentException("Total Users need to be at least 1.");
+            }
+
+            try
+            {   
                 string systemMessage = "You are a specialized assistant capable of analyzing project requirements and employee data. " +
-                       "Your role is to carefully evaluate the 'ProjectDetail' and 'Skill' field in the provided data and select exactly 3 unique user IDs (UIDs) " +
+                       $"Your role is to carefully evaluate the 'ProjectDetail' and 'Skill' field in the provided data and select exactly {request.TotalUsersNeed} unique user IDs (UIDs) " +
                        "that best align with the described requirements. " +
                        "The selection criteria are based on relevance and fit to the ProjectDetail field. " +
                        "The output must be a valid JSON array of exactly 3 GUID strings, strictly formatted as [\"GUID1\", \"GUID2\", \"GUID3\"]. " +
@@ -43,9 +48,9 @@ namespace Capstone.Application.Module.Projects.QueryHandle
 
                 var maxTokens = 4096;
                 var requestJson = JsonSerializer.Serialize(request);
-                //var response = await _chatGptService.GetChatGptResponseAsync(requestJson, systemMessage, maxTokens);
+                var response = await _chatGptService.GetChatGptResponseAsync(requestJson, systemMessage, maxTokens);
                 //var response = await _huggingFaceService.GetResponseAsync(requestJson, systemMessage, maxTokens);
-                var response = await _cohereService.GetResponseAsync(requestJson, systemMessage, maxTokens);
+                //var response = await _cohereService.GetResponseAsync(requestJson, systemMessage, maxTokens);
 
                 var potentialEmployeeIds = ParseGptResponse(response);
 
@@ -79,7 +84,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                     })
                     .OrderByDescending(x => x.MatchCount)
                     .ThenBy(x => x.User.ActiveProjectCount)
-                    .Take(3)
+                    .Take(request.TotalUsersNeed)
                     .Select(x => new SuggestMapping
                     {
                         UserId = x.User.Id,
@@ -91,7 +96,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                 {
                     matchedUsers = request.UserStatistics
                         .OrderByDescending(us => us.ActiveProjectCount)
-                        .Take(3)
+                        .Take(request.TotalUsersNeed)
                         .Select(us => new SuggestMapping
                         {
                             UserId = us.Id,
