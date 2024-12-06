@@ -8,7 +8,7 @@ namespace Capstone.Application.Common.Gpt
     public class ChatGPTService : IChatGPTService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _apiKey;
+        private readonly string? _apiKey;
 
         public ChatGPTService(HttpClient httpClient, IConfiguration configuration)
         {
