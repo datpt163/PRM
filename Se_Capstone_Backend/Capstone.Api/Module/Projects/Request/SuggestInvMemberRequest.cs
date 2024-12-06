@@ -6,6 +6,8 @@ namespace Capstone.Api.Module.Projects.Request
     {
         public string ProjectName { get; set; } = string.Empty;
         public string ProjectDetail { get; set; } = string.Empty;
+        public int TotalUsersNeed { get; set; } = 3;
+
         public List<UserStatistic> UserStatistics { get; set; } = new List<UserStatistic>();    
     }
 }
