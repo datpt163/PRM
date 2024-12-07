@@ -24,11 +24,13 @@ namespace Capstone.Api.Module.Issues.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly IHubContext<StatusHub> _statusHubContext;
 
-        public IssueController(IMediator mediator, IHubContext<NotificationHub> context)
+        public IssueController(IMediator mediator, IHubContext<NotificationHub> context, IHubContext<StatusHub> statusHubContext)
         {
             _hubContext = context;
             _mediator = mediator;
+            _statusHubContext = statusHubContext;
         }
 
         [HttpPost]
@@ -52,6 +54,8 @@ namespace Capstone.Api.Module.Issues.Controllers
                         {
                             await _hubContext.Clients.Group(userIdd + "")
                                                    .SendAsync("NotificationResponse", "Success");
+                            await _statusHubContext.Clients.Group(userIdd + "")
+                                                 .SendAsync("IssueOrderResponse", "Success");
                         }
                     }
                     catch
@@ -158,6 +162,8 @@ namespace Capstone.Api.Module.Issues.Controllers
                         {
                             await _hubContext.Clients.Group(userIdd + "")
                                                    .SendAsync("NotificationResponse", "Success");
+                            await _statusHubContext.Clients.Group(userIdd + "")
+                                               .SendAsync("IssueOrderResponse", "Success");
                         }
                     }
                     catch
