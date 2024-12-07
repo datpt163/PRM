@@ -43,7 +43,7 @@ namespace Capstone.Api.Module.Issues.Controllers
             if (result.StatusCode == 403)
                 return Forbid();
 
-            if (result.StatusCode == 205 || (result.StatusCode == 200)
+            if (result.StatusCode == 205 || (result.StatusCode == 200))
             {
                 if (!string.IsNullOrEmpty(result.ErrorMessage))
                 {
