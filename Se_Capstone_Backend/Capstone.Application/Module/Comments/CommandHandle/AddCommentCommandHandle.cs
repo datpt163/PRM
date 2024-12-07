@@ -2,6 +2,7 @@
 using Capstone.Application.Common.Email.EmailQueue;
 using Capstone.Application.Common.EmailHTML;
 using Capstone.Application.Common.Jwt;
+using Capstone.Application.Common.ProjectAuthorize;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Comments.Command;
 using Capstone.Application.Module.Comments.CommentDTOs;
@@ -28,8 +29,10 @@ namespace Capstone.Application.Module.Comments.CommandHandle
         private readonly IJwtService _jwtService;
         private readonly IMapper _mapper;
         private readonly IPublishEndpoint _publisher;
-        public AddCommentCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService, IMapper mapper, IPublishEndpoint publishEndpoint)
+        private readonly IManagePermissionProject _managePermissionProject;
+        public AddCommentCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService, IMapper mapper, IPublishEndpoint publishEndpoint, IManagePermissionProject managePermissionProject)
         {
+            _managePermissionProject = managePermissionProject;
             _publisher = publishEndpoint;
             _mapper = mapper;
             _jwtService = jwtService;
@@ -49,6 +52,10 @@ namespace Capstone.Application.Module.Comments.CommandHandle
             var issue = _unitOfWork.Issues.Find(x => x.Id == request.IssueId).Include(c => c.Comments).ThenInclude(c => c.User).Include(c => c.Status).ThenInclude(c => c.Project).Include(c => c.Reporter).Include(c => c.Assignee).FirstOrDefault();
             if(issue  == null)
                 return new ResponseMediator("Issue not found", null);
+
+            (List<string> permissions, int authorizeProjectCode) = await _managePermissionProject.GetPermissionAsync(request.Token, issueId: request.IssueId, option: PermissionCode.CheckMember);
+            if (authorizeProjectCode != PermissionCode.IsMember && authorizeProjectCode != PermissionCode.IsLeader && authorizeProjectCode != PermissionCode.IsSettingAllProjectConfigurator)
+                return new ResponseMediator("", null, 403);
 
             if (string.IsNullOrEmpty(request.Content))
                 return new ResponseMediator("Content empty", null);

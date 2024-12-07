@@ -1,4 +1,5 @@
 ﻿using Capstone.Domain.Enums;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,5 +34,43 @@ namespace Capstone.Application.Common.EmailHTML
         {
             return $"<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n    <title>Project Created Email</title>\r\n    <style>\r\n        body {{\r\n            font-family: Arial, sans-serif;\r\n            line-height: 1.6;\r\n            margin: 0;\r\n            padding: 0;\r\n            background-color: #f9f9f9;\r\n            color: #333;\r\n        }}\r\n        .email-container {{\r\n            max-width: 600px;\r\n            margin: 20px auto;\r\n            padding: 20px;\r\n            background-color: #ffffff;\r\n            border: 1px solid #ddd;\r\n            border-radius: 5px;\r\n            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);\r\n        }}\r\n        h1 {{\r\n            font-size: 20px;\r\n            color: #444;\r\n        }}\r\n        p {{\r\n            margin: 10px 0;\r\n        }}\r\n        .button-container {{\r\n            margin: 20px 0;\r\n            text-align: center;\r\n        }}\r\n        .button {{\r\n            display: inline-block;\r\n            padding: 10px 20px;\r\n            background-color: #007bff;\r\n            color: #fff;\r\n            text-decoration: none;\r\n            border-radius: 5px;\r\n            font-size: 16px;\r\n            font-weight: bold;\r\n        }}\r\n        .button:hover {{\r\n            background-color: #0056b3;\r\n        }}\r\n        footer {{\r\n            margin-top: 20px;\r\n            font-size: 12px;\r\n            text-align: center;\r\n            color: #888;\r\n        }}\r\n    </style>\r\n</head>\r\n<body>\r\n    <div class=\"email-container\">\r\n    <p>Update on issue: {name}.</p>\r\n      <div class=\"button-container\">\r\n            <a href=\"https://headnshoulder.netlify.app/projects/{projectId}/issues/{issueId}\" class=\"button\" style=\"color: white;\" >Go to issue Details</a>\r\n        </div>\r\n        <p>If you need any help or have questions, feel free to reach out.</p>\r\n \r\n    </div>\r\n</body>\r\n</html>";
         }
+
+        public static string NotificationIssue(List<NotificationIssue> request)
+        {
+            var header = "<!DOCTYPE html>\r\n<html lang=\"vi\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n    <title>These are the issues you have not completed yet.</title>\r\n    <style>\r\n        body {\r\n            font-family: 'Arial', sans-serif;\r\n            background-color: #f4f7f6;\r\n            margin: 0;\r\n            padding: 0;\r\n            color: #333;\r\n        }\r\n        .container {\r\n            width: 80%;\r\n            margin: 0 auto;\r\n            padding: 20px;\r\n        }\r\n        h1 {\r\n            text-align: center;\r\n            color: #2C3E50;\r\n            font-size: 36px;\r\n            margin-bottom: 20px;\r\n        }\r\n        table {\r\n            width: 100%;\r\n            border-collapse: collapse;\r\n            margin-top: 20px;\r\n            background-color: #fff;\r\n            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);\r\n        }\r\n        th, td {\r\n            padding: 12px;\r\n            text-align: left;\r\n            border: 1px solid #ddd;\r\n        }\r\n        th {\r\n            background-color: #3498db;\r\n            color: white;\r\n        }\r\n        tr:nth-child(even) {\r\n            background-color: #f2f2f2;\r\n        }\r\n        tr:hover {\r\n            background-color: #f1f1f1;\r\n        }\r\n        .status {\r\n            font-weight: bold;\r\n        }\r\n        .status.open {\r\n            color: #e74c3c;\r\n        }\r\n        .status.in-progress {\r\n            color: #f39c12;\r\n        }\r\n        .status.completed {\r\n            color: #2ecc71;\r\n        }\r\n\r\n        /* Styles for table scroll */\r\n        .table-container {\r\n            max-height: 300px; /* Set the maximum height for the table */\r\n            overflow-y: auto;  /* Enable vertical scrolling */\r\n        }\r\n\r\n    </style>\r\n</head>\r\n<body>\r\n    <div class=\"container\">\r\n        <h1>These are the issues you have not completed yet.</h1>\r\n        <div class=\"table-container\">\r\n            <table>\r\n                <thead>\r\n                    <tr>\r\n                        <th>Project Name</th>\r\n                        <th>Issue Index</th>\r\n                        <th>Issue Name</th>\r\n                        <th>Status</th>\r\n                        <th>Due Date</th>\r\n                   \r\n                    </tr>\r\n                </thead>\r\n                <tbody>";
+            var footer = " </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</body>\r\n</html>";
+            var body = "";
+
+            foreach(var i in request)
+            {
+                body += $" <tr>\r\n                    <td>{i.ProjectName}</td>\r\n                    <td>#{i.IssueIndex}</td>\r\n                    <td>{i.IssueName}</td>\r\n                    <td><span class=\"status open\">{i.StatusName}</span></td>\r\n  \r\n";
+
+                if (i.DueDate == null)
+                {
+                    body += $"<td></td>";
+                }
+                else
+                {
+                    if (i.DueDate.Value.Date <= DateTime.Now.Date)
+                        body += $"<td style=\"color: #e74c3c;\" >{i.DueDate.Value.Date}</td>";
+                    else
+                        body += $" <td>{i.DueDate.Value.Date}</td>";
+                }
+
+                body += $"<td><a href=\"https://headnshoulder.netlify.app/projects/{i.ProjectId}/issues/{i.IssueId}\" target=\"_blank\">Detail</a></td>  </tr>";
+            }
+            return (header + body + footer);
+        }
+    }
+
+    public class NotificationIssue
+    {
+        public string ProjectName { get; set; } = string.Empty;
+        public int IssueIndex { get; set; } 
+        public string IssueName { get; set; } = string.Empty;
+        public string StatusName { get; set; } = string.Empty;
+        public DateTime? DueDate { get; set;}
+        public string IssueId { get; set; } = string.Empty;
+        public string ProjectId { get; set; } = string.Empty;
     }
 }

@@ -3,6 +3,7 @@ using Capstone.Api.Middleware;
 using Capstone.Api.Module.Auth.Validator;
 using Capstone.Api.Module.Statuses.SignalR;
 using Capstone.Application;
+using Capstone.Application.Module.Issues.NotiDate;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.DbContexts;
 using FluentValidation;
@@ -49,7 +50,6 @@ builder.Services.AddCors(options =>
 builder.Services.AddSignalR();
 builder.Services.AddSwaggerService();
 builder.Services.AddDataService(builder.Configuration);
-
 #region MediatR
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AssemblyReference.Assembly));
 builder.Services.AddIdentity<User, Capstone.Domain.Entities.Role>()
@@ -76,6 +76,7 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 #endregion
 
 builder.Services.AddGreetingService(builder.Configuration);
+builder.Services.AddHostedService<ScheduledTaskService>();
 var app = builder.Build();
 app.UseCors("AllowAll");
 #region Cultures

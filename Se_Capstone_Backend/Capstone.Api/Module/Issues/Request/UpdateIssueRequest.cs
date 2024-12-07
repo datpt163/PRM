@@ -13,6 +13,7 @@ namespace Capstone.Api.Module.Issues.Request
         public float? EstimatedTime { get; set; }
         public Guid? ParentIssueId { get; set; }
         public Guid? AssigneeId { get; set; }
+        public Guid ReporterId { get; set; }
         public Guid StatusId { get; set; }
         public Guid? LabelId { get; set; }
         public Guid? PhaseId { get; set; }
