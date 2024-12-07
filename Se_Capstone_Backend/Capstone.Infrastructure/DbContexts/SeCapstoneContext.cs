@@ -180,7 +180,8 @@ namespace Capstone.Infrastructure.DbContexts
             modelBuilder.Entity<Issue>()
             .HasOne(a => a.ParentIssue)
             .WithMany(s => s.SubIssues)
-            .HasForeignKey(a => a.ParentIssueId);
+            .HasForeignKey(a => a.ParentIssueId)
+              .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Issue>()
            .HasOne(a => a.LastUpdateBy)

@@ -2,6 +2,7 @@
 using Capstone.Application.Common.Email.EmailQueue;
 using Capstone.Application.Common.EmailHTML;
 using Capstone.Application.Common.Jwt;
+using Capstone.Application.Common.ProjectAuthorize;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Issues.Command;
 using Capstone.Application.Module.Issues.DTO;
@@ -28,9 +29,12 @@ namespace Capstone.Application.Module.Issues.CommandHandle
         private readonly IUnitOfWork _unitOfWork;
         private readonly IJwtService _jwtService;
         private readonly IMapper _mapper;
-        public readonly IPublishEndpoint _publisher;
-        public UpdateIssueCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService, IMapper mapper, IPublishEndpoint publishEndpoint)
+        private readonly IPublishEndpoint _publisher;
+        private readonly IManagePermissionProject _managePermissionProject;
+
+       public UpdateIssueCommandHandle(IUnitOfWork unitOfWork, IJwtService jwtService, IMapper mapper, IPublishEndpoint publishEndpoint, IManagePermissionProject managePermissionProject)
         {
+            _managePermissionProject = managePermissionProject;
             _publisher = publishEndpoint;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
@@ -86,6 +90,18 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             var user = await _jwtService.VerifyTokenAsync(request.Token);
             if (user == null)
                 return new ResponseMediator("User  not found", null, 404);
+
+            (bool isAuthorized, int statusCode) = await _managePermissionProject.IsAuthorizedAsync(request.Token, "IsIssueConfigurator", issueId: request.Id);
+            if (request.ReporterId != issue.ReporterId)
+            {
+                if (!isAuthorized)
+                    return new ResponseMediator("", null, 403);
+            }
+            else
+            {
+                if(issue.AssigneeId != user.Id && issue.ReporterId != user.Id && !isAuthorized)
+                    return new ResponseMediator("", null, 403);
+            }
 
             if((issue.AssigneeId == null && request.AssigneeId != null ) || ( issue.AssigneeId != null && request.AssigneeId != null && issue.AssigneeId != request.AssigneeId))
             {

@@ -141,6 +141,9 @@ namespace Capstone.Api.Module.Projects.Controlers
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             request.Token = token;
             var result = await _mediator.Send(request);
+            if (result.StatusCode == 403)
+                return Forbid();
+
             if (result.StatusCode == 200)
             {
                 if (!string.IsNullOrEmpty(result.ErrorMessage))

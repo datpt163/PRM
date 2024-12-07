@@ -2,6 +2,7 @@
 using Capstone.Application.Common.Email.EmailQueue;
 using Capstone.Application.Common.EmailHTML;
 using Capstone.Application.Common.Jwt;
+using Capstone.Application.Common.ProjectAuthorize;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Issues.Command;
 using Capstone.Application.Module.Issues.ConsumerRabbitMq;
@@ -30,9 +31,10 @@ namespace Capstone.Application.Module.Issues.CommandHandle
         private readonly IJwtService _jwtService;
         private readonly RedisContext _redisContext;
         private readonly IMapper _mapper;
-        public readonly IPublishEndpoint _publisher;
+        private readonly IPublishEndpoint _publisher;
         private readonly IRequestClient<AddIssueMessage2> _requestClient;
-        public AddIssueCommandHandle(IPublishEndpoint publishEndpoint, IUnitOfWork unitOfWork, IJwtService jwtService, RedisContext redisContext, IMapper mapper, IRequestClient<AddIssueMessage2> requestClient)
+        private readonly IManagePermissionProject _managePermissionProject;  
+        public AddIssueCommandHandle(IPublishEndpoint publishEndpoint, IUnitOfWork unitOfWork, IJwtService jwtService, RedisContext redisContext, IMapper mapper, IRequestClient<AddIssueMessage2> requestClient, IManagePermissionProject managePermissionProject)
         {
             _requestClient = requestClient;
             _mapper = mapper;
@@ -40,6 +42,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             _jwtService = jwtService;
             _redisContext = redisContext;
             _publisher = publishEndpoint;
+            _managePermissionProject = managePermissionProject;
         }
 
         public async Task<ResponseMediator> Handle(AddIssueCommand request, CancellationToken cancellationToken)
@@ -72,6 +75,9 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             if (user == null)
                 return new ResponseMediator("User  not found", null, 404);
 
+            (List<string> permissions, int authorizeProjectCode) = await _managePermissionProject.GetPermissionAsync(request.Token, statusId: request.StatusId, option: PermissionCode.CheckMember);
+            if (authorizeProjectCode != PermissionCode.IsMember && authorizeProjectCode != PermissionCode.IsLeader && authorizeProjectCode != PermissionCode.IsSettingAllProjectConfigurator)
+                return new ResponseMediator("", null, 403);
 
             if (request.AssignedToId.HasValue)
             {
@@ -141,7 +147,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, 
                                                                    UserId = userAssignee.Id, 
                                                                    Type = "assignIssue", 
-                                                                   Data = JsonSerializer.Serialize(new { type = "assignIssue", assignerName = user.FullName, assignerUsername = user.UserName, assignerAvatar = user.Avatar, projectId = status.ProjectId, issueName = request.Title, issue.Id, issueIndex = index, issueStatusName = status.Name}) });
+                                                                   Data = JsonSerializer.Serialize(new { type = "assignIssue", assignerName = user.FullName, assignerUsername = user.UserName, assignerAvatar = user.Avatar, projectId = status.ProjectId, issueName = request.Title, issueId = issue.Id, issueIndex = index, issueStatusName = status.Name}) });
                 await _unitOfWork.SaveChangesAsync();
                 await _publisher.Publish(new SendEmailMessage() { ToEmail = userAssignee.Email == null ? "" : userAssignee.Email, Body = EmailMessage.AssignIssue(request.Title, request.Description, request.StartDate, request.DueDate, issue.Id + "", status.ProjectId + ""), Subject = $"[ {status.Project.Name} ]You are assigned to issue {request.Title}" });
             }
