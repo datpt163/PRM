@@ -151,7 +151,10 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 await _unitOfWork.SaveChangesAsync();
                 await _publisher.Publish(new SendEmailMessage() { ToEmail = userAssignee.Email == null ? "" : userAssignee.Email, Body = EmailMessage.AssignIssue(request.Title, request.Description, request.StartDate, request.DueDate, issue.Id + "", status.ProjectId + ""), Subject = $"[ {status.Project.Name} ]You are assigned to issue {request.Title}" });
             }
-            return new ResponseMediator(userAssignee.Id + "", response, responseSuccess);
+            var ids = new List<Guid>();
+            ids.Add(userAssignee.Id);
+            ids.Add(status.ProjectId);
+            return new ResponseMediator(JsonSerializer.Serialize(ids), response, responseSuccess);
         }
 
 

@@ -43,8 +43,21 @@ namespace Capstone.Api.Module.Issues.Controllers
 
             if (result.StatusCode == 205)
             {
-                await _hubContext.Clients.Group(result.ErrorMessage == null ? "" : result.ErrorMessage)
-                    .SendAsync("NotificationResponse", "Success");
+                if (!string.IsNullOrEmpty(result.ErrorMessage))
+                {
+                    try
+                    {
+                        var ids = JsonSerializer.Deserialize<List<Guid>>(result.ErrorMessage);
+                        foreach (var userIdd in (ids == null ? new List<Guid>() : ids))
+                        {
+                            await _hubContext.Clients.Group(userIdd + "")
+                                                   .SendAsync("NotificationResponse", "Success");
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
                 return ResponseOk(result.Data);
             }
             else if (result.StatusCode == 200)
@@ -138,11 +151,17 @@ namespace Capstone.Api.Module.Issues.Controllers
             {
                 if (!string.IsNullOrEmpty(result.ErrorMessage))
                 {
-                    var ids = JsonSerializer.Deserialize<List<Guid>>(result.ErrorMessage);
-                    foreach (var userIdd in (ids == null ? new List<Guid>() : ids))
+                    try
                     {
-                        await _hubContext.Clients.Group(userIdd + "")
-                                               .SendAsync("NotificationResponse", "Success");
+                        var ids = JsonSerializer.Deserialize<List<Guid>>(result.ErrorMessage);
+                        foreach (var userIdd in (ids == null ? new List<Guid>() : ids))
+                        {
+                            await _hubContext.Clients.Group(userIdd + "")
+                                                   .SendAsync("NotificationResponse", "Success");
+                        }
+                    }
+                    catch
+                    {
                     }
                 }
                 return ResponseOk(result.Data);
