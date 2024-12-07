@@ -156,7 +156,6 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             issue.PhaseId = request.PhaseId;
             issue.ActualTime = request.ActualTime;
             _unitOfWork.Issues.Update(issue);
-            users.Add(issue.Reporter);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -179,8 +178,11 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 await _publisher.Publish(new SendEmailMessage() { ToEmail = u.Email == null ? "" : u.Email, Body = EmailMessage.UpdateIssue(request.Title, request.Id + "", status.ProjectId + ""), Subject = $"[ {request.Title} ]You have a new update" });
             }
 
-            var response = _mapper.Map<IssueDTO?>(issue);
-            return new ResponseMediator(JsonSerializer.Serialize(users.Select(x => x.Id)), response, 200);
+            var response = _mapper.Map<IssueDTO>(issue);
+            var ids = users.Select(x => x.Id).ToList();
+                ids.Add(status.ProjectId);
+
+            return new ResponseMediator(JsonSerializer.Serialize(ids), response, 200);
         }
     }
 }
