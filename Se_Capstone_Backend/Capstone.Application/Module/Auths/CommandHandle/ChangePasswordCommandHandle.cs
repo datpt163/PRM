@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Auths.Command;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -25,10 +26,10 @@ namespace Capstone.Application.Module.Auths.CommandHandle
         {   
             var user = await _jwtService.VerifyTokenAsync(request.Token);
             if(user == null)
-                return new ResponseMediator("Some thing wrong with token", null);
+                return new ResponseMediator(Messages.invalid_token, null);
 
             if (!await _userManager.CheckPasswordAsync(user, request.OldPassword))
-                return new ResponseMediator("Old password not correct", null);
+                return new ResponseMediator(Messages.old_password_not_correct, null);
             await _userManager.RemovePasswordAsync(user);
             await _userManager.AddPasswordAsync(user, request.NewPassword);
             return new ResponseMediator("", null);

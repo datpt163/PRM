@@ -2,6 +2,7 @@
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Auths.Command;
 using Capstone.Application.Module.Projects.Response;
+using Capstone.Application.Resources;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace Capstone.Application.Module.Auths.CommandHandle
         {
             var project = _unitOfWork.Projects.Find(x => x.Id == request.Id).Include(c => c.Lead).FirstOrDefault();
             if (project == null)
-                return new ResponseMediator("Project not found", null, 404);
+                return new ResponseMediator(Messages.project_not_found, null, 404);
 
             project.IsVisible = !project.IsVisible;
             _unitOfWork.Projects.Update(project);

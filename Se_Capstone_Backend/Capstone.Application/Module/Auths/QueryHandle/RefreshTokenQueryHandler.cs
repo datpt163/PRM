@@ -4,6 +4,7 @@ using Capstone.Application.Module.Auth.Response;
 using Capstone.Application.Module.Auths.Model;
 using Capstone.Application.Module.Auths.Query;
 using Capstone.Application.Module.Auths.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Redis;
 using Capstone.Infrastructure.Repository;
@@ -48,7 +49,7 @@ namespace Capstone.Application.Module.Auth.QueryHandle
 
             if (user == null)
             {
-                return new ResponseMediator("User not found", null, 400);
+                return new ResponseMediator(Messages.user_not_found, null, 400);
             }
 
             var validationParameters = new TokenValidationParameters
@@ -71,13 +72,13 @@ namespace Capstone.Application.Module.Auth.QueryHandle
 
                 if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return new ResponseMediator("Invalid refresh token", null, 400);
+                    return new ResponseMediator(Messages.invalid_refresh_token, null, 400);
                 }
 
                 var expiryDate = jwtToken.ValidTo;
                 if (expiryDate <= DateTime.UtcNow)
                 {
-                    return new ResponseMediator("Refresh token has expired", null, 400);
+                    return new ResponseMediator(Messages.refresh_token_expired, null, 400);
                 }
 
                 var accessToken = await _jwtService.GenerateJwtTokenAsync(user, DateTime.Now.AddDays(10));
@@ -127,11 +128,11 @@ namespace Capstone.Application.Module.Auth.QueryHandle
             }
             catch (SecurityTokenExpiredException)
             {
-                return new ResponseMediator("Refresh token has expired", null, (int)HttpStatusCode.Unauthorized);
+                return new ResponseMediator(Messages.refresh_token_expired, null, (int)HttpStatusCode.Unauthorized);
             }
             catch (Exception ex)
             {
-                return new ResponseMediator($"Token validation failed: {ex.Message}", null, (int)HttpStatusCode.Unauthorized);
+                return new ResponseMediator($"{Messages.token_validation_failed}: {ex.Message}", null, (int)HttpStatusCode.Unauthorized);
             }
         }
     }

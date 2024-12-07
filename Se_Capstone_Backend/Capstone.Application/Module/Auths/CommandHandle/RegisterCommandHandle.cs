@@ -3,6 +3,7 @@ using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Auth.Command;
 using Capstone.Application.Module.Auths.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -36,18 +37,18 @@ namespace Capstone.Application.Module.Users.CommandHandle
             {
                 var role = _unitOfWork.Roles.Find(x => x.Id == request.RoleId).FirstOrDefault();
                 if (role == null)
-                    return new ResponseMediator("Role not found", null, 404);
+                    return new ResponseMediator(Messages.role_not_found, null, 404);
                 roleId = role.Id;
                 roleName = role.Name;
             }
 
             var existingEmailAccount = await _userManager.FindByEmailAsync(request.Email);
             if (existingEmailAccount != null)
-                return new ResponseMediator("Account with this email already exists", null, 400);
+                return new ResponseMediator(Messages.account_with_email_exists, null, 400);
 
             var existingUserNameAccount = await _userManager.FindByNameAsync(request.UserName);
             if (existingUserNameAccount != null)
-                return new ResponseMediator("User name is already exists", null, 400);
+                return new ResponseMediator(Messages.username_already_exists, null, 400);
 
             var user = new User(request.Email, request.Address, request.Gender, request.Dob, request.Phone, request.UserName, request.FullName);
             var result = await _userManager.CreateAsync(user, request.Password);
@@ -68,12 +69,12 @@ namespace Capstone.Application.Module.Users.CommandHandle
                         await _userManager.AddToRoleAsync(user, roleName);
                     return new ResponseMediator("", responseUser);
                 }
-                return new ResponseMediator($"User creation failed!", null, 400);
+                return new ResponseMediator($"{Messages.user_creation_failed}", null, 400);
             }
             else
             {
                 var errors = string.Join("; ", result.Errors.Select(e => e.Description));
-                return new ResponseMediator($"User creation failed! {errors}", null);
+                return new ResponseMediator($"{Messages.user_creation_failed} {errors}", null);
             }
         }
     }

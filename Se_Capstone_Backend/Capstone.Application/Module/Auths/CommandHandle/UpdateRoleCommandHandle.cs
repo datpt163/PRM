@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Auths.Command;
 using Capstone.Application.Module.Auths.Model;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Domain.Module.Auth.TokenBlackList;
 using Capstone.Infrastructure.Redis;
@@ -29,28 +30,28 @@ namespace Capstone.Application.Module.Auths.CommandHandle
         {
             if (string.IsNullOrEmpty(request.Name))
             {
-                return new ResponseMediator("Role name empty", null,400);
+                return new ResponseMediator(Messages.role_name_empty, null,400);
             }
 
             if (string.IsNullOrEmpty(request.Description))
             {
-                return new ResponseMediator("Description empty", null,400);
+                return new ResponseMediator(Messages.description_empty, null,400);
             }
             if (string.IsNullOrEmpty(request.Color))
             {
-                return new ResponseMediator("Color empty", null);
+                return new ResponseMediator(Messages.color_empty, null);
             }
             if (request.PermissionsId == null || request.PermissionsId.Count == 0)
-                return new ResponseMediator("List Permission empty", null, 400);
+                return new ResponseMediator(Messages.list_permission_empty, null, 400);
 
             var roleUpdate = await _unitOfWork.Roles.Find(x => x.Id == request.Id).Include(c => c.Permissions).FirstOrDefaultAsync();
 
             if (roleUpdate == null)
-                return new ResponseMediator("Role not found", null,404);
+                return new ResponseMediator(Messages.role_not_found, null,404);
             var rolePermissionIds = roleUpdate.Permissions.Select(p => p.Id).ToList();
             if ( _unitOfWork.Roles.FindOne( x => x.Name != null && x.Name == request.Name.ToUpper() && x.Id != request.Id ) != null)
             {
-                return new ResponseMediator("This role name already exists", null);
+                return new ResponseMediator(Messages.role_already_exists, null);
             }
 
             var role = await _roleManager.FindByNameAsync(roleUpdate.Name ?? "");
@@ -58,7 +59,7 @@ namespace Capstone.Application.Module.Auths.CommandHandle
 
             if(role == null)
             {
-                return new ResponseMediator("Failed to create role", null);
+                return new ResponseMediator(Messages.failed_to_create_role, null);
             }
             else
             {
@@ -114,11 +115,11 @@ namespace Capstone.Application.Module.Auths.CommandHandle
 
                         return new ResponseMediator("", new { id = createdRole.Id, name = createdRole.Name, description = createdRole.Description, permissions = createdRole.Permissions , color = createdRole.Color });
                     }
-                    return new ResponseMediator("Failed to update role", null);
+                    return new ResponseMediator(Messages.failed_to_create_role, null);
                 }
                 else
                 {
-                    return new ResponseMediator("Failed to update role", null);
+                    return new ResponseMediator(Messages.failed_to_create_role, null);
                 }
             }
         }

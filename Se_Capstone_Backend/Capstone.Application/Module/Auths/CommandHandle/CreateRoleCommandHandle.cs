@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Auths.Command;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -24,27 +25,27 @@ namespace Capstone.Application.Module.Auths.CommandHandle
         {
             if (string.IsNullOrEmpty(request.Name))
             {
-                return new ResponseMediator("Role name empty", null);
+                return new ResponseMediator(Messages.role_name_empty, null);
             }
 
             if (string.IsNullOrEmpty(request.Description))
             {
-                return new ResponseMediator("Description empty", null);
+                return new ResponseMediator(Messages.description_empty, null);
             }
 
 
             if (string.IsNullOrEmpty(request.Color))
             {
-                return new ResponseMediator("Color empty", null);
+                return new ResponseMediator(Messages.color_empty, null);
             }
 
             if (request.PermissionsId == null || request.PermissionsId.Count == 0)
-                return new ResponseMediator("List Permission empty", null, 400);
+                return new ResponseMediator(Messages.list_permission_empty, null, 400);
 
             var roleExists = await _roleManager.RoleExistsAsync(request.Name);
             if (roleExists)
             {
-                return new ResponseMediator("Role already exists", null);
+                return new ResponseMediator(Messages.role_already_exists, null);
             }
 
             var result = await _roleManager.CreateAsync(new Role() { Name = request.Name.ToUpper()});
@@ -64,11 +65,11 @@ namespace Capstone.Application.Module.Auths.CommandHandle
                     await _unitOfWork.SaveChangesAsync();
                     return new ResponseMediator("", new { color = createdRole.Color, id = createdRole.Id, name = createdRole.Name, description = createdRole.Description, permissions = createdRole.Permissions }); ;
                 }
-                return new ResponseMediator("Failed to create role", null);
+                return new ResponseMediator(Messages.failed_to_create_role, null);
             }
             else
             {
-                return new ResponseMediator("Failed to create role", null);
+                return new ResponseMediator(Messages.failed_to_create_role, null);
             }
         }
     }

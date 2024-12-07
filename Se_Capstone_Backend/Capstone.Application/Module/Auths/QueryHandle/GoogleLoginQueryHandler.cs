@@ -4,6 +4,7 @@ using Capstone.Application.Module.Auth.Response;
 using Capstone.Application.Module.Auths.Model;
 using Capstone.Application.Module.Auths.Query;
 using Capstone.Application.Module.Auths.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Redis;
 using Capstone.Infrastructure.Repository;
@@ -38,13 +39,13 @@ namespace Capstone.Application.Module.Auths.QueryHandle
             var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken);
             if (payload == null)
             {
-                return new ResponseMediator("Invalid Google token", null, 400);
+                return new ResponseMediator(Messages.invalid_google_token, null, 400);
             }
 
             var user = await _userManager.FindByEmailAsync(payload.Email);
             if (user == null)
             {
-                return new ResponseMediator("Account not found", null, 404);
+                return new ResponseMediator(Messages.account_not_found, null, 404);
 
             }
 

@@ -6,7 +6,7 @@ using Capstone.Domain.Helpers;
 using Capstone.Infrastructure.Helpers;
 using Capstone.Infrastructure.Repository;
 using MediatR;
-
+using Capstone.Application.Resources;
 
 namespace Capstone.Application.Module.Applicants.CommandHandler
 {
@@ -29,14 +29,14 @@ namespace Capstone.Application.Module.Applicants.CommandHandler
             {
                 if (!EmailHelper.IsValidEmail(command.Email))
                 {
-                    throw new ArgumentException("Invalid email format.");
+                    throw new ArgumentException(Messages.invalid_email_format);
                 }
             }
             if (!string.IsNullOrEmpty(command.PhoneNumber))
             {
                 if (!PhoneNumberValidator.Validate(command.PhoneNumber))
                 {
-                    throw new ArgumentException("Invalid phone number format.");
+                    throw new ArgumentException(Messages.invalid_phone_number_format);
                 }
 
             }

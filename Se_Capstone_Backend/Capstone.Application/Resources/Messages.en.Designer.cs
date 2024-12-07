@@ -64,14 +64,274 @@ namespace Capstone.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Applicant created successfully..
         /// </summary>
-        internal static string test
+        internal static string invalid_email_format
         {
             get
             {
-                return ResourceManager.GetString("test", resourceCulture);
+                return ResourceManager.GetString("invalid_email_format", resourceCulture);
+            }
+        }
+        internal static string invalid_phone_number_format
+        {
+            get
+            {
+                return ResourceManager.GetString("invalid_phone_number_format", resourceCulture);
+            }
+        }
+        internal static string user_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("user_not_found", resourceCulture);
+            }
+        }
+        internal static string role_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("role_not_found", resourceCulture);
+            }
+        }
+        internal static string user_already_has_role
+        {
+            get
+            {
+                return ResourceManager.GetString("user_already_has_role", resourceCulture);
+            }
+        }
+        internal static string invalid_token
+        {
+            get
+            {
+                return ResourceManager.GetString("invalid_token", resourceCulture);
+            }
+        }
+        internal static string old_password_not_correct
+        {
+            get
+            {
+                return ResourceManager.GetString("old_password_not_correct", resourceCulture);
+            }
+        }
+        internal static string role_name_empty
+        {
+            get
+            {
+                return ResourceManager.GetString("role_name_empty", resourceCulture);
             }
         }
 
-       
+        internal static string description_empty
+        {
+            get
+            {
+                return ResourceManager.GetString("description_empty", resourceCulture);
+            }
+        }
+        internal static string color_empty
+        {
+            get
+            {
+                return ResourceManager.GetString("color_empty", resourceCulture);
+            }
+        }
+        internal static string list_permission_empty
+        {
+            get
+            {
+                return ResourceManager.GetString("list_permission_empty", resourceCulture);
+            }
+        }
+        internal static string role_already_exists
+        {
+            get
+            {
+                return ResourceManager.GetString("role_already_exists", resourceCulture);
+            }
+        }
+        internal static string failed_to_create_role
+        {
+            get
+            {
+                return ResourceManager.GetString("failed_to_create_role", resourceCulture);
+            }
+        }
+
+        internal static string delete_fail
+        {
+            get
+            {
+                return ResourceManager.GetString("delete_fail", resourceCulture);
+            }
+        }
+        internal static string account_with_email_exists
+        {
+            get
+            {
+                return ResourceManager.GetString("account_with_email_exists", resourceCulture);
+            }
+        }
+        internal static string username_already_exists
+        {
+            get
+            {
+                return ResourceManager.GetString("username_already_exists", resourceCulture);
+            }
+        }
+        internal static string user_creation_failed
+        {
+            get
+            {
+                return ResourceManager.GetString("user_creation_failed", resourceCulture);
+            }
+        }
+        internal static string password_null_or_empty
+        {
+            get
+            {
+                return ResourceManager.GetString("password_null_or_empty", resourceCulture);
+            }
+        }
+        internal static string code_null_or_empty
+        {
+            get
+            {
+                return ResourceManager.GetString("code_null_or_empty", resourceCulture);
+            }
+        }
+        internal static string code_already_used
+        {
+            get
+            {
+                return ResourceManager.GetString("code_already_used", resourceCulture);
+            }
+        }
+        internal static string something_wrong
+        {
+            get
+            {
+                return ResourceManager.GetString("something_wrong", resourceCulture);
+            }
+        }
+        internal static string reset_password_code_expired_or_incorrect
+        {
+            get
+            {
+                return ResourceManager.GetString("reset_password_code_expired_or_incorrect", resourceCulture);
+            }
+        }
+        internal static string project_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("project_not_found", resourceCulture);
+            }
+        }
+        internal static string code_expired_or_wrong
+        {
+            get
+            {
+                return ResourceManager.GetString("code_expired_or_wrong", resourceCulture);
+            }
+        }
+        internal static string email_empty
+        {
+            get
+            {
+                return ResourceManager.GetString("email_empty", resourceCulture);
+            }
+        }
+        internal static string check_email_for_instruction
+        {
+            get
+            {
+                return ResourceManager.GetString("check_email_for_instruction", resourceCulture);
+            }
+        }
+        internal static string message_already_sent
+        {
+            get
+            {
+                return ResourceManager.GetString("message_already_sent", resourceCulture);
+            }
+        }
+        internal static string permission_name_empty
+        {
+            get
+            {
+                return ResourceManager.GetString("permission_name_empty", resourceCulture);
+            }
+        }
+        internal static string permission_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("permission_not_found", resourceCulture);
+            }
+        }
+        internal static string invalid_google_token
+        {
+            get
+            {
+                return ResourceManager.GetString("invalid_google_token", resourceCulture);
+            }
+        }
+        internal static string account_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("account_not_found", resourceCulture);
+            }
+        }
+        internal static string password_not_correct
+        {
+            get
+            {
+                return ResourceManager.GetString("password_not_correct", resourceCulture);
+            }
+        }
+        internal static string token_required
+        {
+            get
+            {
+                return ResourceManager.GetString("token_required", resourceCulture);
+            }
+        }
+        internal static string error_processing_request
+        {
+            get
+            {
+                return ResourceManager.GetString("error_processing_request", resourceCulture);
+            }
+        }
+        internal static string account_inactive
+        {
+            get
+            {
+                return ResourceManager.GetString("account_inactive", resourceCulture);
+            }
+        }
+        internal static string invalid_refresh_token
+        {
+            get
+            {
+                return ResourceManager.GetString("invalid_refresh_token", resourceCulture);
+            }
+        }
+        internal static string refresh_token_expired
+        {
+            get
+            {
+                return ResourceManager.GetString("refresh_token_expired", resourceCulture);
+            }
+        }
+        internal static string token_validation_failed
+        {
+            get
+            {
+                return ResourceManager.GetString("token_validation_failed", resourceCulture);
+            }
+        }
+
     }
 }

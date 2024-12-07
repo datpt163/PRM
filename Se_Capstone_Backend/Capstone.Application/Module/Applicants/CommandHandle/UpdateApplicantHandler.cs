@@ -5,7 +5,7 @@ using Capstone.Domain.Helpers;
 using Capstone.Infrastructure.Helpers;
 using Capstone.Infrastructure.Repository;
 using MediatR;
-
+using Capstone.Application.Resources;
 
 public class UpdateApplicantCommandHandler : IRequestHandler<UpdateApplicantCommand, ApplicantDto?>
 {
@@ -36,7 +36,7 @@ public class UpdateApplicantCommandHandler : IRequestHandler<UpdateApplicantComm
         {
             if (!EmailHelper.IsValidEmail(request.Email))
             {
-                throw new ArgumentException("Invalid email format.");
+                throw new ArgumentException(Messages.invalid_email_format);
             }
             applicant.Email = request.Email ?? string.Empty;
 
@@ -46,7 +46,7 @@ public class UpdateApplicantCommandHandler : IRequestHandler<UpdateApplicantComm
         {
             if (!PhoneNumberValidator.Validate(request.PhoneNumber))
             {
-                throw new ArgumentException("Invalid phone number format.");
+                throw new ArgumentException(Messages.invalid_phone_number_format);
             }
             applicant.PhoneNumber = request.PhoneNumber;
 

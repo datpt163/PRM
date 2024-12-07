@@ -117,7 +117,118 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="test" xml:space="preserve">
-    <value>test</value>
+  <data name="account_inactive" xml:space="preserve">
+    <value>Account is inactive.</value>
+  </data>
+  <data name="account_not_found" xml:space="preserve">
+    <value>Account not found.</value>
+  </data>
+  <data name="account_with_email_exists" xml:space="preserve">
+    <value>Account with this email already exists.</value>
+  </data>
+  <data name="check_email_for_instruction" xml:space="preserve">
+    <value>If you already have an account, please check your email for instructions.</value>
+  </data>
+  <data name="code_already_used" xml:space="preserve">
+    <value>This code has already been used.</value>
+  </data>
+  <data name="code_expired_or_wrong" xml:space="preserve">
+    <value>This code was expired or wrong.</value>
+  </data>
+  <data name="code_null_or_empty" xml:space="preserve">
+    <value>Code is null or empty.</value>
+  </data>
+  <data name="color_empty" xml:space="preserve">
+    <value>Color is empty.</value>
+  </data>
+  <data name="delete_fail" xml:space="preserve">
+    <value>Delete failed.</value>
+  </data>
+  <data name="description_empty" xml:space="preserve">
+    <value>Description is empty.</value>
+  </data>
+  <data name="email_empty" xml:space="preserve">
+    <value>Email is empty.</value>
+  </data>
+  <data name="error_processing_request" xml:space="preserve">
+    <value>An error occurred while processing your request.</value>
+  </data>
+  <data name="failed_to_create_role" xml:space="preserve">
+    <value>Failed to create role.</value>
+  </data>
+  <data name="invalid_email_format" xml:space="preserve">
+    <value>Invalid email format.</value>
+  </data>
+  <data name="invalid_google_token" xml:space="preserve">
+    <value>Invalid Google token.</value>
+  </data>
+  <data name="invalid_phone_number_format" xml:space="preserve">
+    <value>Invalid phone number format.</value>
+  </data>
+  <data name="invalid_refresh_token" xml:space="preserve">
+    <value>Invalid refresh token.</value>
+  </data>
+  <data name="invalid_token" xml:space="preserve">
+    <value>Something is wrong with the token.</value>
+  </data>
+  <data name="list_permission_empty" xml:space="preserve">
+    <value>List of permissions is empty.</value>
+  </data>
+  <data name="message_already_sent" xml:space="preserve">
+    <value>Message has already been sent to your account, you can resend in a few minutes.</value>
+  </data>
+  <data name="old_password_not_correct" xml:space="preserve">
+    <value>Old password not correct.</value>
+  </data>
+  <data name="password_not_correct" xml:space="preserve">
+    <value>Password is not correct.</value>
+  </data>
+  <data name="password_null_or_empty" xml:space="preserve">
+    <value>Password is null or empty.</value>
+  </data>
+  <data name="permission_name_empty" xml:space="preserve">
+    <value>Permission name is empty.</value>
+  </data>
+  <data name="permission_not_found" xml:space="preserve">
+    <value>Permission not found.</value>
+  </data>
+  <data name="project_not_found" xml:space="preserve">
+    <value>Project not found.</value>
+  </data>
+  <data name="refresh_token_expired" xml:space="preserve">
+    <value>Refresh token has expired.</value>
+  </data>
+  <data name="reset_password_code_expired_or_incorrect" xml:space="preserve">
+    <value>The reset password code was expired or incorrect.</value>
+  </data>
+  <data name="role_already_exists" xml:space="preserve">
+    <value>Role already exists.</value>
+  </data>
+  <data name="role_name_empty" xml:space="preserve">
+    <value>Role name is empty.</value>
+  </data>
+  <data name="role_not_found" xml:space="preserve">
+    <value>Role not found.</value>
+  </data>
+  <data name="something_wrong" xml:space="preserve">
+    <value>Something is wrong.</value>
+  </data>
+  <data name="token_required" xml:space="preserve">
+    <value>Token is required.</value>
+  </data>
+  <data name="token_validation_failed" xml:space="preserve">
+    <value>Token validation failed.</value>
+  </data>
+  <data name="username_already_exists" xml:space="preserve">
+    <value>User name already exists.</value>
+  </data>
+  <data name="user_already_has_role" xml:space="preserve">
+    <value>This user already has a role.</value>
+  </data>
+  <data name="user_creation_failed" xml:space="preserve">
+    <value>User creation failed!</value>
+  </data>
+  <data name="user_not_found" xml:space="preserve">
+    <value>User not found.</value>
   </data>
 </root>

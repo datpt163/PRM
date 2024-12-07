@@ -2,6 +2,7 @@
 using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Auths.Query;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Redis;
 using MediatR;
@@ -28,15 +29,15 @@ namespace Capstone.Application.Module.Auths.QueryHandle
         public async Task<ResponseMediator> Handle(ForgotPasswordQuery request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(request.Email))
-                return new ResponseMediator("Email is empty", null);
+                return new ResponseMediator(Messages.email_empty, null);
 
             if (!request.Email.Contains("@") || !request.Email.Contains("."))
-                return new ResponseMediator("Invalid email format.", null);
+                return new ResponseMediator(Messages.invalid_email_format, null);
 
             var ac = await _userManager.FindByEmailAsync(request.Email);
 
             if (ac == null)
-                return new ResponseMediator("If you already have an account, please check your email for instruction", null);
+                return new ResponseMediator(Messages.check_email_for_instruction, null);
 
             var code = await _jwtService.GenerateJwtTokenAsync(ac, DateTime.Now.AddMinutes(3), "da-32-character-ultra-secure-and-ultra-long-secret");
 
@@ -46,7 +47,7 @@ namespace Capstone.Application.Module.Auths.QueryHandle
                 var data = _redisContext.GetData<string>("BlackListForgotPasswordUser" + request.Email);
                 if (data == null)
                     throw new Exception();
-                return new ResponseMediator("Message already was sent to your account, you can resend in a few minutes", null);
+                return new ResponseMediator(Messages.message_already_sent, null);
             }
             catch
             {
