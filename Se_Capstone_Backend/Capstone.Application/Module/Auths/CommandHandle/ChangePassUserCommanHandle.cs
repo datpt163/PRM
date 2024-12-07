@@ -4,6 +4,7 @@ using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Capstone.Application.Resources;
 
 
 
@@ -23,7 +24,7 @@ namespace Capstone.Application.Module.Auths.CommandHandle
         {
             var user = _unitOfWork.Users.Find(x => x.Id == request.UserId).FirstOrDefault();
             if (user == null)
-                return new ResponseMediator("This user not found", "", 404);
+                return new ResponseMediator(Messages.user_not_found, "", 404);
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var result = await _userManager.ResetPasswordAsync(user, token, request.NewPassword);

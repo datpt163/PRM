@@ -11,6 +11,7 @@ using Capstone.Infrastructure.Redis;
 using Capstone.Application.Module.Auths.Model;
 using Microsoft.EntityFrameworkCore;
 using Capstone.Infrastructure.Helpers;
+using Capstone.Application.Resources;
 
 namespace Capstone.Application.Module.Auth.QueryHandle
 {
@@ -34,7 +35,7 @@ namespace Capstone.Application.Module.Auth.QueryHandle
             {
                 if (!EmailHelper.IsValidEmail(request.Email))
                 {
-                    throw new ArgumentException("Invalid email format.");
+                    throw new ArgumentException(Messages.invalid_email_format);
                 }
             }
 
@@ -46,7 +47,7 @@ namespace Capstone.Application.Module.Auth.QueryHandle
                 if (await _userManager.CheckPasswordAsync(user, request.Password))
                 {
                     if(user.Status != Domain.Enums.UserStatus.Active)
-                        return new ResponseMediator("Account inactive", null, 400);
+                        return new ResponseMediator(Messages.account_inactive, null, 400);
                     var accessToken = await _jwtService.GenerateJwtTokenAsync(user, DateTime.Now.AddDays(10));
                     var refreshToken = await _jwtService.GenerateJwtTokenAsync(user, DateTime.Now.AddDays(30));
                     user.RefreshToken = refreshToken;
@@ -90,9 +91,9 @@ namespace Capstone.Application.Module.Auth.QueryHandle
                                               user.CreateDate, user.UpdateDate, user.DeleteDate)
                     });
                 }
-                return new ResponseMediator("Password not correct", null, 400);
+                return new ResponseMediator(Messages.password_not_correct, null, 400);
             }
-            return new ResponseMediator("Account not found", null, 404);
+            return new ResponseMediator(Messages.account_not_found, null, 404);
         }
     }
 }

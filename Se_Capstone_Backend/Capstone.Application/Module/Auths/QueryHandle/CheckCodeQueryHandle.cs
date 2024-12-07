@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Auths.Query;
+using Capstone.Application.Resources;
 using Capstone.Infrastructure.Redis;
 using MediatR;
 
@@ -25,7 +26,7 @@ namespace Capstone.Application.Module.Auths.QueryHandle
 
                 if (blackList != null)
                     if (blackList.Contains(request.Code))
-                        return new ResponseMediator("This code has already been used", null);
+                        return new ResponseMediator(Messages.code_already_used, null);
 
                 try
                 {
@@ -34,7 +35,7 @@ namespace Capstone.Application.Module.Auths.QueryHandle
                 }
                 catch
                 {
-                    return new ResponseMediator("This code was expired or wrong", null);
+                    return new ResponseMediator(Messages.code_expired_or_wrong, null);
                 }
 
             }

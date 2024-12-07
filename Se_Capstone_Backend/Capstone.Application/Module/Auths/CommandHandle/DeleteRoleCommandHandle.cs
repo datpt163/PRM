@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Auths.Command;
 using Capstone.Application.Module.Auths.Model;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Domain.Module.Auth.TokenBlackList;
 using Capstone.Infrastructure.Redis;
@@ -33,12 +34,12 @@ namespace Capstone.Application.Module.Auths.CommandHandle
         {
             var role = _unitOfWork.Roles.FindOne(x => x.Id == request.Id);
             if (role == null)
-                return new ResponseMediator("Role not found", null, 404);
+                return new ResponseMediator(Messages.role_not_found, null, 404);
 
             var result = await _roleManager.DeleteAsync(role);
             if (!result.Succeeded)
             {
-                return new ResponseMediator("Delete fail", null, 404);
+                return new ResponseMediator(Messages.delete_fail, null, 404);
             }
 
             var listMonitorToken = _redis.GetData<List<MonitorTokenModel>>("ListMonitorToken");

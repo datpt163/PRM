@@ -1,5 +1,6 @@
 ﻿using Capstone.Api.Module.Auths.Request;
 using Capstone.Application.Module.Auths.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Module.Auth.TokenBlackList;
 using MediatR;
 
@@ -20,7 +21,7 @@ namespace Capstone.Application.Module.Auth.QueryHandle
             {
                 if (string.IsNullOrEmpty(request.Token))
                 {
-                    return new LogoutResponse { Success = false, ErrorMessage = "Token is required." };
+                    return new LogoutResponse { Success = false, ErrorMessage = Messages.token_required };
                 }
                 var token = request.Token.ToString().Replace("Bearer ", "").Trim();
 
@@ -30,7 +31,7 @@ namespace Capstone.Application.Module.Auth.QueryHandle
             }
             catch (Exception ex)
             {
-                return new LogoutResponse { Success = false, ErrorMessage = "An error occurred while processing your request." + ex.Message };
+                return new LogoutResponse { Success = false, ErrorMessage = Messages.error_processing_request + ex.Message };
             }
         }
     }

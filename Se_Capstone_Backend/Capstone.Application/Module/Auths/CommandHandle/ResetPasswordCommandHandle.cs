@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Auths.Command;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Redis;
 using MediatR;
@@ -25,16 +26,16 @@ namespace Capstone.Application.Module.Auths.CommandHandle
         public async Task<ResponseMediator> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(request.NewPassword))
-                return new ResponseMediator("Password is null or empty", null);
+                return new ResponseMediator(Messages.password_null_or_empty, null);
 
             if (string.IsNullOrEmpty(request.Code))
-                return new ResponseMediator("Code is null or empty", null);
+                return new ResponseMediator(Messages.code_null_or_empty, null);
 
             var blackList = _redisContext.GetData<List<string>>("BlackListForgotPasswordCode");
 
             if (blackList != null)
                 if (blackList.Contains(request.Code))
-                    return new ResponseMediator("This code has already been used", null);
+                    return new ResponseMediator(Messages.code_already_used, null);
 
             try
             {
@@ -60,11 +61,11 @@ namespace Capstone.Application.Module.Auths.CommandHandle
                     _redisContext.SetData<List<string>>("BlackListForgotPasswordCode", new List<string>() { request.Code }, DateTime.Now.AddYears(1000));
                     return new ResponseMediator("", null);
                 }
-                return new ResponseMediator("Some thing wrong", null);
+                return new ResponseMediator(Messages.something_wrong, null);
             }
             catch
             {
-                return new ResponseMediator("Code reset password was expired or incorrect", null);
+                return new ResponseMediator(Messages.reset_password_code_expired_or_incorrect, null);
             }
         }
     }

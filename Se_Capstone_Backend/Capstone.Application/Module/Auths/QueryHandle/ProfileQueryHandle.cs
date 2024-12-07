@@ -2,6 +2,7 @@
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Auths.Query;
 using Capstone.Application.Module.Auths.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -27,7 +28,7 @@ namespace Capstone.Application.Module.Auths.QueryHandle
 
             if (user == null)
             {
-                return new ResponseMediator("Account not found", null);
+                return new ResponseMediator(Messages.user_not_found, null);
             }
 
             var roles = await _userManager.GetRolesAsync(user);
