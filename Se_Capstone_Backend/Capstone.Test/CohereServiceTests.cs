@@ -9,7 +9,7 @@ using Moq;
 using Moq.Protected;
 using Xunit;
 
-namespace Test
+namespace Suggest
 {
     public class CohereServiceTests
     {
