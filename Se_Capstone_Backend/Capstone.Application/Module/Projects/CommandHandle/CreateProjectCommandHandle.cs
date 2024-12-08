@@ -16,6 +16,7 @@ using System.Text.Json;
 using Capstone.Application.Common.EmailHTML;
 using MassTransit;
 using Capstone.Application.Common.Jwt;
+using Capstone.Application.Resources;
 namespace Capstone.Application.Module.Projects.CommandHandle
 {
     public class CreateProjectCommandHandle : IRequestHandler<CreateProjectCommand, ResponseMediator>
@@ -39,14 +40,14 @@ namespace Capstone.Application.Module.Projects.CommandHandle
         {
             var userAssign = await _jwtService.VerifyTokenAsync(request.Token);
             if(userAssign == null)
-                return new ResponseMediator("User not found", null);
+                return new ResponseMediator(Messages.user_not_found, null);
 
             int statusCodeSuccess = 200;
             var toEmail = "";
             var project = _unitOfWork.Projects.Find(p => p.Code.Trim().ToUpper().Equals(request.Code.Trim().ToUpper())).FirstOrDefault();
 
             if (project != null)
-                return new ResponseMediator("Project code is exist", null);
+                return new ResponseMediator(Messages.project_code_exists, null);
 
             //if (request.StartDate.Date < DateTime.Now.Date || request.EndDate.Date < DateTime.Now.Date)
             //    return new ResponseMediator("Start date and end date must be greater than the current time", null);
@@ -54,7 +55,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             if (request.StartDate.HasValue && request.EndDate.HasValue)
             {
                 if (request.EndDate.Value.Date < request.StartDate.Value.Date)
-                    return new ResponseMediator("End date must be greater or equal than the start date", null);
+                    return new ResponseMediator(Messages.end_date_greater_than_start_date, null);
             }
           
             UserDTO userDto = new UserDTO();
@@ -62,7 +63,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             {
                 var user = _unitOfWork.Users.Find(u => u.Id == request.LeadId).FirstOrDefault();
                 if (user == null)
-                    return new ResponseMediator("Team lead not found", null, 404);
+                    return new ResponseMediator(Messages.team_lead_not_found, null, 404);
                 // var roles = await _userManager.GetRolesAsync(user);
                 // if (roles == null || roles.Count == 0)
                 //     return new ResponseMediator("This user not have lead project permission to become a leader", null);
@@ -122,7 +123,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             var fileContent = await _fileService.ReadFileAsync(path);
 
             if (fileContent == null)
-                throw new ArgumentNullException(nameof(fileContent), "File content cannot be null");
+                throw new ArgumentNullException(nameof(fileContent), Messages.file_content_cannot_be_null);
 
             var statuses = JsonSerializer.Deserialize<List<Domain.Entities.Status>>(fileContent) ?? new List<Domain.Entities.Status>();
             foreach (var s in statuses)

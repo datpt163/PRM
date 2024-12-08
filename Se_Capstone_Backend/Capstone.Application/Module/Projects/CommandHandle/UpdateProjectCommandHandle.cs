@@ -5,6 +5,7 @@ using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Projects.Command;
 using Capstone.Application.Module.Projects.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Domain.Enums;
 using Capstone.Infrastructure.Repository;
@@ -37,30 +38,30 @@ namespace Capstone.Application.Module.Projects.CommandHandle
         {
             var userAssign = await _jwtService.VerifyTokenAsync(request.Token);
             if (userAssign == null)
-                return new ResponseMediator("User not found", null);
+                return new ResponseMediator(Messages.user_not_found, null);
             int statusCodeSuccess = 200;
             if ( !(request.Status == ProjectStatus.NotStarted || request.Status == ProjectStatus.InProgress || request.Status == ProjectStatus.Finished || request.Status == ProjectStatus.Canceled ))
-                return new ResponseMediator("Status must more than 0 or less than 5", null);
+                return new ResponseMediator(Messages.status_not_valid, null);
 
             var projectCheckCode = _unitOfWork.Projects.Find(p => p.Code.Trim().ToUpper().Equals(request.Code.Trim().ToUpper()) && request.Id != p.Id).FirstOrDefault();
 
             if (projectCheckCode != null)
-                return new ResponseMediator("Project code is exist", null);
+                return new ResponseMediator(Messages.project_code_exists, null);
 
             if(request.EndDate.HasValue && request.StartDate.HasValue)
                 if (request.EndDate.Value.Date < request.StartDate.Value.Date)
-                    return new ResponseMediator("End date must be greater or equal than the start date", null);
+                    return new ResponseMediator(Messages.end_date_greater_than_start_date, null);
            
 
             var project = _unitOfWork.Projects.Find(x => x.Id == request.Id).Include(c => c.Lead).FirstOrDefault();
             if (project == null)
-                return new ResponseMediator("Project not found", null, 404);
+                return new ResponseMediator(Messages.project_not_found, null, 404);
 
             if (request.TeamLeadId != null)
             {
                 var user = _unitOfWork.Users.Find(u => u.Id == request.TeamLeadId).FirstOrDefault();
                 if (user == null)
-                    return new ResponseMediator("Team lead not found", null, 404);
+                    return new ResponseMediator(Messages.team_lead_not_found, null, 404);
                 if((project.LeadId == null || project.LeadId != request.TeamLeadId) && request.TeamLeadId != userAssign.Id)
                 {
                     _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = user.Id, Type = "assignLeader", Data = JsonSerializer.Serialize(new { type = "assignLeader", projectId = request.Id, projectName = request.Name, assignerName = userAssign.FullName, assignerUserName = userAssign.UserName, assignerAvatar = userAssign.Avatar }) });

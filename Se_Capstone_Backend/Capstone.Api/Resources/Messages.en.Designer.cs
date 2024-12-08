@@ -132,15 +132,120 @@ namespace Capstone.Api.Resources {
             }
         }
 
-        /// <summary>
-        ///   Looks up a localized string similar to Applicant updated successfully..
-        /// </summary>
-        internal static string String1
+        internal static string user_not_found_or_update_failed
         {
             get
             {
-                return ResourceManager.GetString("String1", resourceCulture);
+                return ResourceManager.GetString("user_not_found_or_update_failed", resourceCulture);
             }
         }
+        internal static string job_created_successfully
+        {
+            get
+            {
+                return ResourceManager.GetString("job_created_successfully", resourceCulture);
+            }
+        }
+        internal static string job_not_found_or_deleted
+        {
+            get
+            {
+                return ResourceManager.GetString("job_not_found_or_deleted", resourceCulture);
+            }
+        }
+        internal static string job_updated_successfully
+        {
+            get
+            {
+                return ResourceManager.GetString("job_updated_successfully", resourceCulture);
+            }
+        }
+        internal static string job_retrieved_successfully
+        {
+            get
+            {
+                return ResourceManager.GetString("job_retrieved_successfully", resourceCulture);
+            }
+        }
+        internal static string position_created_successfully
+        {
+            get
+            {
+                return ResourceManager.GetString("position_created_successfully", resourceCulture);
+            }
+        }
+        internal static string position_not_found_or_deleted
+        {
+            get
+            {
+                return ResourceManager.GetString("position_not_found_or_deleted", resourceCulture);
+            }
+        }
+        internal static string position_updated_successfully
+        {
+            get
+            {
+                return ResourceManager.GetString("position_updated_successfully", resourceCulture);
+            }
+        }
+        internal static string position_retrieved_successfully
+        {
+            get
+            {
+                return ResourceManager.GetString("position_retrieved_successfully", resourceCulture);
+            }
+        }
+        internal static string skill_created_successfully
+        {
+            get
+            {
+                return ResourceManager.GetString("skill_created_successfully", resourceCulture);
+            }
+        }
+        internal static string skill_not_found_or_deleted
+        {
+            get
+            {
+                return ResourceManager.GetString("skill_not_found_or_deleted", resourceCulture);
+            }
+        }
+        internal static string skill_updated_successfully
+        {
+            get
+            {
+                return ResourceManager.GetString("skill_updated_successfully", resourceCulture);
+            }
+        }
+        internal static string skill_retrieved_successfully
+        {
+            get
+            {
+                return ResourceManager.GetString("skill_retrieved_successfully", resourceCulture);
+            }
+        }
+        internal static string user_or_skill_not_found_or_not_associated
+        {
+            get
+            {
+                return ResourceManager.GetString("user_or_skill_not_found_or_not_associated", resourceCulture);
+            }
+        }
+        internal static string skill_added_to_user_successfully
+        {
+            get
+            {
+                return ResourceManager.GetString("skill_added_to_user_successfully", resourceCulture);
+            }
+        }
+
+        internal static string removed_skills_successfully
+        {
+            get
+            {
+                return ResourceManager.GetString("removed_skills_successfully", resourceCulture);
+            }
+        }
+
+
     }
 }

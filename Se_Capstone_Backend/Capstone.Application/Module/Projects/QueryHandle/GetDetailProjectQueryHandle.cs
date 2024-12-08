@@ -3,6 +3,7 @@ using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Projects.Query;
 using Capstone.Application.Module.Projects.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using CloudinaryDotNet.Core;
@@ -34,7 +35,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
             var project = await _unitOfWork.Projects.Find(x => x.Id == request.Id).Include(c => c.Lead).Include(c => c.UserProjects).ThenInclude(c => c.User).FirstOrDefaultAsync();
 
             if (project == null)
-                return new ResponseMediator("Project not found", null, 404);
+                return new ResponseMediator(Messages.project_not_found, null, 404);
 
 
             var projectMapper = _mapper.Map<ProjectDetailResponse>(project);

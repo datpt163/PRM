@@ -141,7 +141,52 @@
   <data name="ApplicantUpdatedSuccessfully" xml:space="preserve">
     <value>Applicant updated successfully.</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value>da</value>
+  <data name="job_created_successfully" xml:space="preserve">
+    <value>Job created successfully.</value>
+  </data>
+  <data name="job_not_found_or_deleted" xml:space="preserve">
+    <value>Job not found or has been deleted.</value>
+  </data>
+  <data name="job_retrieved_successfully" xml:space="preserve">
+    <value>Job retrieved successfully.</value>
+  </data>
+  <data name="job_updated_successfully" xml:space="preserve">
+    <value>Job updated successfully.</value>
+  </data>
+  <data name="position_created_successfully" xml:space="preserve">
+    <value>Position created successfully.</value>
+  </data>
+  <data name="position_not_found_or_deleted" xml:space="preserve">
+    <value>Position not found or has been deleted.</value>
+  </data>
+  <data name="position_retrieved_successfully" xml:space="preserve">
+    <value>Position retrieved successfully.</value>
+  </data>
+  <data name="position_updated_successfully" xml:space="preserve">
+    <value>Position updated successfully.</value>
+  </data>
+  <data name="removed_skills_successfully" xml:space="preserve">
+    <value>Removed skills successfully.</value>
+  </data>
+  <data name="skill_added_to_user_successfully" xml:space="preserve">
+    <value>Skill added to user successfully!</value>
+  </data>
+  <data name="skill_created_successfully" xml:space="preserve">
+    <value>Skill created successfully.</value>
+  </data>
+  <data name="skill_not_found_or_deleted" xml:space="preserve">
+    <value>Skill not found or has been deleted.</value>
+  </data>
+  <data name="skill_retrieved_successfully" xml:space="preserve">
+    <value>Skill retrieved successfully.</value>
+  </data>
+  <data name="skill_updated_successfully" xml:space="preserve">
+    <value>Skill updated successfully.</value>
+  </data>
+  <data name="user_not_found_or_update_failed" xml:space="preserve">
+    <value>User not found or update failed.</value>
+  </data>
+  <data name="user_or_skill_not_found_or_not_associated" xml:space="preserve">
+    <value>User or skill not found, or skill not associated with the user.</value>
   </data>
 </root>

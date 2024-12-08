@@ -3,6 +3,7 @@ using Capstone.Application.Common.Gpt;
 using Capstone.Application.Common.HuggingFace;
 using Capstone.Application.Module.Projects.Query;
 using Capstone.Application.Module.Projects.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MassTransit;
@@ -33,7 +34,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
         {
             if (request.TotalUsersNeed < 1)
             {
-                throw new ArgumentException("Total Users need to be at least 1.");
+                throw new ArgumentException(Messages.total_members_need_at_least_1);
             }
 
             try

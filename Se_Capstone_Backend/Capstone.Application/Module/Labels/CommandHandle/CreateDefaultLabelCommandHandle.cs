@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.FileService;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Labels.Command;
+using Capstone.Application.Resources;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -29,10 +30,10 @@ namespace Capstone.Application.Module.Labels.CommandHandle
             string path = Path.Combine(module, project, folder, fileName);
             var labels = JsonSerializer.Deserialize<List<Domain.Entities.Label>>(await _fileService.ReadFileAsync(path)) ?? new List<Domain.Entities.Label>();
             if (string.IsNullOrEmpty(request.Title))
-                return new ResponseMediator("Title empty", null, 400);
+                return new ResponseMediator(Messages.title_empty, null, 400);
 
             if (labels.Select(x => x.Title.Trim().ToUpper()).Contains(request.Title.Trim().ToUpper()))
-                return new ResponseMediator("This title label is availble", null, 400);
+                return new ResponseMediator(Messages.title_label_available, null, 400);
 
             var label = new Capstone.Domain.Entities.Label() { Id = Guid.NewGuid(), Title = request.Title, Description = request.Description };
             labels.Add(label);

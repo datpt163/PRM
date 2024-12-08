@@ -4,6 +4,7 @@ using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ProjectAuthorize;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Projects.Command;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MassTransit;
@@ -34,11 +35,11 @@ namespace Capstone.Application.Module.Projects.CommandHandle
         {
             var userAsign = await _jwtService.VerifyTokenAsync(request.Token);
             if(userAsign == null)
-                return new ResponseMediator("User not found", null, 404);
+                return new ResponseMediator(Messages.user_not_found, null, 404);
 
             var project = _unitOfWork.Projects.Find(x => x.Id == request.ProjectId).Include(c => c.UserProjects).FirstOrDefault();
             if (project == null)
-                return new ResponseMediator("Project not found", null, 404);
+                return new ResponseMediator(Messages.project_not_found, null, 404);
 
             (bool isAuthorized, int statusCode) = await _managePermissionProject.IsAuthorizedAsync(request.Token, "IsMemberConfigurator", projectId: request.ProjectId);
             if(!isAuthorized)
@@ -63,7 +64,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             {
                 var staff = _unitOfWork.Users.FindOne(x => x.Id == s);
                 if (staff == null)
-                    return new ResponseMediator("Member not found", null, 404);
+                    return new ResponseMediator(Messages.member_not_found, null, 404);
                 if(staff.Id != project.LeadId)
                     project.UserProjects.Add(new UserProject() { ProjectId = request.ProjectId, UserId = staff.Id, IsIssueConfigurator = false, IsProjectConfigurator = false});
             }

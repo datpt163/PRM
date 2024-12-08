@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Projects.Command;
+using Capstone.Application.Resources;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 
@@ -18,7 +19,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             var project = _unitOfWork.Projects.FindOne(x => x.Id == request.Id);
 
             if (project == null) 
-                return new ResponseMediator("Project not found", null, 404);
+                return new ResponseMediator(Messages.project_not_found, null, 404);
 
             _unitOfWork.Projects.Remove(project);
             await _unitOfWork.SaveChangesAsync();

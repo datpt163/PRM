@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Permissions.Command;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -20,11 +21,11 @@ namespace Capstone.Application.Module.Permissions.CommandHandle
         public async Task<ResponseMediator> Handle(CreateGroupPermissionCommand request, CancellationToken cancellationToken)
         {
             if(string.IsNullOrEmpty(request.Name))
-                return new ResponseMediator("Name empty", null);
+                return new ResponseMediator(Messages.name_empty, null);
 
             var groupPermission = await _unitOfWork.GroupPermissions.Find(p => p.Name.ToUpper().Equals(request.Name.ToUpper())).FirstOrDefaultAsync();
             if (groupPermission != null) 
-                return new ResponseMediator("Group permission is exist", null);
+                return new ResponseMediator(Messages.group_permission_exists, null);
 
             var groupPermissionCreated = new GroupPermission() { Name = request.Name.ToUpper() };
                 _unitOfWork.GroupPermissions.Add(groupPermissionCreated);

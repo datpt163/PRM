@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.FileService;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Labels.Command;
+using Capstone.Application.Resources;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -29,13 +30,13 @@ namespace Capstone.Application.Module.Labels.CommandHandle
             var labels = JsonSerializer.Deserialize<List<Domain.Entities.Label>>(await _fileService.ReadFileAsync(path)) ?? new List<Domain.Entities.Label>();
             var label = labels.FirstOrDefault(x => x.Id == request.Id);
             if (label == null)
-                return new ResponseMediator("Label not found", null, 404);
+                return new ResponseMediator(Messages.label_not_found, null, 404);
             if (string.IsNullOrEmpty(request.Title))
-                return new ResponseMediator("Title empty", null, 400);
+                return new ResponseMediator(Messages.title_empty, null, 400);
 
             var labelCheckDuplicateTitle = labels.FirstOrDefault(x => x.Id != request.Id && x.Title.Trim().ToUpper() == request.Title.Trim().ToUpper());
             if (labelCheckDuplicateTitle != null)
-                return new ResponseMediator("This title label is availble", null, 400);
+                return new ResponseMediator(Messages.title_label_available, null, 400);
 
             label.Title = request.Title;
             label.Description = request.Description;

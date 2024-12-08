@@ -3,6 +3,7 @@ using Capstone.Api.Common.ResponseApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Capstone.Application.Module.Jobs.Query;
+using Capstone.Api.Resources;
 
 
 namespace Capstone.Api.Module.Jobs.Controllers
@@ -22,7 +23,7 @@ namespace Capstone.Api.Module.Jobs.Controllers
         public async Task<IActionResult> Create([FromBody] CreateJobCommand command)
         {
             var jobDto = await _mediator.Send(command);
-            return ResponseCreated(jobDto, "Job created successfully");
+            return ResponseCreated(jobDto, Messages.job_created_successfully);
         }
 
         [HttpPut]
@@ -31,9 +32,9 @@ namespace Capstone.Api.Module.Jobs.Controllers
             var jobDto = await _mediator.Send(command);
             if (jobDto == null)
             {
-                return ResponseNotFound("Job not found or has been deleted");
+                return ResponseNotFound(Messages.job_not_found_or_deleted);
             }
-            return ResponseOk(jobDto, "Job updated successfully");
+            return ResponseOk(jobDto, Messages.job_updated_successfully);
         }
 
         [HttpDelete("{id}")]
@@ -43,7 +44,7 @@ namespace Capstone.Api.Module.Jobs.Controllers
             var result = await _mediator.Send(command);
             if (!result)
             {
-                return ResponseNotFound("Job not found or already deleted");
+                return ResponseNotFound(Messages.job_not_found_or_deleted);
             }
             return ResponseNoContent();
         }
@@ -55,9 +56,9 @@ namespace Capstone.Api.Module.Jobs.Controllers
             var jobDto = await _mediator.Send(query);
             if (jobDto == null)
             {
-                return ResponseNotFound("Job not found or has been deleted");
+                return ResponseNotFound(Messages.job_not_found_or_deleted);
             }
-            return ResponseOk(jobDto, "Job retrieved successfully");
+            return ResponseOk(jobDto, Messages.job_retrieved_successfully);
         }
 
         [HttpGet]
@@ -65,7 +66,7 @@ namespace Capstone.Api.Module.Jobs.Controllers
         {
 
             var response = await _mediator.Send(request);
-            return ResponseOk(response.Data, response.Paging, "Jobs retrieved successfully");
+            return ResponseOk(response.Data, response.Paging, Messages.job_retrieved_successfully);
         }
 
 

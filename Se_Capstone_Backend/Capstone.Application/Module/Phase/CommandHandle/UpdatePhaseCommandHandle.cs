@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Phase.Command;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Domain.Enums;
 using Capstone.Infrastructure.Repository;
@@ -24,19 +25,19 @@ namespace Capstone.Application.Module.Phase.CommandHandle
             var phase = _unitOfWork.Phases.Find(x => x.Id == request.Id).Include(c => c.Project).ThenInclude(p => p.Phases).FirstOrDefault();
             var p = phase;
             if(phase == null)
-                return new ResponseMediator("Phase not found", null, 404);
+                return new ResponseMediator(Messages.phase_not_found, null, 404);
             if(phase.ActualEndDate.HasValue)
-                return new ResponseMediator("This phase was done", null);
+                return new ResponseMediator(Messages.phase_done, null);
 
             var phaseCheckDuplicateTitle = _unitOfWork.Phases.FindOne(x => x.Id != request.Id && x.ProjectId == phase.ProjectId && x.Title.Trim().ToUpper() == request.Title.Trim().ToUpper());
             if(phaseCheckDuplicateTitle != null)
-                return new ResponseMediator("This title is availble", null, 400);
+                return new ResponseMediator(Messages.title_available, null, 400);
 
             //if (request.ExpectedStartDate.Date < phase.Project.StartDate)
             //    return new ResponseMediator("Start date must be greater or equal than the start date of project", null);
 
             if (request.ExpectedEndDate.Date < request.ExpectedStartDate.Date)
-                return new ResponseMediator("End date must be greater or equal than the start date", null);
+                return new ResponseMediator(Messages.end_date_greater_than_start_date, null);
 
             //if (request.ExpectedEndDate.Date < DateTime.Now.Date)
             //    return new ResponseMediator("End date must be greater or equal than the current time", null);
@@ -56,7 +57,7 @@ namespace Capstone.Application.Module.Phase.CommandHandle
             foreach(var l in phase.Project.Phases.OrderByDescending(c => c.ExpectedStartDate))
             {
                 if(l.ActualStartDate.HasValue && l.Id != request.Id && request.ExpectedStartDate < l.ActualStartDate )
-                    return new ResponseMediator("Start date must be greater or equal running and completed phases ", null);
+                    return new ResponseMediator(Messages.start_date_greater_than_phases, null);
             }
 
             phase.Title = request.Title;

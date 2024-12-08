@@ -332,6 +332,204 @@ namespace Capstone.Application.Resources {
                 return ResourceManager.GetString("token_validation_failed", resourceCulture);
             }
         }
+        internal static string title_empty
+        {
+            get
+            {
+                return ResourceManager.GetString("title_empty", resourceCulture);
+            }
+        }
+        internal static string title_label_available
+        {
+            get
+            {
+                return ResourceManager.GetString("title_label_available", resourceCulture);
+            }
+        }
+        internal static string cannot_delete_all_default_labels
+        {
+            get
+            {
+                return ResourceManager.GetString("cannot_delete_all_default_labels", resourceCulture);
+            }
+        }
+        internal static string label_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("label_not_found", resourceCulture);
+            }
+        }
+        internal static string label_id_null
+        {
+            get
+            {
+                return ResourceManager.GetString("label_id_null", resourceCulture);
+            }
+        }
+        internal static string name_empty
+        {
+            get
+            {
+                return ResourceManager.GetString("name_empty", resourceCulture);
+            }
+        }
+        internal static string group_permission_exists
+        {
+            get
+            {
+                return ResourceManager.GetString("group_permission_exists", resourceCulture);
+            }
+        }
+        internal static string group_permission_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("group_permission_not_found", resourceCulture);
+            }
+        }
+        internal static string permission_exists
+        {
+            get
+            {
+                return ResourceManager.GetString("permission_exists", resourceCulture);
+            }
+        }
+        internal static string no_more_phase
+        {
+            get
+            {
+                return ResourceManager.GetString("no_more_phase", resourceCulture);
+            }
+        }
+        internal static string project_no_phase
+        {
+            get
+            {
+                return ResourceManager.GetString("project_no_phase", resourceCulture);
+            }
+        }
+        internal static string title_phase_available
+        {
+            get
+            {
+                return ResourceManager.GetString("title_phase_available", resourceCulture);
+            }
+        }
+        internal static string end_date_greater_than_start_date
+        {
+            get
+            {
+                return ResourceManager.GetString("end_date_greater_than_start_date", resourceCulture);
+            }
+        }
+        internal static string start_date_greater_than_phases
+        {
+            get
+            {
+                return ResourceManager.GetString("start_date_greater_than_phases", resourceCulture);
+            }
+        }
+        internal static string phase_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("phase_not_found", resourceCulture);
+            }
+        }
+        internal static string phase_running_or_completed
+        {
+            get
+            {
+                return ResourceManager.GetString("phase_running_or_completed", resourceCulture);
+            }
+        }
+        internal static string phase_done
+        {
+            get
+            {
+                return ResourceManager.GetString("phase_done", resourceCulture);
+            }
+        }
+        internal static string title_available
+        {
+            get
+            {
+                return ResourceManager.GetString("title_available", resourceCulture);
+            }
+        }
+        internal static string skills_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("skills_not_found", resourceCulture);
+            }
+        }
+        internal static string skills_already_exist_for_user
+        {
+            get
+            {
+                return ResourceManager.GetString("skills_already_exist_for_user", resourceCulture);
+            }
+        }
+        internal static string skill_title_empty_or_null
+        {
+            get
+            {
+                return ResourceManager.GetString("skill_title_empty_or_null", resourceCulture);
+            }
+        }
+        internal static string member_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("member_not_found", resourceCulture);
+            }
+        }
+        internal static string project_code_exists
+        {
+            get
+            {
+                return ResourceManager.GetString("project_code_exists", resourceCulture);
+            }
+        }
+        internal static string team_lead_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("team_lead_not_found", resourceCulture);
+            }
+        }
+        internal static string file_content_cannot_be_null
+        {
+            get
+            {
+                return ResourceManager.GetString("file_content_cannot_be_null", resourceCulture);
+            }
+        }
+        internal static string position_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("position_not_found", resourceCulture);
+            }
+        }
+        internal static string status_not_valid
+        {
+            get
+            {
+                return ResourceManager.GetString("status_not_valid", resourceCulture);
+            }
+        }
+
+        internal static string total_members_need_at_least_1
+        {
+            get
+            {
+                return ResourceManager.GetString("total_members_need_at_least_1", resourceCulture);
+            }
+        }
+
 
     }
 }

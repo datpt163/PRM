@@ -1,4 +1,5 @@
-﻿using Capstone.Infrastructure.Repository;
+﻿using Capstone.Application.Resources;
+using Capstone.Infrastructure.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +18,7 @@ namespace Capstone.Application.Module.Projects.Query
         {
             if (request.StartDate.HasValue && request.EndDate.HasValue && request.StartDate > request.EndDate)
             {
-                throw new Exception("Start date cannot be greater than end date!");
+                throw new Exception(Messages.end_date_greater_than_start_date);
             }
 
             var project = await _unitOfWork.Projects
@@ -33,7 +34,7 @@ namespace Capstone.Application.Module.Projects.Query
 
             if (project == null)
             {
-                throw new Exception("Project is not exist!");
+                throw new Exception(Messages.project_not_found);
             }
 
             var ongoingTasks = 0;
