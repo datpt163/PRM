@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Module.Skills.Command;
 using Capstone.Application.Module.Skills.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -25,7 +26,7 @@ namespace Capstone.Application.Module.Skills.CommandHandle
         {
             var user = await _userRepository.GetQuery()
                 .Include(u => u.Skills)
-                .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken) ?? throw new Exception("User not found.");
+                .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken) ?? throw new Exception(Messages.user_not_found);
             var existingSkills = new List<string>();
             var notFoundSkills = new List<Guid>();
 
@@ -58,12 +59,12 @@ namespace Capstone.Application.Module.Skills.CommandHandle
 
             if (existingSkills.Any())
             {
-                message += $"Skills already exist for user: {string.Join(", ", existingSkills)}. ";
+                message += $"{Messages.skills_already_exist_for_user}: {string.Join(", ", existingSkills)}. ";
             }
 
             if (notFoundSkills.Any())
             {
-                message += $"Skills not found: {string.Join(", ", notFoundSkills)}.";
+                message += $"{Messages.skills_not_found}: {string.Join(", ", notFoundSkills)}.";
             }
 
             return new AddMultipleSkillsResponse(true, message);

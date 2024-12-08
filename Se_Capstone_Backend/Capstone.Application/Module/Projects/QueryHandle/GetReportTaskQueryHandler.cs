@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Module.Projects.Query;
 using Capstone.Application.Module.Projects.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -20,7 +21,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
         {
             if (request.StartDate.HasValue && request.EndDate.HasValue && request.StartDate > request.EndDate)
             {
-                throw new Exception("Start date cannot be greater than end date!");
+                throw new Exception(Messages.end_date_greater_than_start_date);
             }
 
             var project = await _unitOfWork.Projects.GetQueryNoTracking()
@@ -38,7 +39,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
 
             if (project == null)
             {
-                throw new Exception("Project does not exist!");
+                throw new Exception(Messages.project_not_found);
             }
 
             var issues = project.Statuses

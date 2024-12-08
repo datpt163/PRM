@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Permissions.Command;
+using Capstone.Application.Resources;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ namespace Capstone.Application.Module.Permissions.CommandHandle
         {
             var role = await _unitOfWork.Roles.Find(r => r.Id == request.RoleId).Include(p => p.Permissions).FirstOrDefaultAsync();
             if (role == null)
-                return new ResponseMediator("Role not found", null);
+                return new ResponseMediator(Messages.role_not_found, null);
             var permissionsOfRole = role.Permissions.Select(p => p.Id);
 
             var listPermission = request.Permissions.Where(p => !permissionsOfRole.Contains(p.PermissionId)).Select(p => p.PermissionId).ToList();

@@ -1,6 +1,7 @@
 ﻿using Capstone.Api.Common.ResponseApi.Controllers;
 using Capstone.Api.Common.ResponseApi.Model;
 using Capstone.Api.Module.Auths.Request;
+using Capstone.Api.Resources;
 using Capstone.Application.Module.Auth.Command;
 using Capstone.Application.Module.Auths.Query;
 using Capstone.Application.Module.Auths.Response;
@@ -74,7 +75,7 @@ namespace Capstone.Api.Module.Auths.Controllers
 
             if (updatedUser == null)
             {
-                return ResponseNotFound("User not found or update failed.");
+                return ResponseNotFound(Messages.user_not_found_or_update_failed);
             }
 
             return ResponseOk(dataResponse: updatedUser);

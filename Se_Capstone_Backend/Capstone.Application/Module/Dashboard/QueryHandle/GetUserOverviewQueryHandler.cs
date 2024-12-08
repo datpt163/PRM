@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Module.Dashboard.Query;
 using Capstone.Application.Module.Dashboard.Response;
+using Capstone.Application.Resources;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,7 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
                 .FirstOrDefaultAsync(x=> x.Id == request.UserId,cancellationToken);
 
             if(user == null) {
-                throw new Exception("User not found!");
+                throw new Exception(Messages.user_not_found);
             }
             var totalSkills = 0;
             if (user.Skills != null)

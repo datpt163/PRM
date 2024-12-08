@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Phase.Command;
+using Capstone.Application.Resources;
 using Capstone.Infrastructure.Repository;
 using MassTransit;
 using MediatR;
@@ -25,9 +26,9 @@ namespace Capstone.Application.Module.Phase.CommandHandle
         {
             var phase = await _unitOfWork.Phases.Find(x => x.Id == request.Id).FirstOrDefaultAsync();
             if(phase == null)
-                return new ResponseMediator("Phase not found", null, 404);
+                return new ResponseMediator(Messages.phase_not_found, null, 404);
             if(phase.ActualStartDate.HasValue)
-                return new ResponseMediator("This phase is running or completed", null, 404);
+                return new ResponseMediator(Messages.phase_running_or_completed, null, 404);
 
             _unitOfWork.Phases.Remove(phase);
             await _unitOfWork.SaveChangesAsync();

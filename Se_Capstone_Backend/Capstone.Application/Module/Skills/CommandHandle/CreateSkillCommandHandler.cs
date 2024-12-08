@@ -3,6 +3,7 @@ using Capstone.Application.Module.Skills.Command;
 using Capstone.Application.Module.Skills.Response;
 using Capstone.Infrastructure.Repository;
 using MediatR;
+using Capstone.Application.Resources;
 
 namespace Capstone.Application.Module.Skills.CommandHandle
 {
@@ -21,7 +22,7 @@ namespace Capstone.Application.Module.Skills.CommandHandle
         {
             if (string.IsNullOrWhiteSpace(request.Title))
             {
-                throw new ArgumentException("Skill title cannot be empty or null.");
+                throw new ArgumentException(Messages.skill_title_empty_or_null);
             }
 
             var skill = new Skill

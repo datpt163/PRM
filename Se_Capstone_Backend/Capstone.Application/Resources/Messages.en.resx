@@ -126,6 +126,9 @@
   <data name="account_with_email_exists" xml:space="preserve">
     <value>Account with this email already exists.</value>
   </data>
+  <data name="cannot_delete_all_default_labels" xml:space="preserve">
+    <value>Cannot delete all default labels.</value>
+  </data>
   <data name="check_email_for_instruction" xml:space="preserve">
     <value>If you already have an account, please check your email for instructions.</value>
   </data>
@@ -150,11 +153,23 @@
   <data name="email_empty" xml:space="preserve">
     <value>Email is empty.</value>
   </data>
+  <data name="end_date_greater_than_start_date" xml:space="preserve">
+    <value>End date must be greater or equal to the start date.</value>
+  </data>
   <data name="error_processing_request" xml:space="preserve">
     <value>An error occurred while processing your request.</value>
   </data>
   <data name="failed_to_create_role" xml:space="preserve">
     <value>Failed to create role.</value>
+  </data>
+  <data name="file_content_cannot_be_null" xml:space="preserve">
+    <value>File content cannot be null.</value>
+  </data>
+  <data name="group_permission_exists" xml:space="preserve">
+    <value>Group permission already exists.</value>
+  </data>
+  <data name="group_permission_not_found" xml:space="preserve">
+    <value>Group permission not found.</value>
   </data>
   <data name="invalid_email_format" xml:space="preserve">
     <value>Invalid email format.</value>
@@ -171,11 +186,26 @@
   <data name="invalid_token" xml:space="preserve">
     <value>Something is wrong with the token.</value>
   </data>
+  <data name="label_id_null" xml:space="preserve">
+    <value>Label ID is null.</value>
+  </data>
+  <data name="label_not_found" xml:space="preserve">
+    <value>Label not found.</value>
+  </data>
   <data name="list_permission_empty" xml:space="preserve">
     <value>List of permissions is empty.</value>
   </data>
+  <data name="member_not_found" xml:space="preserve">
+    <value>Member not found.</value>
+  </data>
   <data name="message_already_sent" xml:space="preserve">
     <value>Message has already been sent to your account, you can resend in a few minutes.</value>
+  </data>
+  <data name="name_empty" xml:space="preserve">
+    <value>Name is empty.</value>
+  </data>
+  <data name="no_more_phase" xml:space="preserve">
+    <value>No more phase.</value>
   </data>
   <data name="old_password_not_correct" xml:space="preserve">
     <value>Old password not correct.</value>
@@ -186,14 +216,35 @@
   <data name="password_null_or_empty" xml:space="preserve">
     <value>Password is null or empty.</value>
   </data>
+  <data name="permission_exists" xml:space="preserve">
+    <value>Permission already exists.</value>
+  </data>
   <data name="permission_name_empty" xml:space="preserve">
     <value>Permission name is empty.</value>
   </data>
   <data name="permission_not_found" xml:space="preserve">
     <value>Permission not found.</value>
   </data>
+  <data name="phase_done" xml:space="preserve">
+    <value>This phase was done.</value>
+  </data>
+  <data name="phase_not_found" xml:space="preserve">
+    <value>Phase not found.</value>
+  </data>
+  <data name="phase_running_or_completed" xml:space="preserve">
+    <value>This phase is running or completed.</value>
+  </data>
+  <data name="position_not_found" xml:space="preserve">
+    <value>Position not found.</value>
+  </data>
+  <data name="project_code_exists" xml:space="preserve">
+    <value>Project code is exist.</value>
+  </data>
   <data name="project_not_found" xml:space="preserve">
     <value>Project not found.</value>
+  </data>
+  <data name="project_no_phase" xml:space="preserve">
+    <value>Project does not have any phase.</value>
   </data>
   <data name="refresh_token_expired" xml:space="preserve">
     <value>Refresh token has expired.</value>
@@ -210,14 +261,47 @@
   <data name="role_not_found" xml:space="preserve">
     <value>Role not found.</value>
   </data>
+  <data name="skills_already_exist_for_user" xml:space="preserve">
+    <value>Skills already exist for user.</value>
+  </data>
+  <data name="skills_not_found" xml:space="preserve">
+    <value>Skills not found.</value>
+  </data>
+  <data name="skill_title_empty_or_null" xml:space="preserve">
+    <value>Skill title cannot be empty or null.</value>
+  </data>
   <data name="something_wrong" xml:space="preserve">
     <value>Something is wrong.</value>
+  </data>
+  <data name="start_date_greater_than_phases" xml:space="preserve">
+    <value>Start date must be greater or equal to the running and completed phases.</value>
+  </data>
+  <data name="status_not_valid" xml:space="preserve">
+    <value>Status not valid.</value>
+  </data>
+  <data name="team_lead_not_found" xml:space="preserve">
+    <value>Team lead not found.</value>
+  </data>
+  <data name="title_available" xml:space="preserve">
+    <value>This title is available.</value>
+  </data>
+  <data name="title_empty" xml:space="preserve">
+    <value>Title is empty.</value>
+  </data>
+  <data name="title_label_available" xml:space="preserve">
+    <value>This title label is available.</value>
+  </data>
+  <data name="title_phase_available" xml:space="preserve">
+    <value>This title phase is available.</value>
   </data>
   <data name="token_required" xml:space="preserve">
     <value>Token is required.</value>
   </data>
   <data name="token_validation_failed" xml:space="preserve">
     <value>Token validation failed.</value>
+  </data>
+  <data name="total_members_need_at_least_1" xml:space="preserve">
+    <value>Total members need to be at least 1.</value>
   </data>
   <data name="username_already_exists" xml:space="preserve">
     <value>User name already exists.</value>

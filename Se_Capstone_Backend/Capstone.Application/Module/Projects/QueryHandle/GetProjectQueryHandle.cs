@@ -3,6 +3,7 @@ using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.Paging;
 using Capstone.Application.Module.Projects.Query;
 using Capstone.Application.Module.Projects.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Domain.Enums;
 using Capstone.Infrastructure.Repository;
@@ -31,7 +32,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
         {
             if (request.Status.HasValue)
                 if (!(request.Status == ProjectStatus.NotStarted || request.Status == ProjectStatus.InProgress || request.Status == ProjectStatus.Finished || request.Status == ProjectStatus.Canceled))
-                    return new PagingResultSP<ProjectDTO>() { ErrorMessage = "Status must more than 0 or less than 5" };
+                    return new PagingResultSP<ProjectDTO>() { ErrorMessage = Messages.status_not_valid };
 
             var projectsQuery = new List<Project>();
 

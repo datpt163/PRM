@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Phase.Command;
+using Capstone.Application.Resources;
 using Capstone.Domain.Enums;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -24,13 +25,13 @@ namespace Capstone.Application.Module.Phase.CommandHandle
         {
             var project = _unitOfWork.Projects.Find(x => x.Id == request.ProjectId).Include(c => c.Phases).FirstOrDefault();
             if(project == null)
-                return new ResponseMediator("Project not found", null, 404);
+                return new ResponseMediator(Messages.project_not_found, null, 404);
 
             (PhaseStatus status, Domain.Entities.Phase? phaseRunning, Domain.Entities.Phase? phaseAfterPhaseRunning) = project.GetStatusPhaseOfProject();
             if(status == PhaseStatus.Complete)
-                return new ResponseMediator("No more phase", null, 404);
+                return new ResponseMediator(Messages.no_more_phase, null, 404);
             else if(status == PhaseStatus.NoPhase)
-                return new ResponseMediator("Project do not have any phase", null, 400);
+                return new ResponseMediator(Messages.project_no_phase, null, 400);
             else if( status == PhaseStatus.NoPhaseRunning)
             {
                 var phase = project.Phases.FirstOrDefault();

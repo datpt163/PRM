@@ -141,7 +141,52 @@
   <data name="ApplicantUpdatedSuccessfully" xml:space="preserve">
     <value>Ứng viên đã cập nhật thành công</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value>dat</value>
+  <data name="job_created_successfully" xml:space="preserve">
+    <value>Tạo công việc thành công.</value>
+  </data>
+  <data name="job_not_found_or_deleted" xml:space="preserve">
+    <value>Công việc không tìm thấy hoặc đã bị xóa.</value>
+  </data>
+  <data name="job_retrieved_successfully" xml:space="preserve">
+    <value>Lấy công việc thành công.</value>
+  </data>
+  <data name="job_updated_successfully" xml:space="preserve">
+    <value>Cập nhật công việc thành công.</value>
+  </data>
+  <data name="position_created_successfully" xml:space="preserve">
+    <value>Tạo vị trí thành công.</value>
+  </data>
+  <data name="position_not_found_or_deleted" xml:space="preserve">
+    <value>Vị trí không tìm thấy hoặc đã bị xóa.</value>
+  </data>
+  <data name="position_retrieved_successfully" xml:space="preserve">
+    <value>Lấy vị trí thành công.</value>
+  </data>
+  <data name="position_updated_successfully" xml:space="preserve">
+    <value>Cập nhật vị trí thành công.</value>
+  </data>
+  <data name="removed_skills_successfully" xml:space="preserve">
+    <value>Xóa kỹ năng thành công.</value>
+  </data>
+  <data name="skill_added_to_user_successfully" xml:space="preserve">
+    <value>Thêm kỹ năng vào người dùng thành công!</value>
+  </data>
+  <data name="skill_created_successfully" xml:space="preserve">
+    <value>Tạo kỹ năng thành công.</value>
+  </data>
+  <data name="skill_not_found_or_deleted" xml:space="preserve">
+    <value>Kỹ năng không tìm thấy hoặc đã bị xóa.</value>
+  </data>
+  <data name="skill_retrieved_successfully" xml:space="preserve">
+    <value>Lấy kỹ năng thành công.</value>
+  </data>
+  <data name="skill_updated_successfully" xml:space="preserve">
+    <value>Cập nhật kỹ năng thành công.</value>
+  </data>
+  <data name="user_not_found_or_update_failed" xml:space="preserve">
+    <value>Không tìm thấy người dùng hoặc cập nhật thất bại.</value>
+  </data>
+  <data name="user_or_skill_not_found_or_not_associated" xml:space="preserve">
+    <value>Người dùng hoặc kỹ năng không tìm thấy, hoặc kỹ năng không liên kết với người dùng.</value>
   </data>
 </root>

@@ -5,6 +5,7 @@ using MediatR;
 using Capstone.Application.Module.Positions.Query;
 using Capstone.Api.Module.Positions.Request;
 using Microsoft.AspNetCore.Authorization;
+using Capstone.Api.Resources;
 
 namespace Capstone.Api.Module.positions.Controllers
 {
@@ -24,7 +25,7 @@ namespace Capstone.Api.Module.positions.Controllers
         public async Task<IActionResult> Create([FromBody] CreatePositionCommand command)
         {
             var positionDto = await _mediator.Send(command);
-            return ResponseCreated(positionDto, "Position created successfully");
+            return ResponseCreated(positionDto, Messages.position_created_successfully);
         }
 
         [HttpPut]
@@ -35,9 +36,9 @@ namespace Capstone.Api.Module.positions.Controllers
             var positionDto = await _mediator.Send(command);
             if (positionDto == null)
             {
-                return ResponseNotFound("Position not found or has been deleted");
+                return ResponseNotFound(Messages.position_not_found_or_deleted);
             }
-            return ResponseOk(positionDto, "Position updated successfully");
+            return ResponseOk(positionDto, Messages.position_updated_successfully);
         }
 
         [HttpDelete("{id}")]
@@ -49,7 +50,7 @@ namespace Capstone.Api.Module.positions.Controllers
             var result = await _mediator.Send(command);
             if (!result)
             {
-                return ResponseNotFound("Position not found or already deleted");
+                return ResponseNotFound(Messages.position_not_found_or_deleted);
             }
             return ResponseNoContent();
         }
@@ -62,9 +63,9 @@ namespace Capstone.Api.Module.positions.Controllers
             var positionDto = await _mediator.Send(query);
             if (positionDto == null)
             {
-                return ResponseNotFound("Position not found or has been deleted");
+                return ResponseNotFound(Messages.position_not_found_or_deleted);
             }
-            return ResponseOk(positionDto, "Position retrieved successfully");
+            return ResponseOk(positionDto, Messages.position_retrieved_successfully);
         }
 
         [HttpGet]
@@ -73,7 +74,7 @@ namespace Capstone.Api.Module.positions.Controllers
         {
 
             var response = await _mediator.Send(request);
-            return ResponseOk(response.Data, response.Paging, "Positions retrieved successfully");
+            return ResponseOk(response.Data, response.Paging, Messages.position_retrieved_successfully);
         }
 
         [HttpGet("user/{userId}")]

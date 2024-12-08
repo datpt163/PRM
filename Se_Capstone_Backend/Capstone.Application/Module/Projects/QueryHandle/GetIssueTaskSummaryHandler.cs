@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Module.Projects.Query;
 using Capstone.Application.Module.Projects.Response;
+using Capstone.Application.Resources;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                 .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken);
 
             if (project == null)
-                throw new Exception("Project not found.");
+                throw new Exception(Messages.project_not_found);
 
             var relevantIssues = request.PhaseId == null
                 ? project.Statuses.SelectMany(status => status.Issues).ToList()

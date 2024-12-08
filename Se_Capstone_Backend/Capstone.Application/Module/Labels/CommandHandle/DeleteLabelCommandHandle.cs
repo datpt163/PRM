@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Labels.Command;
+using Capstone.Application.Resources;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ namespace Capstone.Application.Module.Labels.CommandHandle
         {
             var label = _unitOfWork.Labels.Find(x => x.Id == request.Id).Include(c => c.Issues).Include(c => c.Project).FirstOrDefault();
             if (label == null)
-                return new ResponseMediator("Label not found", null, 404);
+                return new ResponseMediator(Messages.label_not_found, null, 404);
 
             _unitOfWork.Labels.Remove(label);
             await _unitOfWork.SaveChangesAsync();

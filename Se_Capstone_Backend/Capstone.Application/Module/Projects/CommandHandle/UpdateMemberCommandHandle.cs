@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Projects.Command;
+using Capstone.Application.Resources;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using System;
@@ -22,13 +23,13 @@ namespace Capstone.Application.Module.Projects.CommandHandle
         {
             var userProject = _unitOfWork.UserProjects.Find(x => x.ProjectId == request.ProjectId && x.UserId == request.UserId).FirstOrDefault();
             if (userProject == null)
-                return new ResponseMediator("User project not found", null, 404);
+                return new ResponseMediator(Messages.project_not_found, null, 404);
 
             if(request.PositionId.HasValue)
             {
                 var position = _unitOfWork.Positions.Find(x => x.Id == request.PositionId).FirstOrDefault();
                 if (userProject == null)
-                    return new ResponseMediator("Position not found", null, 404);
+                    return new ResponseMediator(Messages.position_not_found, null, 404);
             }
 
             userProject.PositionId = request.PositionId;

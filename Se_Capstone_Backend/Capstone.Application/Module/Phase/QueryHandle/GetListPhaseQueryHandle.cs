@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Phase.Query;
+using Capstone.Application.Resources;
 using Capstone.Domain.Enums;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -25,7 +26,7 @@ namespace Capstone.Application.Module.Phase.QueryHandle
         {
             var project = await _unitOfWork.Projects.GetQuery(x => x.Id == request.ProjectId).Include(c => c.Phases).FirstOrDefaultAsync();
             if(project == null)
-                return new ResponseMediator("Project not found", null, 404);
+                return new ResponseMediator(Messages.project_not_found, null, 404);
 
             (PhaseStatus status, Domain.Entities.Phase? phaseRunning, Domain.Entities.Phase? phaseAfterPhaseRunning) = project.GetStatusPhaseOfProject();
 

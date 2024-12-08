@@ -5,6 +5,7 @@ using MediatR;
 using Capstone.Application.Module.Skills.Query;
 using Capstone.Api.Module.Skills.Request;
 using Microsoft.AspNetCore.Authorization;
+using Capstone.Api.Resources;
 
 namespace Capstone.Api.Module.skills.Controllers
 {
@@ -24,7 +25,7 @@ namespace Capstone.Api.Module.skills.Controllers
         public async Task<IActionResult> Create([FromBody] CreateSkillCommand command)
         {
             var skillDto = await _mediator.Send(command);
-            return ResponseCreated(skillDto, "Skill created successfully");
+            return ResponseCreated(skillDto, Messages.skill_created_successfully);
         }
 
         [HttpPut]
@@ -34,9 +35,9 @@ namespace Capstone.Api.Module.skills.Controllers
             var skillDto = await _mediator.Send(command);
             if (skillDto == null)
             {
-                return ResponseNotFound("Skill not found or has been deleted");
+                return ResponseNotFound(Messages.skill_not_found_or_deleted);
             }
-            return ResponseOk(skillDto, "Skill updated successfully");
+            return ResponseOk(skillDto, Messages.skill_updated_successfully);
         }
 
         [HttpDelete("{id}")]
@@ -47,7 +48,7 @@ namespace Capstone.Api.Module.skills.Controllers
             var result = await _mediator.Send(command);
             if (!result)
             {
-                return ResponseNotFound("Skill not found or already deleted");
+                return ResponseNotFound(Messages.skill_not_found_or_deleted);
             }
             return ResponseNoContent();
         }
@@ -60,9 +61,9 @@ namespace Capstone.Api.Module.skills.Controllers
             var skillDto = await _mediator.Send(query);
             if (skillDto == null)
             {
-                return ResponseNotFound("Skill not found or has been deleted");
+                return ResponseNotFound(Messages.skill_not_found_or_deleted);
             }
-            return ResponseOk(skillDto, "Skill retrieved successfully");
+            return ResponseOk(skillDto, Messages.skill_retrieved_successfully);
         }
 
         [HttpGet]
@@ -71,7 +72,7 @@ namespace Capstone.Api.Module.skills.Controllers
         {
 
             var response = await _mediator.Send(request);
-            return ResponseOk(response.Data, response.Paging, "Skills retrieved successfully");
+            return ResponseOk(response.Data, response.Paging, Messages.skill_retrieved_successfully);
         }
 
         [HttpGet("user/{userId}")]
@@ -80,7 +81,7 @@ namespace Capstone.Api.Module.skills.Controllers
         {
             var query = new GetSkillsByUserIdQuery { UserId = userId };
             var skillResponses = await _mediator.Send(query);
-            return ResponseOk(skillResponses, "Skills retrieved successfully");
+            return ResponseOk(skillResponses, Messages.skill_retrieved_successfully);
         }
 
         [HttpDelete("user")]
@@ -99,10 +100,10 @@ namespace Capstone.Api.Module.skills.Controllers
 
                 if (!result)
                 {
-                    return ResponseNotFound("User or skill not found, or skill not associated with the user");
+                    return ResponseNotFound(Messages.user_or_skill_not_found_or_not_associated);
                 }
 
-                return ResponseOk(result, "Remove skill success!!!");
+                return ResponseOk(result, Messages.removed_skills_successfully);
             }
             catch (Exception ex)
             {
@@ -126,10 +127,10 @@ namespace Capstone.Api.Module.skills.Controllers
 
                 if (!result)
                 {
-                    return ResponseNotFound("User or skills not found, or skills not associated with the user");
+                    return ResponseNotFound(Messages.user_or_skill_not_found_or_not_associated);
                 }
 
-                return ResponseOk(result, "Removed skills successfully!!!");
+                return ResponseOk(result, Messages.removed_skills_successfully);
             }
             catch (Exception ex)
             {
@@ -153,10 +154,10 @@ namespace Capstone.Api.Module.skills.Controllers
 
                 if (!result)
                 {
-                    return ResponseNotFound("User not found, skill not found, or user already has the skill.");
+                    return ResponseNotFound(Messages.user_or_skill_not_found_or_not_associated);
                 }
 
-                return ResponseOk(result, "Skill added to user successfully!");
+                return ResponseOk(result, Messages.skill_added_to_user_successfully);
             }
             catch (Exception ex)
             {

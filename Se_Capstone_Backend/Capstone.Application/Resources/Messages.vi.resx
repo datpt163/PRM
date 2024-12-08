@@ -126,6 +126,9 @@
   <data name="account_with_email_exists" xml:space="preserve">
     <value>Tài khoản với email này đã tồn tại.</value>
   </data>
+  <data name="cannot_delete_all_default_labels" xml:space="preserve">
+    <value>Không thể xóa tất cả nhãn mặc định.</value>
+  </data>
   <data name="check_email_for_instruction" xml:space="preserve">
     <value>Nếu bạn đã có tài khoản, vui lòng kiểm tra email của bạn để biết hướng dẫn.</value>
   </data>
@@ -150,11 +153,23 @@
   <data name="email_empty" xml:space="preserve">
     <value>Email không được để trống.</value>
   </data>
+  <data name="end_date_greater_than_start_date" xml:space="preserve">
+    <value>Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.</value>
+  </data>
   <data name="error_processing_request" xml:space="preserve">
     <value>Đã xảy ra lỗi khi xử lý yêu cầu của bạn.</value>
   </data>
   <data name="failed_to_create_role" xml:space="preserve">
     <value>Tạo vai trò thất bại.</value>
+  </data>
+  <data name="file_content_cannot_be_null" xml:space="preserve">
+    <value>Nội dung tệp không thể là null.</value>
+  </data>
+  <data name="group_permission_exists" xml:space="preserve">
+    <value>Nhóm quyền đã tồn tại.</value>
+  </data>
+  <data name="group_permission_not_found" xml:space="preserve">
+    <value>Không tìm thấy nhóm quyền.</value>
   </data>
   <data name="invalid_email_format" xml:space="preserve">
     <value>Định dạng email không hợp lệ.</value>
@@ -171,11 +186,26 @@
   <data name="invalid_token" xml:space="preserve">
     <value>Có lỗi xảy ra với token.</value>
   </data>
+  <data name="label_id_null" xml:space="preserve">
+    <value>ID nhãn không được để trống.</value>
+  </data>
+  <data name="label_not_found" xml:space="preserve">
+    <value>Không tìm thấy nhãn.</value>
+  </data>
   <data name="list_permission_empty" xml:space="preserve">
     <value>Danh sách quyền không được để trống.</value>
   </data>
+  <data name="member_not_found" xml:space="preserve">
+    <value>Thành viên không tìm thấy.</value>
+  </data>
   <data name="message_already_sent" xml:space="preserve">
     <value>Tin nhắn đã được gửi đến tài khoản của bạn, bạn có thể gửi lại sau vài phút.</value>
+  </data>
+  <data name="name_empty" xml:space="preserve">
+    <value>Tên không được để trống.</value>
+  </data>
+  <data name="no_more_phase" xml:space="preserve">
+    <value>Không còn giai đoạn nào.</value>
   </data>
   <data name="old_password_not_correct" xml:space="preserve">
     <value>Mật khẩu cũ không chính xác.</value>
@@ -186,14 +216,35 @@
   <data name="password_null_or_empty" xml:space="preserve">
     <value>Mật khẩu không được để trống hoặc null.</value>
   </data>
+  <data name="permission_exists" xml:space="preserve">
+    <value>Quyền đã tồn tại.</value>
+  </data>
   <data name="permission_name_empty" xml:space="preserve">
     <value>Tên quyền không được để trống.</value>
   </data>
   <data name="permission_not_found" xml:space="preserve">
     <value>Không tìm thấy quyền.</value>
   </data>
+  <data name="phase_done" xml:space="preserve">
+    <value>Giai đoạn này đã hoàn thành.</value>
+  </data>
+  <data name="phase_not_found" xml:space="preserve">
+    <value>Không tìm thấy giai đoạn.</value>
+  </data>
+  <data name="phase_running_or_completed" xml:space="preserve">
+    <value>Giai đoạn này đang chạy hoặc đã hoàn thành.</value>
+  </data>
+  <data name="position_not_found" xml:space="preserve">
+    <value>Vị trí không tìm thấy.</value>
+  </data>
+  <data name="project_code_exists" xml:space="preserve">
+    <value>Mã dự án đã tồn tại.</value>
+  </data>
   <data name="project_not_found" xml:space="preserve">
     <value>Không tìm thấy dự án.</value>
+  </data>
+  <data name="project_no_phase" xml:space="preserve">
+    <value>Dự án không có giai đoạn nào.</value>
   </data>
   <data name="refresh_token_expired" xml:space="preserve">
     <value>Token làm mới đã hết hạn.</value>
@@ -210,14 +261,47 @@
   <data name="role_not_found" xml:space="preserve">
     <value>Không tìm thấy vai trò.</value>
   </data>
+  <data name="skills_already_exist_for_user" xml:space="preserve">
+    <value>Kỹ năng đã tồn tại cho người dùng.</value>
+  </data>
+  <data name="skills_not_found" xml:space="preserve">
+    <value>Không tìm thấy kỹ năng.</value>
+  </data>
+  <data name="skill_title_empty_or_null" xml:space="preserve">
+    <value>Tiêu đề kỹ năng không thể để trống hoặc null.</value>
+  </data>
   <data name="something_wrong" xml:space="preserve">
     <value>Có điều gì đó sai.</value>
+  </data>
+  <data name="start_date_greater_than_phases" xml:space="preserve">
+    <value>Ngày bắt đầu phải lớn hơn hoặc bằng các giai đoạn đang chạy và đã hoàn thành.</value>
+  </data>
+  <data name="status_not_valid" xml:space="preserve">
+    <value>Trạng thái không hợp lệ.</value>
+  </data>
+  <data name="team_lead_not_found" xml:space="preserve">
+    <value>Trưởng nhóm không tìm thấy.</value>
+  </data>
+  <data name="title_available" xml:space="preserve">
+    <value>Tiêu đề này có sẵn.</value>
+  </data>
+  <data name="title_empty" xml:space="preserve">
+    <value>Tiêu đề không được để trống.</value>
+  </data>
+  <data name="title_label_available" xml:space="preserve">
+    <value>Nhãn tiêu đề này đã có sẵn.</value>
+  </data>
+  <data name="title_phase_available" xml:space="preserve">
+    <value>Giai đoạn tiêu đề này có sẵn.</value>
   </data>
   <data name="token_required" xml:space="preserve">
     <value>Token là bắt buộc.</value>
   </data>
   <data name="token_validation_failed" xml:space="preserve">
     <value>Xác thực token thất bại.</value>
+  </data>
+  <data name="total_members_need_at_least_1" xml:space="preserve">
+    <value>Tổng số thành viên cần ít nhất 1.</value>
   </data>
   <data name="username_already_exists" xml:space="preserve">
     <value>Tên người dùng đã tồn tại.</value>

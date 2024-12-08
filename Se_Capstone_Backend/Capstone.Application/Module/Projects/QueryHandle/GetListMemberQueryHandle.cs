@@ -1,5 +1,6 @@
 ﻿using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Projects.Query;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -30,7 +31,7 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                                               .Include(x => x.Statuses).ThenInclude(c => c.Issues).ThenInclude(c => c.Reporter)
                                               .FirstOrDefaultAsync();
             if (project == null)
-                return new ResponseMediator("Project not found", null, 404);
+                return new ResponseMediator(Messages.project_not_found, null, 404);
 
             var assinees = project.Statuses.SelectMany(x => x.Issues.Where(x => x.Assignee != null)).Select(x => x.Assignee).ToList();
             var reporters = project.Statuses.SelectMany(x => x.Issues.Where(x => x.Reporter != null)).Select(x => x.Reporter).ToList();

@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Module.Projects.Query;
 using Capstone.Application.Module.Projects.Request;
 using Capstone.Application.Module.Projects.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -28,7 +29,7 @@ namespace Capstone.Application.Module.Projects.Handlers
 
             if (project == null)
             {
-                throw new Exception("Project not found."); 
+                throw new Exception(Messages.project_not_found); 
             }
 
             var response = new ProjectEffortCalculationResponse
