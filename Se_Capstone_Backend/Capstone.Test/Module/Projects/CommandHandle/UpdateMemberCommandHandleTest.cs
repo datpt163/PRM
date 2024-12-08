@@ -43,7 +43,7 @@ namespace Capstone.Test.Module.Projects.CommandHandle
 
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            Assert.Equal("User project not found", result.ErrorMessage);
+            Assert.Equal("Project not found.", result.ErrorMessage);
             Assert.Null(result.Data);
         }
 

@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Test
+namespace Suggest
 {
     public class SuggestProjectQueryHandlerTests
     {
@@ -44,7 +44,7 @@ namespace Test
 
             var request = new SuggestProjectQuery
             {
-                UserStatistics = testUserStatistics
+                UserStatistics = testUserStatistics,TotalUsersNeed = 2
             };
 
             var expectedIds = new List<Guid> { testUserStatistics[0].Id, testUserStatistics[1].Id };
@@ -62,11 +62,11 @@ namespace Test
         }
 
         [Fact]
-        public async Task Handle_ShouldThrowArgumentException_WhenCohereResponseIsInvalid()
+        public async Task Handle_ShouldThrowArgumentException()
         {
             var request = new SuggestProjectQuery
             {
-                UserStatistics = new List<UserStatistic>()
+                UserStatistics = new List<UserStatistic>(),TotalUsersNeed = 0
             };
 
             _cohereServiceMock.Setup(service => service.GetResponseAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
