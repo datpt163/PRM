@@ -51,9 +51,9 @@ namespace Capstone.Application.Module.Projects.Query
             float actualEffort = 0;
             foreach(var issue in allIssues)
             {
-                actualEffort = actualEffort - (issue.ActualTime ?? 0);
+                actualEffort = totalEffort - (issue.ActualTime ?? 0);
 
-                estimateEffort = actualEffort - (issue.EstimatedTime ?? 0);
+                estimateEffort = totalEffort - (issue.EstimatedTime ?? 0);
             }
             
             allIssues = allIssues.Where(issue => (!request.StartDate.HasValue || issue.StartDate >= request.StartDate) &&
