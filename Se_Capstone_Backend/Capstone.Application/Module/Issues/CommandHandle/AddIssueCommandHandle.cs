@@ -9,6 +9,7 @@ using Capstone.Application.Module.Issues.ConsumerRabbitMq;
 using Capstone.Application.Module.Issues.ConsumerRabbitMq.Message;
 using Capstone.Application.Module.Issues.DTO;
 using Capstone.Application.Module.Status.ConsumerRabbitMq.Message;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Domain.Enums;
 using Capstone.Infrastructure.Redis;
@@ -50,30 +51,30 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             int responseSuccess = 200;
             var userAssignee = new User();
             if (string.IsNullOrEmpty(request.Title))
-                return new ResponseMediator("Title empty", null, 400);
+                return new ResponseMediator(Messages.title_empty, null, 400);
 
             if (request.StartDate.HasValue && request.DueDate.HasValue && request.StartDate.Value.Date > request.DueDate.Value.Date)
-                return new ResponseMediator("Due date must greater or equal start date", null, 400);
+                return new ResponseMediator(Messages.end_date_greater_than_start_date, null, 400);
 
             if (request.Priority.HasValue && ((int)request.Priority < 1 || (int)request.Priority > 5))
-                return new ResponseMediator("Priority must be between 1 and 5", null, 400);
+                return new ResponseMediator(Messages.priority_range, null, 400);
 
             if (request.EstimatedTime.HasValue && request.EstimatedTime.Value <= 0)
-                return new ResponseMediator("Estimated time must be greater than 0 hour", null, 400);
+                return new ResponseMediator(Messages.estimated_time_greater_than_zero, null, 400);
 
             if (request.ParentIssueId.HasValue)
                 if (_unitOfWork.Issues.FindOne(x => x.Id == request.ParentIssueId.Value) == null)
-                    return new ResponseMediator("Parent issue not found", null, 404);
+                    return new ResponseMediator(Messages.parent_issue_not_found, null, 404);
 
             if (request.LabelId.HasValue && _unitOfWork.Labels.FindOne(x => x.Id == request.LabelId) == null)
-                return new ResponseMediator("Label  not found", null, 404);
+                return new ResponseMediator(Messages.label_not_found, null, 404);
             var status = _unitOfWork.Statuses.Find(x => x.Id == request.StatusId).Include(c => c.Project).ThenInclude(c => c.Phases).Include(c => c.Issues).FirstOrDefault();
             if (status == null)
-                return new ResponseMediator("Status  not found", null, 404);
+                return new ResponseMediator(Messages.status_not_valid, null, 404);
 
             var user = await _jwtService.VerifyTokenAsync(request.Token);
             if (user == null)
-                return new ResponseMediator("User  not found", null, 404);
+                return new ResponseMediator(Messages.user_not_found, null, 404);
 
             (List<string> permissions, int authorizeProjectCode) = await _managePermissionProject.GetPermissionAsync(request.Token, statusId: request.StatusId, option: PermissionCode.CheckMember);
             if (authorizeProjectCode != PermissionCode.IsMember && authorizeProjectCode != PermissionCode.IsLeader && authorizeProjectCode != PermissionCode.IsSettingAllProjectConfigurator)
@@ -83,7 +84,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             {
                 var assignee = _unitOfWork.Users.FindOne(x => x.Id == request.AssignedToId);
                 if (assignee == null)
-                    return new ResponseMediator("Assigned user not found", null, 404);
+                    return new ResponseMediator(Messages.user_not_found, null, 404);
                 if(assignee.Id != user.Id)
                     responseSuccess = 205;
                 userAssignee = assignee;

@@ -3,6 +3,7 @@ using Capstone.Application.Common.Paging;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Notifications.Query;
 using Capstone.Application.Module.Projects.Response;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -28,7 +29,7 @@ namespace Capstone.Application.Module.Notifications.QueryHandle
         {
             var user = await _jwtService.VerifyTokenAsync(request.Token);
             if (user == null)
-                return new PagingResultSP<Notification>() { ErrorMessage = "Wrong Token" };
+                return new PagingResultSP<Notification>() { ErrorMessage = Messages.invalid_token };
 
             var notifications = _unitOfWork.Notifications.Find(x => x.UserId == user.Id).OrderByDescending(x => x.CreatedAt).ToList();
             var unReadCount = notifications.Where(x => x.HasRead == false).Count();

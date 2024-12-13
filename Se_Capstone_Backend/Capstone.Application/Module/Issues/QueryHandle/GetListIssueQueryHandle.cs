@@ -4,6 +4,7 @@ using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Issues.DTO;
 using Capstone.Application.Module.Issues.Query;
 using Capstone.Application.Module.Projects.Response;
+using Capstone.Application.Resources;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -25,11 +26,11 @@ namespace Capstone.Application.Module.Issues.QueryHandle
         public async Task<PagingResultSP<DTO.IssueDTO>> Handle(GetListIssuesQuery request, CancellationToken cancellationToken)
         {
             if (!request.ProjectId.HasValue)
-                return new PagingResultSP<Application.Module.Issues.DTO.IssueDTO>() { ErrorMessage = "Project not found" };
+                return new PagingResultSP<Application.Module.Issues.DTO.IssueDTO>() { ErrorMessage = Messages.project_not_found };
 
             var project = await _unitOfWork.Projects.Find(x => x.Id == request.ProjectId).Include(c => c.Statuses).ThenInclude(c => c.Issues).ThenInclude(c => c.Assignee).FirstOrDefaultAsync();
             if (project == null)
-                return new PagingResultSP<Application.Module.Issues.DTO.IssueDTO>() { ErrorMessage = "Project not found" };
+                return new PagingResultSP<Application.Module.Issues.DTO.IssueDTO>() { ErrorMessage = Messages.project_not_found };
 
             var issueIds = project.Statuses.SelectMany(x => x.Issues).ToList().Select(c => c.Id);
             var issues = _unitOfWork.Issues.Find(x => issueIds.Contains(x.Id)).Include(c => c.Phase).Include(c => c.Label).Include(c => c.Status).Include(c => c.LastUpdateBy).Include(c => c.ParentIssue).Include(c => c.Reporter).Include(c => c.Assignee).Include(c => c.Comments).OrderByDescending(x => x.Index).ToList();

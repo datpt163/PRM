@@ -16,18 +16,17 @@ using System.Threading;
 using static MassTransit.ValidationResultExtensions;
 namespace Capstone.Api.Module.Statuses.SignalR
 {
-     [Authorize]
     public class StatusHub : Hub
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPublishEndpoint _publishEndpoint;
         private readonly IJwtService _jwtService;
         private readonly IPublishEndpoint _publisher;
-        private readonly IHubContext<StatusHub> _hubContext;
+        private readonly IHubContext<NotificationHub> _hubContext;
         private readonly IRequestClient<OrderStatusMessage2> _requestClient;
         private readonly IRequestClient<OrderIssueMessage2> _requestClient2;
 
-        public StatusHub(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, IJwtService jwtService, IPublishEndpoint publisher, IHubContext<StatusHub> hubContext, IRequestClient<OrderStatusMessage2> requestClient, IRequestClient<OrderIssueMessage2> requestClient2)
+        public StatusHub(IUnitOfWork unitOfWork, IPublishEndpoint publishEndpoint, IJwtService jwtService, IPublishEndpoint publisher, IHubContext<NotificationHub> hubContext, IRequestClient<OrderStatusMessage2> requestClient, IRequestClient<OrderIssueMessage2> requestClient2)
         {
             _unitOfWork = unitOfWork;
             _publishEndpoint = publishEndpoint;
@@ -61,8 +60,6 @@ namespace Capstone.Api.Module.Statuses.SignalR
             try
             {
                 await Clients.Group(groupId).SendAsync("StatusOrderResponse", "Success");
-
-                var httpContext = Context.GetHttpContext();
 
                 var status = _unitOfWork.Statuses.Find(x => x.Id == statusId).Include(c => c.Project).ThenInclude(c => c.Statuses).FirstOrDefault();
                 if (status == null)

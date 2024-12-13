@@ -2,6 +2,7 @@
 using Capstone.Application.Common.ProjectAuthorize;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Issues.Command;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -26,7 +27,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
         {
             var issue = _unitOfWork.Issues.Find(x => x.Id == request.Id).Include(c => c.Status).ThenInclude(d => d.Issues).FirstOrDefault();
             if (issue == null)
-                return new ResponseMediator("Issue not found", null, 404);
+                return new ResponseMediator(Messages.parent_issue_not_found, null, 404);
 
             var user = await _jwtService.VerifyTokenAsync(request.Token);
             if (user == null)

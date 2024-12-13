@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Notifications.Command;
+using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -26,21 +27,21 @@ namespace Capstone.Application.Module.Notifications.CommandHandle
         {
             var user = await _jwtService.VerifyTokenAsync(request.Token);
             if (user == null)
-                return new ResponseMediator("Dont have permission", null, 403);
+                return new ResponseMediator(Messages.user_no_permission_delete_notification, null, 403);
 
             var notification = _unitOfWork.Notifications.FindOne(x => x.Id == request.Id);
 
             if (notification != null)
             {
                 if (notification.UserId != user.Id)
-                    return new ResponseMediator("Dont have permission", null, 403);
+                    return new ResponseMediator(Messages.user_no_permission_delete_notification, null, 403);
                 notification.HasRead = true;
                 _unitOfWork.Notifications.Update(notification);
                 await _unitOfWork.SaveChangesAsync();
                 return new ResponseMediator("", null);
             }
 
-            return new ResponseMediator("Notification Not found", null, 404);
+            return new ResponseMediator(Messages.notification_not_found, null, 404);
         }
     }
 }
