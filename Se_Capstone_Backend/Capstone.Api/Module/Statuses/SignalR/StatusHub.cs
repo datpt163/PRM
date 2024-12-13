@@ -16,6 +16,7 @@ using System.Threading;
 using static MassTransit.ValidationResultExtensions;
 namespace Capstone.Api.Module.Statuses.SignalR
 {
+    [Authorize]
     public class StatusHub : Hub
     {
         private readonly IUnitOfWork _unitOfWork;
