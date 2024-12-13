@@ -1,6 +1,7 @@
 ﻿using Capstone.Application.Common.Jwt;
 using Capstone.Application.Common.ResponseMediator;
 using Capstone.Application.Module.Notifications.Command;
+using Capstone.Application.Resources;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using System;
@@ -26,7 +27,7 @@ namespace Capstone.Application.Module.Notifications.CommandHandle
         {
             var user = await _jwtService.VerifyTokenAsync(request.Token);
             if (user == null)
-                return new ResponseMediator("Some thing wrong", null);
+                return new ResponseMediator(Messages.invalid_token, null);
 
             var notifications = _unitOfWork.Notifications.Find(x => x.UserId == user.Id);
             foreach(var n in notifications)

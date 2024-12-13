@@ -159,6 +159,9 @@
   <data name="error_processing_request" xml:space="preserve">
     <value>An error occurred while processing your request.</value>
   </data>
+  <data name="estimated_time_greater_than_zero" xml:space="preserve">
+    <value>Estimated time must be greater than 0 hour.</value>
+  </data>
   <data name="failed_to_create_role" xml:space="preserve">
     <value>Failed to create role.</value>
   </data>
@@ -204,17 +207,26 @@
   <data name="name_empty" xml:space="preserve">
     <value>Name is empty.</value>
   </data>
+  <data name="notification_not_found" xml:space="preserve">
+    <value>Notification not found.</value>
+  </data>
   <data name="no_more_phase" xml:space="preserve">
     <value>No more phase.</value>
   </data>
   <data name="old_password_not_correct" xml:space="preserve">
     <value>Old password not correct.</value>
   </data>
+  <data name="parent_issue_not_found" xml:space="preserve">
+    <value>Issue not found.</value>
+  </data>
   <data name="password_not_correct" xml:space="preserve">
     <value>Password is not correct.</value>
   </data>
   <data name="password_null_or_empty" xml:space="preserve">
     <value>Password is null or empty.</value>
+  </data>
+  <data name="percentage_range" xml:space="preserve">
+    <value>Percentage must be greater or equal to 0 and less or equal to 100.</value>
   </data>
   <data name="permission_exists" xml:space="preserve">
     <value>Permission already exists.</value>
@@ -236,6 +248,9 @@
   </data>
   <data name="position_not_found" xml:space="preserve">
     <value>Position not found.</value>
+  </data>
+  <data name="priority_range" xml:space="preserve">
+    <value>Priority must be between 1 and 5.</value>
   </data>
   <data name="project_code_exists" xml:space="preserve">
     <value>Project code is exist.</value>
@@ -314,5 +329,8 @@
   </data>
   <data name="user_not_found" xml:space="preserve">
     <value>User not found.</value>
+  </data>
+  <data name="user_no_permission_delete_notification" xml:space="preserve">
+    <value>User doesn't have permission to delete this.</value>
   </data>
 </root>

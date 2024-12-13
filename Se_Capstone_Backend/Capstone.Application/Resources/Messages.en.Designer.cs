@@ -227,6 +227,7 @@ namespace Capstone.Application.Resources {
                 return ResourceManager.GetString("project_not_found", resourceCulture);
             }
         }
+
         internal static string code_expired_or_wrong
         {
             get
@@ -530,6 +531,48 @@ namespace Capstone.Application.Resources {
             }
         }
 
+        internal static string notification_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("notification_not_found", resourceCulture);
+            }
+        }
 
+        internal static string user_no_permission_delete_notification
+        {
+            get
+            {
+                return ResourceManager.GetString("user_no_permission_delete_notification", resourceCulture);
+            }
+        }
+        internal static string priority_range
+        {
+            get
+            {
+                return ResourceManager.GetString("priority_range", resourceCulture);
+            }
+        }
+        internal static string estimated_time_greater_than_zero
+        {
+            get
+            {
+                return ResourceManager.GetString("estimated_time_greater_than_zero", resourceCulture);
+            }
+        }
+        internal static string parent_issue_not_found
+        {
+            get
+            {
+                return ResourceManager.GetString("parent_issue_not_found", resourceCulture);
+            }
+        }
+        internal static string percentage_range
+        {
+            get
+            {
+                return ResourceManager.GetString("percentage_range", resourceCulture);
+            }
+        }
     }
 }
