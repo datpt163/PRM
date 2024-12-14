@@ -1,8 +1,11 @@
 ﻿using Capstone.Application.Common.Cloudinaries;
 using Capstone.Application.Common.Jwt;
+using Capstone.Application.Module.Auths.Model;
 using Capstone.Application.Module.Users.Command;
 using Capstone.Application.Module.Users.Response;
 using Capstone.Domain.Entities;
+using Capstone.Domain.Module.Auth.TokenBlackList;
+using Capstone.Infrastructure.Redis;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +23,9 @@ namespace Capstone.Application.Module.Users.CommandHandle
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
-        public UpdateUserCommandHandler(IRepository<Role> roleRepository, IUnitOfWork unitOfWork,IHttpContextAccessor httpContextAccessor, IRepository<User> userRepository, CloudinaryService cloudinaryService, IJwtService jwtService, UserManager<User> userManager)
+        private readonly RedisContext _redis;
+        private readonly ITokenBlacklistService _tokenBlacklistService;
+        public UpdateUserCommandHandler(IRepository<Role> roleRepository, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IRepository<User> userRepository, CloudinaryService cloudinaryService, IJwtService jwtService, UserManager<User> userManager, RedisContext redis, ITokenBlacklistService tokenBlacklistService)
         {
             _userRepository = userRepository;
             _cloudinaryService = cloudinaryService;
@@ -29,6 +34,8 @@ namespace Capstone.Application.Module.Users.CommandHandle
             _unitOfWork = unitOfWork;
             _roleRepository = roleRepository;
             _userManager = userManager;
+            _tokenBlacklistService = tokenBlacklistService;
+            _redis = redis;
         }
 
         public async Task<UserDto?> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
@@ -55,7 +62,7 @@ namespace Capstone.Application.Module.Users.CommandHandle
 
             if (user == null)
             {
-                return null; 
+                return null;
             }
 
             if (!string.IsNullOrEmpty(request.FullName))
@@ -97,17 +104,17 @@ namespace Capstone.Application.Module.Users.CommandHandle
             }
 
             var currentRoles = await _userManager.GetRolesAsync(user);
-            var roleResponse = _unitOfWork.Roles.Find(x => x.Name != null && currentRoles.Count() > 0 &&  x.Name.ToUpper().Trim().Equals(currentRoles.FirstOrDefault())).FirstOrDefault();
+            var roleResponse = _unitOfWork.Roles.Find(x => x.Name != null && currentRoles.Count() > 0 && x.Name.ToUpper().Trim().Equals(currentRoles.FirstOrDefault())).FirstOrDefault();
             roleId = roleResponse?.Id;
-            roleName = roleResponse?.Name;   
+            roleName = roleResponse?.Name;
 
             if (request.RoleId.HasValue)
             {
-                var role =  _roleRepository.GetQuery().FirstOrDefault(x=> x.Id == request.RoleId.Value);
-                if (role !=null)
+                var role = _roleRepository.GetQuery().FirstOrDefault(x => x.Id == request.RoleId.Value);
+                if (role != null)
                 {
-                    
-                    if(currentRoles != null && currentRoles.Count() > 0) 
+
+                    if (currentRoles != null && currentRoles.Count() > 0)
                         await _userManager.RemoveFromRolesAsync(user, currentRoles);
                     var roleQuery = await _unitOfWork.Roles.FindOneAsync(x => x.Id == request.RoleId);
                     if (roleQuery != null)
@@ -115,20 +122,42 @@ namespace Capstone.Application.Module.Users.CommandHandle
                         roleId = roleQuery.Id;
                         roleName = roleQuery.Name;
                         await _userManager.AddToRolesAsync(user, new List<String>() { roleName ?? "" });
+
+                        var listMonitorToken = _redis.GetData<List<MonitorTokenModel>>("ListMonitorToken");
+                        if (listMonitorToken != null)
+                        {
+                            var tokensToRemove = new List<MonitorTokenModel>();
+
+                            foreach (var monitorToken in listMonitorToken)
+                            {
+                                if (request.Id != null && monitorToken.UserId == request.Id.Value)
+                                {
+                                    await _tokenBlacklistService.BlacklistTokenAsync(monitorToken.Token, 888);
+                                    tokensToRemove.Add(monitorToken);
+                                }
+                            }
+
+                            foreach (var tokenToRemove in tokensToRemove)
+                            {
+                                listMonitorToken.Remove(tokenToRemove);
+                            }
+
+                            _redis.SetData<List<MonitorTokenModel>>("ListMonitorToken", listMonitorToken, DateTime.Now.AddYears(10));
+                        }
                     }
                 }
             }
-           
+
 
             if (request.AvatarFile != null)
             {
                 using var stream = request.AvatarFile.OpenReadStream();
                 var avatarUrl = await _cloudinaryService.UploadImageAsync(stream, request.AvatarFile.FileName);
-                if(user.Avatar != null)
+                if (user.Avatar != null)
                 {
-                   var isDeletedAvatar = await _cloudinaryService.DeleteImageByUrlAsync(user.Avatar);
+                    var isDeletedAvatar = await _cloudinaryService.DeleteImageByUrlAsync(user.Avatar);
                 }
-                user.Avatar = avatarUrl; 
+                user.Avatar = avatarUrl;
             }
 
             user.UpdateDate = DateTime.Now;
