@@ -62,14 +62,13 @@ namespace Capstone.Application.Module.Auth.QueryHandle
                             if (listCheckToken != null)
                             {
 
-                                listCheckToken.Add(new MonitorTokenModel() { RoleId = role.Id, Token = accessToken});
+                                listCheckToken.Add(new MonitorTokenModel() {UserId = user.Id, RoleId = role.Id, Token = accessToken});
                                 _redis.SetData("ListMonitorToken", listCheckToken, DateTime.Now.AddYears(20));
                             }
                             else
                             {
-                                _redis.SetData("ListMonitorToken", new List<MonitorTokenModel>() { new MonitorTokenModel() { RoleId = role.Id, Token = accessToken} }, DateTime.Now.AddYears(20));
+                                _redis.SetData("ListMonitorToken", new List<MonitorTokenModel>() { new MonitorTokenModel() { RoleId = role.Id, Token = accessToken, UserId = user.Id} }, DateTime.Now.AddYears(20));
                             }
-
                             return new ResponseMediator("", new LoginResponse()
                             {
                                 AccessToken = accessToken,
@@ -80,6 +79,19 @@ namespace Capstone.Application.Module.Auth.QueryHandle
                                 { Permissions = role.Permissions, RoleColor = role.Color}
                             });
                         }
+                    }
+
+
+                    var listCheckToken2 = _redis.GetData<List<MonitorTokenModel>>("ListMonitorToken");
+                    if (listCheckToken2 != null)
+                    {
+
+                        listCheckToken2.Add(new MonitorTokenModel() { RoleId = Guid.NewGuid(), Token = accessToken , UserId = user.Id, });
+                        _redis.SetData("ListMonitorToken", listCheckToken2, DateTime.Now.AddYears(20));
+                    }
+                    else
+                    {
+                        _redis.SetData("ListMonitorToken", new List<MonitorTokenModel>() { new MonitorTokenModel() { RoleId = Guid.NewGuid(), Token = accessToken, UserId = user.Id } }, DateTime.Now.AddYears(20));
                     }
 
                     return new ResponseMediator("", new LoginResponse()
