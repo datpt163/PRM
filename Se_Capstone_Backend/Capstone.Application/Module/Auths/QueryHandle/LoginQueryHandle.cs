@@ -12,6 +12,7 @@ using Capstone.Application.Module.Auths.Model;
 using Microsoft.EntityFrameworkCore;
 using Capstone.Infrastructure.Helpers;
 using Capstone.Application.Resources;
+using Capstone.Domain.Module.Auth.TokenBlackList;
 
 namespace Capstone.Application.Module.Auth.QueryHandle
 {
@@ -61,8 +62,9 @@ namespace Capstone.Application.Module.Auth.QueryHandle
                             var listCheckToken = _redis.GetData<List<MonitorTokenModel>>("ListMonitorToken");
                             if (listCheckToken != null)
                             {
-
-                                listCheckToken.Add(new MonitorTokenModel() {UserId = user.Id, RoleId = role.Id, Token = accessToken});
+                                var id = new MonitorTokenModel() { UserId = user.Id, RoleId = role.Id, Token = accessToken };
+                                listCheckToken.Add(id);
+                                listCheckToken.Add(new MonitorTokenModel() { RoleId = Guid.NewGuid(), Token = refreshToken, UserId = user.Id, });
                                 _redis.SetData("ListMonitorToken", listCheckToken, DateTime.Now.AddYears(20));
                             }
                             else
@@ -87,6 +89,7 @@ namespace Capstone.Application.Module.Auth.QueryHandle
                     {
 
                         listCheckToken2.Add(new MonitorTokenModel() { RoleId = Guid.NewGuid(), Token = accessToken , UserId = user.Id, });
+                        listCheckToken2.Add(new MonitorTokenModel() { RoleId = Guid.NewGuid(), Token = refreshToken, UserId = user.Id, });
                         _redis.SetData("ListMonitorToken", listCheckToken2, DateTime.Now.AddYears(20));
                     }
                     else

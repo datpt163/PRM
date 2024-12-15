@@ -47,7 +47,6 @@ namespace Capstone.Application.Module.Users.CommandHandle
             }
             else
             {
-                await _tokenRevocationService.RevocationTokenAsync(user.Id);
                 user.Status = UserStatus.Inacitve;
                 var listMonitorToken = _redis.GetData<List<MonitorTokenModel>>("ListMonitorToken");
                 if (listMonitorToken != null)
@@ -58,7 +57,7 @@ namespace Capstone.Application.Module.Users.CommandHandle
                     {
                         if (monitorToken.UserId == command.UserId)
                         {
-                            await _tokenBlacklistService.BlacklistTokenAsync(monitorToken.Token, 401);
+                            await _tokenBlacklistService.BlacklistTokenAsync(monitorToken.Token, 789);
                             tokensToRemove.Add(monitorToken);
                         }
                     }
