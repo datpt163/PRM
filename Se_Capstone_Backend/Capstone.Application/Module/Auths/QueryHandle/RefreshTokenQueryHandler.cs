@@ -6,6 +6,7 @@ using Capstone.Application.Module.Auths.Query;
 using Capstone.Application.Module.Auths.Response;
 using Capstone.Application.Resources;
 using Capstone.Domain.Entities;
+using Capstone.Domain.Module.Auth.TokenBlackList;
 using Capstone.Infrastructure.Redis;
 using Capstone.Infrastructure.Repository;
 using MediatR;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq.Dynamic.Core.Tokenizer;
 using System.Net;
 using System.Text;
 
@@ -28,14 +30,16 @@ namespace Capstone.Application.Module.Auth.QueryHandle
         private readonly JwtSettings _jwtSettings;
         private readonly IUnitOfWork _unitOfWork;
         private readonly RedisContext _redis;
+        private readonly ITokenBlacklistService _tokenBlacklistService;
 
-        public RefreshTokenQueryHandler(UserManager<User> userManager, IJwtService jwtService, IOptions<JwtSettings> jwtSettings, IUnitOfWork unitOfWork, RedisContext redis)
+        public RefreshTokenQueryHandler(UserManager<User> userManager, IJwtService jwtService, IOptions<JwtSettings> jwtSettings, IUnitOfWork unitOfWork, RedisContext redis, ITokenBlacklistService tokenBlacklistService)
         {
             _userManager = userManager;
             _jwtService = jwtService;
             _jwtSettings = jwtSettings.Value;
             _unitOfWork = unitOfWork;
             _redis = redis;
+            _tokenBlacklistService = tokenBlacklistService;
         }
 
         public async Task<ResponseMediator> Handle(RefreshTokenQuery request, CancellationToken cancellationToken)
@@ -43,7 +47,12 @@ namespace Capstone.Application.Module.Auth.QueryHandle
             request.RefreshToken = request.RefreshToken.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
                                     ? request.RefreshToken.Substring("Bearer ".Length): request.RefreshToken;
             var refreshToken = request.RefreshToken;
+            var authorizeCode = await _tokenBlacklistService.IsTokenBlacklistedAsync(request.RefreshToken);
 
+            if (authorizeCode != null && authorizeCode.Value == 789)
+            {
+                return new ResponseMediator("Refresh Token invalid", null, 400);
+            }
 
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken, cancellationToken: cancellationToken);
 
@@ -97,12 +106,13 @@ namespace Capstone.Application.Module.Auth.QueryHandle
                         if (listCheckToken != null)
                         {
 
-                            listCheckToken.Add(new MonitorTokenModel() { RoleId = role.Id, Token = accessToken });
-                            _redis.SetData<List<MonitorTokenModel>>("ListMonitorToken", listCheckToken, DateTime.Now.AddYears(20));
+                            listCheckToken.Add(new MonitorTokenModel() { UserId = user.Id, RoleId = role.Id, Token = accessToken });
+                            listCheckToken.Add(new MonitorTokenModel() { RoleId = Guid.NewGuid(), Token = refreshToken, UserId = user.Id, });
+                            _redis.SetData("ListMonitorToken", listCheckToken, DateTime.Now.AddYears(20));
                         }
                         else
                         {
-                            _redis.SetData<List<MonitorTokenModel>>("ListMonitorToken", new List<MonitorTokenModel>() { new MonitorTokenModel() { RoleId = role.Id, Token = accessToken } }, DateTime.Now.AddYears(20));
+                            _redis.SetData("ListMonitorToken", new List<MonitorTokenModel>() { new MonitorTokenModel() { RoleId = role.Id, Token = accessToken, UserId = user.Id } }, DateTime.Now.AddYears(20));
                         }
 
                         return new ResponseMediator("", new LoginResponse()
@@ -115,6 +125,19 @@ namespace Capstone.Application.Module.Auth.QueryHandle
                             { Permissions = role.Permissions, RoleColor = role.Color }
                         });
                     }
+                }
+
+                var listCheckToken2 = _redis.GetData<List<MonitorTokenModel>>("ListMonitorToken");
+                if (listCheckToken2 != null)
+                {
+
+                    listCheckToken2.Add(new MonitorTokenModel() { RoleId = Guid.NewGuid(), Token = accessToken, UserId = user.Id, });
+                    listCheckToken2.Add(new MonitorTokenModel() { RoleId = Guid.NewGuid(), Token = refreshToken, UserId = user.Id, });
+                    _redis.SetData("ListMonitorToken", listCheckToken2, DateTime.Now.AddYears(20));
+                }
+                else
+                {
+                    _redis.SetData("ListMonitorToken", new List<MonitorTokenModel>() { new MonitorTokenModel() { RoleId = Guid.NewGuid(), Token = accessToken, UserId = user.Id } }, DateTime.Now.AddYears(20));
                 }
 
                 return new ResponseMediator("", new LoginResponse()
