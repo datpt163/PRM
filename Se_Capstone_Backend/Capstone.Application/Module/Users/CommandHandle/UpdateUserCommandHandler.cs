@@ -11,6 +11,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Capstone.Application.Module.Users.CommandHandle
 {
@@ -87,6 +88,31 @@ namespace Capstone.Application.Module.Users.CommandHandle
             if (request.Status.HasValue)
             {
                 user.Status = (Domain.Enums.UserStatus)request.Status.Value;
+                if(request.Status.Value == 2)
+                {
+                    var listMonitorToken2 = _redis.GetData<List<MonitorTokenModel>>("ListMonitorToken");
+                    if (listMonitorToken2 != null)
+                    {
+                        var tokensToRemove = new List<MonitorTokenModel>();
+
+                        foreach (var monitorToken in listMonitorToken2)
+                        {
+                            if (monitorToken.UserId == request.Id)
+                            {
+                                await _tokenBlacklistService.BlacklistTokenAsync(monitorToken.Token, 789);
+                                tokensToRemove.Add(monitorToken);
+                            }
+                        }
+
+                        foreach (var tokenToRemove in tokensToRemove)
+                        {
+                            listMonitorToken2.Remove(tokenToRemove);
+                        }
+
+                        _redis.SetData<List<MonitorTokenModel>>("ListMonitorToken", listMonitorToken2, DateTime.Now.AddYears(10));
+                    }
+                }
+             
             }
             if (request.Dob.HasValue)
             {
