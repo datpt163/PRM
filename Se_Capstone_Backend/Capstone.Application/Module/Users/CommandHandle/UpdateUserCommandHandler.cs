@@ -121,29 +121,7 @@ namespace Capstone.Application.Module.Users.CommandHandle
                     {
                         roleId = roleQuery.Id;
                         roleName = roleQuery.Name;
-                        await _userManager.AddToRolesAsync(user, new List<String>() { roleName ?? "" });
-
-                        var listMonitorToken = _redis.GetData<List<MonitorTokenModel>>("ListMonitorToken");
-                        if (listMonitorToken != null)
-                        {
-                            var tokensToRemove = new List<MonitorTokenModel>();
-
-                            foreach (var monitorToken in listMonitorToken)
-                            {
-                                if (request.Id != null && monitorToken.UserId == request.Id.Value)
-                                {
-                                    await _tokenBlacklistService.BlacklistTokenAsync(monitorToken.Token, 888);
-                                    tokensToRemove.Add(monitorToken);
-                                }
-                            }
-
-                            foreach (var tokenToRemove in tokensToRemove)
-                            {
-                                listMonitorToken.Remove(tokenToRemove);
-                            }
-
-                            _redis.SetData<List<MonitorTokenModel>>("ListMonitorToken", listMonitorToken, DateTime.Now.AddYears(10));
-                        }
+                        await _userManager.AddToRolesAsync(user, new List<String>() { roleName ?? "" }); 
                     }
                 }
             }
@@ -162,9 +140,32 @@ namespace Capstone.Application.Module.Users.CommandHandle
 
             user.UpdateDate = DateTime.Now;
 
-
             _userRepository.Update(user);
             await _unitOfWork.SaveChangesAsync();
+
+
+            var listMonitorToken = _redis.GetData<List<MonitorTokenModel>>("ListMonitorToken");
+            if (listMonitorToken != null)
+            {
+                var tokensToRemove = new List<MonitorTokenModel>();
+
+                foreach (var monitorToken in listMonitorToken)
+                {
+                    if (request.Id != null && monitorToken.UserId == request.Id.Value)
+                    {
+                        await _tokenBlacklistService.BlacklistTokenAsync(monitorToken.Token, 888);
+                        tokensToRemove.Add(monitorToken);
+                    }
+                }
+
+                foreach (var tokenToRemove in tokensToRemove)
+                {
+                    listMonitorToken.Remove(tokenToRemove);
+                }
+
+                _redis.SetData<List<MonitorTokenModel>>("ListMonitorToken", listMonitorToken, DateTime.Now.AddYears(10));
+            }
+
             return new UserDto
             {
                 Id = user.Id,
