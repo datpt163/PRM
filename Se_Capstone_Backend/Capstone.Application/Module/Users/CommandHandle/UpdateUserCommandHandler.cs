@@ -121,9 +121,14 @@ namespace Capstone.Application.Module.Users.CommandHandle
                     {
                         roleId = roleQuery.Id;
                         roleName = roleQuery.Name;
-                        await _userManager.AddToRolesAsync(user, new List<String>() { roleName ?? "" }); 
+                        await _userManager.AddToRolesAsync(user, new List<String>() { roleName ?? "" });
                     }
                 }
+            }
+            else
+            {
+                if (currentRoles != null && currentRoles.Count() > 0)
+                    await _userManager.RemoveFromRolesAsync(user, currentRoles);
             }
 
 
