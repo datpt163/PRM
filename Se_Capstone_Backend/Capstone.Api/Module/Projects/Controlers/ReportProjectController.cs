@@ -121,7 +121,7 @@ namespace Capstone.Api.Module.Projects.Controllers
         }
         [HttpPost("tasks/get-suggest")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetSuggest([FromBody] GetSuggestRequest request)
+        public async Task<IActionResult> GetSuggest([FromForm] GetSuggestRequest request)
         {
             var query = new GetSuggestQuery
             {
