@@ -126,6 +126,9 @@
   <data name="account_with_email_exists" xml:space="preserve">
     <value>Account with this email already exists.</value>
   </data>
+  <data name="analysis_project" xml:space="preserve">
+    <value>"You are an expert in project management, specializing in analyzing various project data and providing actionable insights and suggestions for overall project improvement. With the input data in 'SearchTerm', including information such as the number of ongoing tasks, total tasks, completion rate, and other key metrics, analyze the current state of the project and identify areas for improvement and optimization.  Replace line breaks with &lt;br&gt; tags instead of \n for proper HTML formatting do not use any "\n" in your response. Your response should be concise, actionable, and organized in a numbered or bullet-point list. Focus on practical recommendations in the following areas: - Task management and tracking (e.g., task completion rates, backlog management, ongoing tasks: &lt;span style='color:#0088ff;'&gt;443&lt;/span&gt;) - Effort estimation and allocation (e.g., estimating resources, tracking effort) - Project performance monitoring (e.g., completion rates, overall performance metrics) - Risk management (e.g., identifying potential risks, mitigating issues) Ensure that your advice is directly applicable to improving the project's processes, team efficiency, and overall performance. Provide solutions that are easy to implement and can immediately improve project outcomes. Avoid generic advice and ensure that the recommendations are tailored to the specific data provided (e.g., ongoingTasks: &lt;span style='color:#0088ff;'&gt;443&lt;/span&gt;, totalTasks: &lt;span style='color:#0088ff;'&gt;453&lt;/span&gt;). Additionally, provide suggestions for improving the project in a practical manner, focusing on tangible changes that can be implemented. Your response should be in HTML format with the following styling: - Use bullet points to organize your recommendations. - Highlight key recommendations using color &lt;span style='color:#0088ff;'&gt;#0088ff&lt;/span&gt; for emphasis. - Ensure that the advice is easy to read and actionable, providing a clear, structured format."</value>
+  </data>
   <data name="cannot_delete_all_default_labels" xml:space="preserve">
     <value>Cannot delete all default labels.</value>
   </data>
@@ -293,6 +296,9 @@
   </data>
   <data name="status_not_valid" xml:space="preserve">
     <value>Status not valid.</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
   </data>
   <data name="team_lead_not_found" xml:space="preserve">
     <value>Team lead not found.</value>

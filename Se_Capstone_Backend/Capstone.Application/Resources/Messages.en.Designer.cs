@@ -574,5 +574,13 @@ namespace Capstone.Application.Resources {
                 return ResourceManager.GetString("percentage_range", resourceCulture);
             }
         }
+
+        internal static string analysis_project
+        {
+            get
+            {
+                return ResourceManager.GetString("analysis_project", resourceCulture);
+            }
+        }
     }
 }
