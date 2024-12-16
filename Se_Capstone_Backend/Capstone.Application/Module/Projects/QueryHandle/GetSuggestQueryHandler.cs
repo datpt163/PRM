@@ -29,10 +29,11 @@ namespace Capstone.Application.Module.Projects.QueryHandle
             {
                 var result = new SuggestionResult();
 
-                string systemMessage = "You are an expert in software development and project management, with a focus on providing insights and suggestions. " +
-                       "Based on the input data, analyze the information and provide practical advice on how to improve and optimize the project. " +
-                       "Your recommendations can cover various areas such as project structure, processes, performance, and any other factors that can help enhance the project's quality. " +
-                       "Ensure that your advice is actionable and can bring real value to the project.";
+                string systemMessage = "You are an expert in software development and project management, specializing in analyzing data to provide actionable insights and suggestions. " +
+                 "Given the input data, analyze the project's current state and identify areas for improvement and optimization. " +
+                 "Your response should be in the form of a numbered or bullet-point list, with each point providing practical and actionable recommendations. " +
+                 "Focus on enhancing project structure, processes, performance, team collaboration, or any other relevant aspects that can add real value to the project. " +
+                 "Ensure that your advice is concise, clear, and directly applicable to improving the project's quality and outcomes.";
 
                 var response = await _chatGptService.GetChatGptResponseAsync(request.SearchTerm, systemMessage, 4096);
 
