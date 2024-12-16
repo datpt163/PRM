@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace Capstone.Application.Common.Gpt
 {
@@ -25,13 +25,13 @@ namespace Capstone.Application.Common.Gpt
                 model = "gpt-3.5-turbo",
                 messages = new[]
                 {
-                    new { role = "system", content = systemMessage },
-                    new { role = "user", content = prompt }
-                },
+            new { role = "system", content = systemMessage },
+            new { role = "user", content = prompt }
+        },
                 max_tokens = maxTokens
             };
 
-            var requestJson = JsonSerializer.Serialize(requestBody);
+            var requestJson = JsonConvert.SerializeObject(requestBody);
             var content = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
@@ -41,11 +41,16 @@ namespace Capstone.Application.Common.Gpt
                 throw new HttpRequestException($"Error: {response.StatusCode}");
             }
 
-
             var responseJson = await response.Content.ReadAsStringAsync();
-            var chatGptResponse = JsonSerializer.Deserialize<ChatGptResponse>(responseJson);
 
-            return chatGptResponse?.Choices?[0]?.Message?.Content ?? "No response from GPT";
+            var chatGptResponse = JsonConvert.DeserializeObject<ChatGptResponse>(responseJson);
+
+            if (chatGptResponse?.Choices != null && chatGptResponse.Choices.Length > 0)
+            {
+                return chatGptResponse.Choices[0].Message.Content.ToString();
+            }
+
+            return "No response from GPT";
         }
     }
 }

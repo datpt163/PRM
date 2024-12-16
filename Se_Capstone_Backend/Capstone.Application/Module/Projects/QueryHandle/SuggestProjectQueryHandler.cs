@@ -43,9 +43,9 @@ namespace Capstone.Application.Module.Projects.QueryHandle
                        $"Your role is to carefully evaluate the 'ProjectDetail' and 'Skill' field in the provided data and select exactly {request.TotalUsersNeed} unique user IDs (UIDs) " +
                        "that best align with the described requirements. " +
                        "The selection criteria are based on relevance and fit to the ProjectDetail field. " +
-                       "The output must be a valid JSON array of exactly 3 GUID strings, strictly formatted as [\"GUID1\", \"GUID2\", \"GUID3\"]. " +
+                       $"The output must be a valid JSON array of exactly {request.TotalUsersNeed} GUID strings, strictly formatted as [\"GUID1\", \"GUID2\", \"GUID3\"]. " +
                        "Do not include any comments, explanations, or additional text in your response. Return only the JSON array. " +
-                       "If there is insufficient data to select 3 UIDs, return an empty JSON array: [].";
+                       $"If there is insufficient data to select {request.TotalUsersNeed} UIDs, return an empty JSON array: [].";
 
                 var maxTokens = 4096;
                 var requestJson = JsonSerializer.Serialize(request);
