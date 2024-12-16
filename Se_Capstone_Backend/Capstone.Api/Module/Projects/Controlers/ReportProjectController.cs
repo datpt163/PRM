@@ -119,6 +119,17 @@ namespace Capstone.Api.Module.Projects.Controllers
             var result = await _mediator.Send(query);
             return ResponseOk(result, "Summary data retrieved successfully.");
         }
+        [HttpPost("tasks/get-suggest")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetSuggest([FromBody] GetSuggestRequest request)
+        {
+            var query = new GetSuggestQuery
+            {
+               SearchTerm = request.SearchTerm
+            };
+            var result = await _mediator.Send(query);
+            return ResponseOk(result, "Success data retrieved successfully.");
+        }
 
     }
 }

@@ -13,7 +13,6 @@ namespace Capstone.Domain.Entities
         public DateTime? StartDate { get; set; }
         [MaxLength(100)]
         public string PhoneNumber { get; set; } = string.Empty;
-        [MaxLength(100)]
         public string? CvLink { get; set; } = string.Empty; 
         public bool? IsOnBoard { get; set; }
         public Guid MainJobId { get; set; }
