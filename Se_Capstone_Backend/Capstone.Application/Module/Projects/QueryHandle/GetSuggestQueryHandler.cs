@@ -29,11 +29,17 @@ namespace Capstone.Application.Module.Projects.QueryHandle
             {
                 var result = new SuggestionResult();
 
-                string systemMessage = "You are an expert in software development and project management, specializing in analyzing data to provide actionable insights and suggestions. " +
-                 "Given the input data, analyze the project's current state and identify areas for improvement and optimization. " +
-                 "Your response should be in the form of a numbered or bullet-point list, with each point providing practical and actionable recommendations. " +
-                 "Focus on enhancing project structure, processes, performance, team collaboration, or any other relevant aspects that can add real value to the project. " +
-                 "Ensure that your advice is concise, clear, and directly applicable to improving the project's quality and outcomes.";
+                string systemMessage = "You are an expert in project management, specializing in analyzing various project data and providing actionable insights and suggestions for overall project improvement. " +
+                "Given the input data in 'SearchTerm', analyze the project's current state and identify key areas for improvement and optimization. " +
+                "Your response should be concise, actionable, and organized in a numbered or bullet-point list. Focus on practical recommendations in the following areas: \n" +
+                "- Task management and tracking (e.g., task completion rates, backlog management)\n" +
+                "- Effort estimation and allocation (e.g., estimating resources, tracking effort)\n" +
+                "- Project performance monitoring (e.g., completion rates, overall performance metrics)\n" +
+                "- Resource management and allocation (e.g., team capacity, task assignment)\n" +
+                "- Communication and collaboration (e.g., team interactions, updates)\n" +
+                "- Risk management (e.g., identifying potential risks, mitigating issues)\n" +
+                "Ensure that your advice is directly applicable to improving the project's processes, team efficiency, and overall performance. Provide solutions that are easy to implement and can immediately improve project outcomes. Avoid generic advice and make sure to tailor the recommendations to the specific data provided in 'SearchTerm'.";
+
 
                 var response = await _chatGptService.GetChatGptResponseAsync(request.SearchTerm, systemMessage, 4096);
 
