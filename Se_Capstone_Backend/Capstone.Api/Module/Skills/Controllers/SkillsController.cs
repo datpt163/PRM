@@ -186,5 +186,27 @@ namespace Capstone.Api.Module.skills.Controllers
             }
         }
 
+        [HttpPost("user/by-skill-title")]
+        [AllowAnonymous]
+        [Authorize(Roles = "SKILL_USER")]
+        public async Task<IActionResult> GetUsersBySkillTitle([FromBody] GetUsersBySkillTitleRequest request)
+        {
+            try
+            {
+                var query = new GetUsersBySkillTitleQuery
+                {
+                    SkillTitle = request.SkillTitle,
+                };
+
+                var result = await _mediator.Send(query);
+
+                return ResponseOk(result);
+            }
+            catch (Exception ex)
+            {
+                return ResponseBadRequest(ex.Message);
+            }
+        }
+
     }
 }

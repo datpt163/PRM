@@ -38,14 +38,18 @@ namespace Capstone.Application.Module.Projects.QueryHandle
             }
 
             try
-            {   
+            {
                 string systemMessage = "You are a specialized assistant capable of analyzing project requirements and employee data. " +
-                       $"Your role is to carefully evaluate the 'ProjectDetail' and 'Skill' field in the provided data and select exactly {request.TotalUsersNeed} unique user IDs (UIDs) " +
-                       "that best align with the described requirements. " +
-                       "The selection criteria are based on relevance and fit to the ProjectDetail field. " +
-                       $"The output must be a valid JSON array of exactly {request.TotalUsersNeed} GUID strings, strictly formatted as [\"GUID1\", \"GUID2\", \"GUID3\"]. " +
-                       "Do not include any comments, explanations, or additional text in your response. Return only the JSON array. " +
-                       $"If there is insufficient data to select {request.TotalUsersNeed} UIDs, return an empty JSON array: [].";
+                                       $"Your role is to carefully evaluate the 'ProjectDetail', 'Skill', and 'ActiveProjectCount' fields in the provided data. " +
+                                       $"Your goal is to select exactly {request.TotalUsersNeed} unique user IDs (UIDs) that best align with the described requirements, " +
+                                       "based on the following criteria in order of priority: " +
+                                       "1. Relevance to the 'ProjectDetail' field, including identifying related skills (e.g., 'code' should prioritize skills like Java, C#, Python; " +
+                                       "'design' should prioritize skills like Photoshop, Canva, Figma, etc.). " +
+                                       "2. Users with the lowest 'ActiveProjectCount' should be prioritized. " +
+                                       "The output must be a valid JSON array of exactly {request.TotalUsersNeed} GUID strings, strictly formatted as [\"GUID1\", \"GUID2\", \"GUID3\"]. " +
+                                       "Do not include any comments, explanations, or additional text in your response. Return only the JSON array. " +
+                                       $"If there is insufficient data to select {request.TotalUsersNeed} UIDs, return an empty JSON array: [].";
+
 
                 var maxTokens = 4096;
                 var requestJson = JsonSerializer.Serialize(request);

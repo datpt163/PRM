@@ -1,4 +1,4 @@
-﻿    using AutoMapper;
+﻿using AutoMapper;
 using Capstone.Application.Common.Email.EmailQueue;
 using Capstone.Application.Common.EmailHTML;
 using Capstone.Application.Common.Jwt;
@@ -31,7 +31,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             _publisher = publishEndpoint;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _userManager = userManager; 
+            _userManager = userManager;
         }
 
         public async Task<ResponseMediator> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
@@ -40,7 +40,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             if (userAssign == null)
                 return new ResponseMediator(Messages.user_not_found, null);
             int statusCodeSuccess = 200;
-            if ( !(request.Status == ProjectStatus.NotStarted || request.Status == ProjectStatus.InProgress || request.Status == ProjectStatus.Finished || request.Status == ProjectStatus.Canceled ))
+            if (!(request.Status == ProjectStatus.NotStarted || request.Status == ProjectStatus.InProgress || request.Status == ProjectStatus.Finished || request.Status == ProjectStatus.Canceled))
                 return new ResponseMediator(Messages.status_not_valid, null);
 
             var projectCheckCode = _unitOfWork.Projects.Find(p => p.Code.Trim().ToUpper().Equals(request.Code.Trim().ToUpper()) && request.Id != p.Id).FirstOrDefault();
@@ -48,10 +48,10 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             if (projectCheckCode != null)
                 return new ResponseMediator(Messages.project_code_exists, null);
 
-            if(request.EndDate.HasValue && request.StartDate.HasValue)
+            if (request.EndDate.HasValue && request.StartDate.HasValue)
                 if (request.EndDate.Value.Date < request.StartDate.Value.Date)
                     return new ResponseMediator(Messages.end_date_greater_than_start_date, null);
-           
+
 
             var project = _unitOfWork.Projects.Find(x => x.Id == request.Id).Include(c => c.Lead).FirstOrDefault();
             if (project == null)
@@ -62,7 +62,7 @@ namespace Capstone.Application.Module.Projects.CommandHandle
                 var user = _unitOfWork.Users.Find(u => u.Id == request.TeamLeadId).FirstOrDefault();
                 if (user == null)
                     return new ResponseMediator(Messages.team_lead_not_found, null, 404);
-                if((project.LeadId == null || project.LeadId != request.TeamLeadId) && request.TeamLeadId != userAssign.Id)
+                if ((project.LeadId == null || project.LeadId != request.TeamLeadId) && request.TeamLeadId != userAssign.Id)
                 {
                     _unitOfWork.Notifications.Add(new Notification() { CreatedAt = DateTime.Now, UserId = user.Id, Type = "assignLeader", Data = JsonSerializer.Serialize(new { type = "assignLeader", projectId = request.Id, projectName = request.Name, assignerName = userAssign.FullName, assignerUserName = userAssign.UserName, assignerAvatar = userAssign.Avatar }) });
                     await _publisher.Publish(new SendEmailMessage() { ToEmail = user.Email == null ? "" : user.Email, Body = EmailMessage.AssignLeader(request.Name, user.UserName == null ? "" : user.UserName, request.Id), Subject = $"🎉 congratulations! you’ve been assigned as the project leader for {request.Name}" });
@@ -87,7 +87,38 @@ namespace Capstone.Application.Module.Projects.CommandHandle
             project.EndDate = request.EndDate;
             project.LeadId = request.TeamLeadId;
             project.UpdatedAt = DateTime.Now;
-            project.Status = request.Status;
+
+            //Check Status
+            if ((project.Status != ProjectStatus.Finished && request.Status == ProjectStatus.Finished))
+            {
+                var projectPhaseQuery = _unitOfWork.Projects.GetQueryNoTracking()
+                    .Include(x => x.Phases)
+                    .ThenInclude(x => x.Issues)
+                    .ThenInclude(x => x.Status)
+                    .Where(x => !x.IsDeleted);
+
+                var projectStatusesQuery = _unitOfWork.Projects.GetQueryNoTracking()
+                    .Include(x => x.Statuses)
+                    .ThenInclude(x => x.Issues)
+                    .Where(x => !x.IsDeleted);
+
+                var hasUndoneIssues = await projectPhaseQuery
+                    .SelectMany(p => p.Phases)
+                    .SelectMany(ph => ph.Issues)
+                    .AnyAsync(i => i.Status.IsDone == false || i.Status.IsDone == null)
+                     || await projectStatusesQuery
+                    .SelectMany(p => p.Statuses)
+                    .SelectMany(s => s.Issues)
+                    .AnyAsync(i => i.Status.IsDone == false || i.Status.IsDone == null);
+
+
+                if (hasUndoneIssues)
+                {
+                    return new ResponseMediator("There is some task need change status to done!!", null);
+                }
+
+            }
+
             project.LeadId = request.TeamLeadId;
             project.TotalEffort = request.TotalEffort;
             _unitOfWork.Projects.Update(project);
