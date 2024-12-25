@@ -29,9 +29,14 @@ namespace Capstone.Application.Module.Users.QueryHandle
 
         public async Task<PagingResultSP<UsersDto>> Handle(GetUserListQuery request, CancellationToken cancellationToken)
         {
-            var usersQuery = _userRepository.GetQueryNoTracking().Where(x => x.UserName != null);
+            var usersQuery = _userRepository.GetQueryNoTracking().Include(x=> x.Skills).Where(x => x.UserName != null);
 
-            
+            if (!string.IsNullOrEmpty(request.Skill))
+            {
+                usersQuery = usersQuery.Where(user => user.Skills!=null && user.Skills
+                    .Any(skill => skill.Title.ToLower().Contains(request.Skill.ToLower())));
+            }
+
             if (!string.IsNullOrEmpty(request.Phone))
             {
                 //if (!PhoneNumberValidator.Validate(request.Phone))
