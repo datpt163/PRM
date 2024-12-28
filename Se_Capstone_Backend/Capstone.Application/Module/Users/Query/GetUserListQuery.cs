@@ -19,7 +19,7 @@ namespace Capstone.Application.Module.Users.Query
         public DateTime? DobFrom { get; set; } = null;
         public DateTime? DobTo { get; set; } = null;
 
-        public string? Skill = string.Empty;
+        public string? Skill { get; set; } = string.Empty;
 
     }
 }

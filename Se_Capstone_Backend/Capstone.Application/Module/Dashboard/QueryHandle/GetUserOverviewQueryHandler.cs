@@ -28,6 +28,7 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
                 //.ThenInclude(x=> x.Status)
                 .Include(x => x.AssinedIssues)
                 .ThenInclude(x=> x.Status)
+                .ThenInclude(x=> x.Project)
                 .FirstOrDefaultAsync(x=> x.Id == request.UserId,cancellationToken);
 
             if(user == null) {
@@ -46,7 +47,24 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
             var totalProjectsLead = user.LeadProjects.Count();
             var totalCurrentProjects = user.LeadProjects.Where(x=> x.Status != Domain.Enums.ProjectStatus.Finished).Count()
                                     + user.UserProjects.Where(x => x.Project.Status != Domain.Enums.ProjectStatus.Finished).Count();
-            
+
+            var overViewTasks = new List<OverViewTask>();
+            if (totalCurrentTasks > 0)
+            {
+                var currentTask = user.AssinedIssues.Where(x => !x.IsDeleted && (x.Status.IsDone == false || x.Status.IsDone == null)).ToList();
+                foreach (var task in currentTask)
+                {
+                    overViewTasks.Add(new OverViewTask
+                    {
+                        TaskId = task.Id,
+                        TaskName = task.Title,
+                        ProjectId = task.Status.ProjectId,
+                        ProjectName = task.Status.Project.Name,
+                        UserId = request.UserId,
+                        UserName = user.FullName
+                    });
+                }
+            }
             return new UserOverviewResponse
             {
                 TotalSkills = totalSkills,
@@ -55,7 +73,8 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
                 TotalTasksDone = totalTasksDone,
                 TotalProjects = totalProjects,
                 TotalProjectsLead = totalProjectsLead,
-                TotalCurrentProjects = totalCurrentProjects
+                TotalCurrentProjects = totalCurrentProjects,
+                OverViewTasks = overViewTasks
             };
 
         }

@@ -19,6 +19,7 @@ namespace Capstone.Application.Module.Dashboard.Response
         public int TotalSkillsEmployee { get; set; }
 
         public int TotalEmployee { get; set; }
-    }
+        public List<OverViewTask> OverViewTasks { get; set; } = new List<OverViewTask>();
 
+    }
 }
