@@ -38,8 +38,32 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
 
 
             var totalSkillsEmployee = await _unitOfWork.Skills.GetQueryNoTracking().Where(x=> !x.IsDeleted).CountAsync(cancellationToken);
-            var totalEmployee = await _unitOfWork.Users.GetQueryNoTracking().Where(x=> x.Status != UserStatus.Inacitve).CountAsync(cancellationToken);
 
+            var userQuery = _unitOfWork.Users.GetQueryNoTracking().Include(x=> x.AssinedIssues).ThenInclude(x=> x.Status).ThenInclude(x=> x.Project).Where(x => x.Status != UserStatus.Inacitve);
+            var users = await userQuery.ToListAsync(cancellationToken);
+            var totalEmployee = await userQuery.CountAsync(cancellationToken);
+            var overViewTasks = new List<OverViewTask>();
+            if (users.Any())
+            {
+                foreach (var user in users)
+                {
+                    foreach (var task in user.AssinedIssues)
+                    {
+                        if (!task.IsDeleted && (task.Status.IsDone == false || task.Status.IsDone == null))
+                        {
+                            overViewTasks.Add(new OverViewTask
+                            {
+                                TaskId = task.Id,
+                                TaskName = task.Title,
+                                ProjectId = task.Status.ProjectId,
+                                ProjectName = task.Status.Project.Name,
+                                UserId = user.Id,
+                                UserName = user.FullName
+                            });
+                        }
+                    }
+                }
+            }
             return new DashboardOverviewResponse
             {
                 OngoingTasks = ongoingTasks,
@@ -47,7 +71,9 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
                 TotalProjects = totalProjects,
                 TotalProjectsDone = totalProjectsDone,
                 TotalSkillsEmployee = totalSkillsEmployee,
-                TotalEmployee = totalEmployee
+                TotalEmployee = totalEmployee,
+                OverViewTasks = overViewTasks
+
             };
         }
     }
