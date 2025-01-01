@@ -39,7 +39,7 @@ namespace Capstone.Api.Module.Issues.Controllers
         public async Task<IActionResult> CreateStatus([FromBody] CreateIssueRequest request)
         {
             string token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var result = await _mediator.Send(new AddIssueCommand(token, request.Title, request.Description, request.StartDate, request.DueDate, request.Priority, request.EstimatedTime, request.ParentIssueId, request.AssigneeId, request.StatusId, request.LabelId));
+            var result = await _mediator.Send(new AddIssueCommand(token, request.Title, request.Description, request.StartDate, request.DueDate, request.Priority, request.EstimatedTime, request.ParentIssueId, request.AssigneeId, request.StatusId, request.LabelId) { PhaseId = request.PhaseId});
             if (result.StatusCode == 403)
                 return Forbid();
 

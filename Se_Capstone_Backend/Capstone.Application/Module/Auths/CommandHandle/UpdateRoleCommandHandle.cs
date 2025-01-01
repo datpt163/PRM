@@ -48,6 +48,10 @@ namespace Capstone.Application.Module.Auths.CommandHandle
 
             if (roleUpdate == null)
                 return new ResponseMediator(Messages.role_not_found, null,404);
+            if ( roleUpdate.Name != null && string.Equals(roleUpdate.Name.Trim(), "admin", StringComparison.OrdinalIgnoreCase))
+            {
+                return new ResponseMediator("This role cannot update", null, 400);
+            }
             var rolePermissionIds = roleUpdate.Permissions.Select(p => p.Id).ToList();
             if ( _unitOfWork.Roles.FindOne( x => x.Name != null && x.Name == request.Name.ToUpper() && x.Id != request.Id ) != null)
             {

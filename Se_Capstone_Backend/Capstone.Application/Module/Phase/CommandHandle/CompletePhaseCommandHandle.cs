@@ -23,28 +23,16 @@ namespace Capstone.Application.Module.Phase.CommandHandle
 
         public async Task<ResponseMediator> Handle(CompletePhaseCommand request, CancellationToken cancellationToken)
         {
-            var project = _unitOfWork.Projects.Find(x => x.Id == request.ProjectId).Include(c => c.Phases).FirstOrDefault();
-            if(project == null)
-                return new ResponseMediator(Messages.project_not_found, null, 404);
+            var phase = _unitOfWork.Phases.Find(x => x.Id == request.ProjectId).FirstOrDefault();
+            if(phase == null)
+                return new ResponseMediator("Phase not found", null, 404);
 
-            (PhaseStatus status, Domain.Entities.Phase? phaseRunning, Domain.Entities.Phase? phaseAfterPhaseRunning) = project.GetStatusPhaseOfProject();
-            if(status == PhaseStatus.Complete)
-                return new ResponseMediator(Messages.no_more_phase, null, 404);
-            else if(status == PhaseStatus.NoPhase)
-                return new ResponseMediator(Messages.project_no_phase, null, 400);
-            else if( status == PhaseStatus.NoPhaseRunning)
-            {
-                var phase = project.Phases.FirstOrDefault();
-                if(phase != null)
-                    phase.ActualStartDate = DateTime.Now;
-            }
-            else if (status == PhaseStatus.Running && phaseRunning != null && phaseAfterPhaseRunning != null)
-            {
-                phaseRunning.ActualEndDate = DateTime.Now;
-                phaseAfterPhaseRunning.ActualStartDate = DateTime.Now;
-            }
+            if(phase.ActualStartDate == null)
+                phase.ActualStartDate = DateTime.Now;
+            else
+                phase.ActualEndDate = DateTime.Now;
             
-            _unitOfWork.Projects.Update(project);
+            _unitOfWork.Phases.Update(phase);
             await _unitOfWork.SaveChangesAsync();
             return new ResponseMediator("", null);
         }

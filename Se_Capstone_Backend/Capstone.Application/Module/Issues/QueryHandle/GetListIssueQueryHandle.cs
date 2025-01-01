@@ -5,6 +5,7 @@ using Capstone.Application.Module.Issues.DTO;
 using Capstone.Application.Module.Issues.Query;
 using Capstone.Application.Module.Projects.Response;
 using Capstone.Application.Resources;
+using Capstone.Domain.Entities;
 using Capstone.Infrastructure.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -79,7 +80,14 @@ namespace Capstone.Application.Module.Issues.QueryHandle
 
             if (request.PhaseId != null && request.PhaseId.Count > 0)
             {
-                issues = issues.Where(x => x.PhaseId != null && request.PhaseId.Contains(x.PhaseId.Value)).ToList();
+                if (request.PhaseId.Contains(Guid.Parse("827fc009-a7b3-48df-86e0-0a0c49b0bd47")))
+                {
+                    issues = issues.Where(x => x.PhaseId == null || request.PhaseId.Contains(x.PhaseId.Value)).ToList();
+                }
+                else
+                {
+                    issues = issues.Where(x => x.PhaseId != null && request.PhaseId.Contains(x.PhaseId.Value)).ToList();
+                }
             }
 
             if (request.PageIndex.HasValue && request.PageSize.HasValue)

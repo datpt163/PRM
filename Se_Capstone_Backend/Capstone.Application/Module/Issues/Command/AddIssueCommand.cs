@@ -39,5 +39,6 @@ namespace Capstone.Application.Module.Issues.Command
         public Guid? AssignedToId { get; set; }
         public Guid StatusId { get; set; }
         public Guid? LabelId { get; set; }
+        public Guid? PhaseId { get; set; }
     }
 }
