@@ -33,9 +33,10 @@ namespace Capstone.Application.Module.Users.QueryHandle
 
             if (!string.IsNullOrEmpty(request.Skill))
             {
-                usersQuery = usersQuery.Where(user => user.Skills!=null && user.Skills
-                    .Any(skill => skill.Title.ToLower().Contains(request.Skill.ToLower())));
+                usersQuery = usersQuery.Where(x => x.Skills.Any(s =>
+                    s.Title.ToLower().Contains(request.Skill.ToLower())));
             }
+
 
             if (!string.IsNullOrEmpty(request.Phone))
             {
