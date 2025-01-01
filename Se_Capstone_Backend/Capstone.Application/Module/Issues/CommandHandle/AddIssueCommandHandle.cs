@@ -68,6 +68,8 @@ namespace Capstone.Application.Module.Issues.CommandHandle
 
             if (request.LabelId.HasValue && _unitOfWork.Labels.FindOne(x => x.Id == request.LabelId) == null)
                 return new ResponseMediator(Messages.label_not_found, null, 404);
+            if (request.PhaseId.HasValue && _unitOfWork.Phases.FindOne(x => x.Id == request.PhaseId) == null)
+                return new ResponseMediator(Messages.label_not_found, null, 404);
             var status = _unitOfWork.Statuses.Find(x => x.Id == request.StatusId).Include(c => c.Project).ThenInclude(c => c.Phases).Include(c => c.Issues).FirstOrDefault();
             if (status == null)
                 return new ResponseMediator(Messages.status_not_valid, null, 404);
@@ -95,11 +97,6 @@ namespace Capstone.Application.Module.Issues.CommandHandle
             var assignedById = user.Id;
             var index = SetIndex(status.Project.Id);
 
-            Guid? phaseId = null;
-            var result = status.Project.GetStatusPhaseOfProject();
-            if ((result.status == PhaseStatus.Running || result.status == PhaseStatus.Complete) && result.phaseRunning != null)
-                phaseId = result.phaseRunning.Id;
-
             var issue = new Issue()
             {
                 Index = index,
@@ -115,7 +112,7 @@ namespace Capstone.Application.Module.Issues.CommandHandle
                 LastUpdateById = lastUpdateById,
                 StatusId = request.StatusId,
                 LabelId = request.LabelId,
-                PhaseId = phaseId
+                PhaseId = request.PhaseId,
             };
             //var issueMessage = new AddIssueMessage2
             //{

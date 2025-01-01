@@ -138,7 +138,13 @@ namespace Capstone.Application.Module.Status.QueryHandle
             if (request.PhaseId != null && request.PhaseId.Count > 0)
                 foreach (var status in statuses)
                 {
-                    status.Issues = status.Issues.Where(x => x.PhaseId != null && request.PhaseId.Contains(x.PhaseId.Value)).ToList();
+                    if (request.PhaseId.Contains(Guid.Parse("827fc009-a7b3-48df-86e0-0a0c49b0bd47"))){
+                        status.Issues = status.Issues.Where(x => x.PhaseId == null || request.PhaseId.Contains(x.PhaseId.Value)).ToList();
+                    }
+                    else
+                    {
+                        status.Issues = status.Issues.Where(x => x.PhaseId != null && request.PhaseId.Contains(x.PhaseId.Value)).ToList();
+                    }
                 }
            
 

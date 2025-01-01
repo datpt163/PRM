@@ -39,12 +39,12 @@ namespace Capstone.Application.Module.Phase.CommandHandle
 
 
             var phase = new Domain.Entities.Phase() { ProjectId = request.ProjectId, Title = request.Title, Description = request.Description, ExpectedStartDate = request.ExpectedStartDate, ExpectedEndDate = request.ExpectedEndDate };
-            var errorMessage = phase.IsValidExpectDate(project.Phases);
-            if (!string.IsNullOrEmpty(errorMessage))
-                return new ResponseMediator(errorMessage, null, 400);
-            (PhaseStatus status, Domain.Entities.Phase? phaseRunning, Domain.Entities.Phase? phaseAfterPhaseRunning) = project.GetStatusPhaseOfProject();
-            if((status == PhaseStatus.Running || status == PhaseStatus.Complete) && phaseRunning != null && request.ExpectedStartDate < phaseRunning.ExpectedEndDate)
-                return new ResponseMediator(Messages.start_date_greater_than_phases, null);
+            //var errorMessage = phase.IsValidExpectDate(project.Phases);
+            //if (!string.IsNullOrEmpty(errorMessage))
+            //    return new ResponseMediator(errorMessage, null, 400);
+            //(PhaseStatus status, Domain.Entities.Phase? phaseRunning, Domain.Entities.Phase? phaseAfterPhaseRunning) = project.GetStatusPhaseOfProject();
+            //if((status == PhaseStatus.Running || status == PhaseStatus.Complete) && phaseRunning != null && request.ExpectedStartDate < phaseRunning.ExpectedEndDate)
+            //    return new ResponseMediator(Messages.start_date_greater_than_phases, null);
 
 
             _unitOfWork.Phases.Add(phase);

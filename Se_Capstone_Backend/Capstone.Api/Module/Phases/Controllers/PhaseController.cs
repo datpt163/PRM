@@ -95,12 +95,12 @@ namespace Capstone.Api.Module.Phases.Controllers
             }
         }
 
-        [HttpPut("complete")]
+        [HttpPut("{id}/complete")]
         [SwaggerResponse(400, "Fail", typeof(ResponseFail))]
         [Authorize]
-        public async Task<IActionResult> CompletePhase(Guid projectId)
+        public async Task<IActionResult> CompletePhase(Guid id)
         {
-            var result = await _mediator.Send(new CompletePhaseCommand() {ProjectId = projectId });
+            var result = await _mediator.Send(new CompletePhaseCommand() {ProjectId = id });
             if (string.IsNullOrEmpty(result.ErrorMessage))
                 return ResponseNoContent();
             else

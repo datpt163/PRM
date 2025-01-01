@@ -42,23 +42,10 @@ namespace Capstone.Application.Module.Phase.CommandHandle
             //if (request.ExpectedEndDate.Date < DateTime.Now.Date)
             //    return new ResponseMediator("End date must be greater or equal than the current time", null);
 
-            var phaseCheck = new Domain.Entities.Phase() { Title = request.Title, Description = request.Description, ExpectedStartDate = request.ExpectedStartDate, ExpectedEndDate = request.ExpectedEndDate };
-            var phases = new List<Domain.Entities.Phase>();
-            phases.AddRange(phase.Project.Phases);
-            var phaseDelete = phases.FirstOrDefault(x => x.Id == request.Id);
-            if (phaseDelete != null)
-            {
-                phases.Remove(phaseDelete);
-            }
-            var errorMessage = phaseCheck.IsValidExpectDate(phases);
-            if (!string.IsNullOrEmpty(errorMessage))
-                return new ResponseMediator(errorMessage, null, 400);
+            //var errorMessage = phaseCheck.IsValidExpectDate(phases);
+            //if (!string.IsNullOrEmpty(errorMessage))
+            //    return new ResponseMediator(errorMessage, null, 400);
 
-            foreach(var l in phase.Project.Phases.OrderByDescending(c => c.ExpectedStartDate))
-            {
-                if(l.ActualStartDate.HasValue && l.Id != request.Id && request.ExpectedStartDate < l.ActualStartDate )
-                    return new ResponseMediator(Messages.start_date_greater_than_phases, null);
-            }
 
             phase.Title = request.Title;
             phase.Description = request.Description;
