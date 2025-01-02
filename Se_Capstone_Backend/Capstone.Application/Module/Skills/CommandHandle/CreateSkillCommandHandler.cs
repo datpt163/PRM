@@ -31,7 +31,8 @@ namespace Capstone.Application.Module.Skills.CommandHandle
                 Title = request.Title,
                 Description = request.Description,
                 CreatedAt = DateTime.Now,
-                IsDeleted = false
+                IsDeleted = false,
+                Level = request.Level
             };
 
              _skillRepository.Add(skill);
@@ -45,7 +46,8 @@ namespace Capstone.Application.Module.Skills.CommandHandle
                 UpdatedAt = skill.UpdatedAt,
                 IsDeleted = skill.IsDeleted,
                 CreatedBy = skill.CreatedBy,
-                UpdatedBy = skill.UpdatedBy
+                UpdatedBy = skill.UpdatedBy,
+                Level = skill.Level
             };
         }
     }

@@ -33,6 +33,9 @@ namespace Capstone.Application.Module.Skills.CommandHandle
             if(!string.IsNullOrEmpty(request.Description))
             skill.Description = request.Description;
 
+            if(!string.IsNullOrEmpty(request.Level))
+            skill.Level = request.Level;
+
             skill.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
             skill.UpdatedBy = null;
             await _identityService.SetUpdatedByAsync(skill);
@@ -43,11 +46,13 @@ namespace Capstone.Application.Module.Skills.CommandHandle
                 Id = skill.Id,
                 Title = skill.Title,
                 Description = skill.Description,
+                Level = skill.Level,
                 CreatedAt = skill.CreatedAt,
                 UpdatedAt = skill.UpdatedAt,
                 IsDeleted = skill.IsDeleted,
                 CreatedBy = skill.CreatedBy,
-                UpdatedBy = skill.UpdatedBy
+                UpdatedBy = skill.UpdatedBy,
+
             };
         }
     }

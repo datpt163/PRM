@@ -13,6 +13,7 @@ namespace Capstone.Domain.Entities
         public string Title { get; set; } = string.Empty;
         [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
+        public string Level { get; set; } = string.Empty;
         public ICollection<User>? Users { get; set; } = new List<User>();
     }
 }

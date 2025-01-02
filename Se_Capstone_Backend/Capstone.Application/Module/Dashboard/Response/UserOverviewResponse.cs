@@ -21,5 +21,10 @@
         public string TaskName { get; set; } = string.Empty;
         public Guid UserId { get; set; }
         public string UserName { get; set; } = string.Empty;
+        public string StatusName { get; set; } = string.Empty;
+        public string Color { get; set; } = string.Empty;
+        public int Index { get; set; }
+
+
     }
 }

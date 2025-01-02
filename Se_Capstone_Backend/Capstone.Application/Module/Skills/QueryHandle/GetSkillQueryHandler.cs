@@ -33,7 +33,9 @@ namespace Capstone.Application.Module.Skills.QueryHandle
                 UpdatedAt = skill.UpdatedAt,
                 IsDeleted = skill.IsDeleted,
                 CreatedBy = skill.CreatedBy,
-                UpdatedBy = skill.UpdatedBy
+                UpdatedBy = skill.UpdatedBy,
+                Level = skill.Level,
+
             };
         }
     }

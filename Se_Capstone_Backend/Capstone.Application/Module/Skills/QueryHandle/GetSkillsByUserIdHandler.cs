@@ -37,7 +37,9 @@ namespace Capstone.Application.Module.Skills.QueryHandle
             {
                 Id = skill.Id,
                 Title = skill.Title,
-                Description = skill.Description
+                Description = skill.Description,
+                Level = skill.Level,
+
             }).ToList();
 
             return skillDtos;

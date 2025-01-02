@@ -61,10 +61,15 @@ namespace Capstone.Application.Module.Dashboard.QueryHandle
                         ProjectId = task.Status.ProjectId,
                         ProjectName = task.Status.Project.Name,
                         UserId = request.UserId,
-                        UserName = user.FullName
+                        UserName = user.FullName,
+                        StatusName = task.Status.Name,
+                        Color = task.Status.Color,
+                        Index = task.Index
                     });
                 }
             }
+            overViewTasks = overViewTasks.OrderBy(x => x.Index).ToList();
+
             return new UserOverviewResponse
             {
                 TotalSkills = totalSkills,
